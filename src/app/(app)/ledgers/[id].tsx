@@ -7,7 +7,7 @@ import { useGetLedger } from '@/api/generated/endpoints/ledgers/ledgers';
 import { useCreateSettlement } from '@/api/generated/endpoints/settlements/settlements';
 import { LedgerScreen, type SettleRequest } from '@/features/ledgers/LedgerScreen';
 import { refreshLedgers, useLedgerHistory } from '@/features/ledgers/queries';
-import { settleOptions } from '@/features/ledgers/settle';
+import { settleOptions, settlementRequestId, type RequestId } from '@/features/ledgers/settle';
 import { Screen } from '@/ui/Screen';
 
 export default function LedgerRoute() {
@@ -15,8 +15,8 @@ export default function LedgerRoute() {
   const detail = useGetLedger(id);
   const history = useLedgerHistory(id);
   const createSettlement = useCreateSettlement();
-  // One id per settle attempt, reused by retries, so a double tap can't forgive twice.
-  const requestId = useRef<string | null>(null);
+  // One id per distinct settle request, reused by its retries (see settlementRequestId).
+  const requestId = useRef<RequestId | null>(null);
 
   if (!detail.data) {
     return (
@@ -33,10 +33,10 @@ export default function LedgerRoute() {
   async function settle(request: SettleRequest) {
     const counterpartMemberId = settleOptions(detail.data!).counterpartId;
     if (!counterpartMemberId) return;
-    requestId.current ??= randomUUID();
+    requestId.current = settlementRequestId(requestId.current, request, randomUUID);
     await createSettlement.mutateAsync({
       id,
-      data: { ...request, counterpartMemberId, clientRequestId: requestId.current },
+      data: { ...request, counterpartMemberId, clientRequestId: requestId.current.id },
     });
     requestId.current = null;
     await refreshLedgers();

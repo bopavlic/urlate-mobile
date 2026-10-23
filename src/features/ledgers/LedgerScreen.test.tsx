@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import type { LedgerDetail } from '@/api/generated/model';
 
@@ -58,5 +58,26 @@ describe('LedgerScreen', () => {
     expect(screen.getByText('Brother owes you 18 min')).toBeTruthy();
     expect(screen.getByText('Forgive')).toBeTruthy();
     expect(screen.getByText('Reset')).toBeTruthy();
+  });
+});
+
+describe('LedgerScreen settling errors', () => {
+  it('says so when forgiving fails, instead of failing silently', async () => {
+    const onSettle = jest.fn().mockRejectedValue(new Error('offline'));
+    await render(
+      <LedgerScreen
+        detail={{ ...fresh, myBalance: { direction: 'THEY_OWE_YOU', minutes: 18 } }}
+        history={[]}
+        onSettle={onSettle}
+        onLoadMore={jest.fn()}
+        settling={false}
+      />,
+    );
+    await fireEvent.press(screen.getByText('Forgive'));
+    await fireEvent.press(screen.getByText('Forgive 18 min'));
+    expect(onSettle).toHaveBeenCalledWith({ kind: 'FORGIVE', minutes: 18 });
+    expect(
+      await screen.findByText("Couldn't save that. Check your connection and try again."),
+    ).toBeTruthy();
   });
 });

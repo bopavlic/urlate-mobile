@@ -14,3 +14,20 @@ export function settleOptions(detail: {
     counterpartId: counterpart?.id ?? null,
   };
 }
+
+export type SettleRequest = { kind: 'FORGIVE'; minutes: number } | { kind: 'RESET' };
+export type RequestId = { key: string; id: string };
+
+/**
+ * One idempotency key per distinct request: a retry of the same request reuses it (so a
+ * double tap or a timeout can't apply it twice), anything else gets a fresh one (so an
+ * earlier request is never replayed in place of a new one).
+ */
+export function settlementRequestId(
+  previous: RequestId | null,
+  request: SettleRequest,
+  makeId: () => string,
+): RequestId {
+  const key = request.kind === 'FORGIVE' ? `FORGIVE:${request.minutes}` : 'RESET';
+  return previous?.key === key ? previous : { key, id: makeId() };
+}

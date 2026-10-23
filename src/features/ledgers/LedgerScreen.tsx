@@ -9,9 +9,9 @@ import { LateButton } from '@/ui/LateButton';
 import { Screen } from '@/ui/Screen';
 
 import { HistoryItem } from './HistoryItem';
-import { settleOptions } from './settle';
+import { settleOptions, type SettleRequest } from './settle';
 
-export type SettleRequest = { kind: 'FORGIVE'; minutes: number } | { kind: 'RESET' };
+export type { SettleRequest };
 
 function Stepper({
   value,
@@ -94,11 +94,23 @@ export function LedgerScreen({
   const settle = settleOptions(detail);
   const [forgiving, setForgiving] = useState(false);
   const [forgiveMinutes, setForgiveMinutes] = useState(settle.owedMinutes);
+  const [settleError, setSettleError] = useState<string | null>(null);
+
+  async function trySettle(request: SettleRequest): Promise<boolean> {
+    setSettleError(null);
+    try {
+      await onSettle(request);
+      return true;
+    } catch {
+      setSettleError("Couldn't save that. Check your connection and try again.");
+      return false;
+    }
+  }
 
   function confirmReset() {
     Alert.alert('Wipe the slate?', "This can't be undone, but it stays in history.", [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Reset', style: 'destructive', onPress: () => void onSettle({ kind: 'RESET' }) },
+      { text: 'Reset', style: 'destructive', onPress: () => void trySettle({ kind: 'RESET' }) },
     ]);
   }
 
@@ -160,16 +172,18 @@ export function LedgerScreen({
               className="flex-1"
               loading={settling}
               onPress={async () => {
-                await onSettle({
+                const saved = await trySettle({
                   kind: 'FORGIVE',
                   minutes: Math.min(forgiveMinutes, settle.owedMinutes),
                 });
-                setForgiving(false);
+                if (saved) setForgiving(false);
               }}
             />
           </View>
         </View>
       ) : null}
+
+      {settleError ? <Text className="text-base text-danger">{settleError}</Text> : null}
 
       {detail.kind === 'GROUP' ? <Leaderboard detail={detail} /> : null}
 

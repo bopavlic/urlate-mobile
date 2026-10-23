@@ -9,7 +9,7 @@ import {
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -28,7 +28,11 @@ export default function RootLayout() {
     BigShoulders_900Black,
   });
   const { data: session, isPending } = authClient.useSession();
-  const ready = fontsLoaded && !isPending;
+  // Better Auth flips isPending on every refetch (each app focus). Only the first answer
+  // gates rendering: unmounting the navigator later would throw users off the code screen.
+  const [sessionKnown, setSessionKnown] = useState(false);
+  if (!sessionKnown && (!isPending || session)) setSessionKnown(true);
+  const ready = fontsLoaded && sessionKnown;
 
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();

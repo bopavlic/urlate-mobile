@@ -1,5 +1,5 @@
 import { brother, me } from './fixtures';
-import { settleOptions } from './settle';
+import { settleOptions, settlementRequestId } from './settle';
 
 const detail = (
   direction: 'THEY_OWE_YOU' | 'YOU_OWE_THEM' | 'ALL_SQUARE',
@@ -27,5 +27,24 @@ describe('settleOptions', () => {
 
   it('leaves group settling for later', () => {
     expect(settleOptions(detail('THEY_OWE_YOU', 5, 'GROUP')).canSettle).toBe(false);
+  });
+});
+
+describe('settlementRequestId', () => {
+  let n = 0;
+  const makeId = () => `id-${++n}`;
+
+  it('reuses the id when the same request is retried', () => {
+    const first = settlementRequestId(null, { kind: 'FORGIVE', minutes: 5 }, makeId);
+    const retry = settlementRequestId(first, { kind: 'FORGIVE', minutes: 5 }, makeId);
+    expect(retry.id).toBe(first.id);
+  });
+
+  it('uses a new id for a different request, so an old one is never replayed', () => {
+    const forgive5 = settlementRequestId(null, { kind: 'FORGIVE', minutes: 5 }, makeId);
+    expect(settlementRequestId(forgive5, { kind: 'FORGIVE', minutes: 3 }, makeId).id).not.toBe(
+      forgive5.id,
+    );
+    expect(settlementRequestId(forgive5, { kind: 'RESET' }, makeId).id).not.toBe(forgive5.id);
   });
 });
