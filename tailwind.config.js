@@ -6,6 +6,17 @@ const color = (name) => `rgb(var(--color-${name}) / <alpha-value>)`;
 module.exports = {
   content: ['./src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
+  // These make colour classes set CSS variables (--tw-bg-opacity…), and NativeWind remounts
+  // components that gain variables after their first render (e.g. a chip turning bg-accent
+  // when selected). Use the colour/alpha syntax instead: bg-accent/50.
+  corePlugins: {
+    backgroundOpacity: false,
+    textOpacity: false,
+    borderOpacity: false,
+    divideOpacity: false,
+    placeholderOpacity: false,
+    ringOpacity: false,
+  },
   theme: {
     extend: {
       colors: {

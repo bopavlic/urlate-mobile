@@ -39,7 +39,8 @@ function WhoWasLate({
             accessibilityRole="radio"
             accessibilityState={{ selected: isSelected }}
             onPress={() => onPick(member.id)}
-            className={`min-h-16 min-w-[46%] flex-1 items-center justify-center rounded-2xl border-2 px-4 ${
+            // rotate-0 by default: NativeWind remounts elements that gain transform variables later.
+            className={`min-h-16 min-w-[46%] flex-1 rotate-0 items-center justify-center rounded-2xl border-2 px-4 ${
               isSelected
                 ? member.isMe
                   ? 'border-ink bg-ink'

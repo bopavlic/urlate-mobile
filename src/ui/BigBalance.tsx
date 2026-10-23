@@ -21,11 +21,13 @@ export function BigBalance({
   const owedToMe = view.direction === 'THEY_OWE_YOU';
   const square = view.direction === 'ALL_SQUARE';
 
+  // Every variant sets rotate and shadow so the card never gains CSS variables after its
+  // first render (NativeWind would remount it when the balance changes).
   const card = owedToMe
     ? 'bg-accent -rotate-[4deg] shadow-lg shadow-black/25'
     : square
-      ? 'border-[3px] border-dashed border-line'
-      : 'border-[3px] border-ink';
+      ? 'rotate-0 shadow-none border-[3px] border-dashed border-line'
+      : 'rotate-0 shadow-none border-[3px] border-ink';
   const digits = owedToMe ? 'text-on-accent' : square ? 'text-muted' : 'text-ink';
 
   return (

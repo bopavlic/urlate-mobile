@@ -29,7 +29,7 @@ function MiniCard({ ledger }: { ledger: LedgerSummary }) {
     <View
       importantForAccessibility="no-hide-descendants"
       className={`h-14 min-w-11 items-center justify-center rounded-lg px-2 ${
-        owedToMe ? '-rotate-6 bg-accent' : 'border-2 border-ink'
+        owedToMe ? '-rotate-6 bg-accent' : 'rotate-0 border-2 border-ink'
       }`}
     >
       <Text
