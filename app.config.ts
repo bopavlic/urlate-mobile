@@ -20,6 +20,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     icon: './assets/expo.icon',
     supportsTablet: false,
     usesAppleSignIn: true,
+    // Universal links: urlate.app/i/… and /s/… open the app (the site serves the AASA file).
+    associatedDomains: ['applinks:urlate.app'],
   },
   android: {
     package: 'app.urlate',
@@ -30,6 +32,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: './assets/images/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
+    // App links: verified against urlate.app/.well-known/assetlinks.json.
+    intentFilters: [
+      {
+        action: 'VIEW',
+        autoVerify: true,
+        data: [
+          { scheme: 'https', host: 'urlate.app', pathPrefix: '/i/' },
+          { scheme: 'https', host: 'urlate.app', pathPrefix: '/s/' },
+        ],
+        category: ['BROWSABLE', 'DEFAULT'],
+      },
+    ],
   },
   plugins: [
     'expo-router',

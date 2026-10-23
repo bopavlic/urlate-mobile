@@ -90,3 +90,20 @@ it('lands on sign-in when a 401 signs the user out', async () => {
   expect(router.getPathname()).toBe('/sign-in');
   expect(screen.getByText('sign-in screen')).toBeTruthy();
 });
+
+it('opens an invite link while signed out, so people see who invited them first', async () => {
+  mockState = { data: null, isPending: false };
+  const router = await renderRouter(
+    {
+      _layout: RootLayout,
+      'sign-in': () => <Text>sign-in screen</Text>,
+      code: () => <Text>code screen</Text>,
+      onboarding: () => <Text>onboarding</Text>,
+      '(app)/index': () => <Text>home</Text>,
+      'i/[code]': () => <Text>join screen</Text>,
+    },
+    { initialUrl: '/i/ABCDEFGH' },
+  );
+  expect(router.getPathname()).toBe('/i/ABCDEFGH');
+  expect(screen.getByText('join screen')).toBeTruthy();
+});

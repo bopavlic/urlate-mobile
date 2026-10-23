@@ -1,6 +1,6 @@
 import { AxiosError, type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios';
 
-import { api, apiErrorCode, configureApiAuth, customInstance } from './client';
+import { api, apiErrorCode, apiErrorDetails, configureApiAuth, customInstance } from './client';
 
 // Answers every request with the given status/body, the way a real adapter settles.
 function respondWith(status: number, data: unknown, seen: InternalAxiosRequestConfig[] = []) {
@@ -67,5 +67,14 @@ describe('api client', () => {
     const error = await api.patch('/me', { username: 'borna' }).catch((e: unknown) => e);
     expect(apiErrorCode(error)).toBe('USERNAME_TAKEN');
     expect(apiErrorCode(new Error('offline'))).toBeUndefined();
+  });
+
+  it('reads the API error details', async () => {
+    respondWith(409, {
+      error: { code: 'ALREADY_MEMBER', message: 'Already in', details: { ledgerId: 'l1' } },
+    });
+    const error = await api.post('/invites/ABCDEFGH/claim').catch((e: unknown) => e);
+    expect(apiErrorDetails(error)).toEqual({ ledgerId: 'l1' });
+    expect(apiErrorDetails(new Error('offline'))).toBeUndefined();
   });
 });

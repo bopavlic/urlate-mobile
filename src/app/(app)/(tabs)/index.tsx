@@ -7,6 +7,11 @@ import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { Title } from '@/ui/Title';
 
+/** Someone who installed from an invite page types the code shown there. */
+function EnterInviteCode() {
+  return <Button title="Enter invite code" variant="ghost" onPress={() => router.push('/join')} />;
+}
+
 export default function Home() {
   const ledgers = useLedgers();
   const items = ledgers.data?.pages.flatMap((page) => page.items) ?? [];
@@ -58,8 +63,10 @@ export default function Home() {
                 No one&apos;s late yet. Give it time.
               </Text>
               <Button title="Add someone" onPress={() => router.push('/ledgers/new')} />
+              <EnterInviteCode />
             </View>
           }
+          ListFooterComponent={items.length > 0 ? <EnterInviteCode /> : undefined}
         />
       )}
     </Screen>

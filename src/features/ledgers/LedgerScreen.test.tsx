@@ -84,3 +84,50 @@ describe('LedgerScreen settling errors', () => {
     ).toBeTruthy();
   });
 });
+
+describe('LedgerScreen invites', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { router } = require('expo-router') as { router: { push: jest.Mock } };
+  beforeEach(() => router.push.mockClear());
+
+  function renderLedger(detail: LedgerDetail) {
+    return render(
+      <LedgerScreen
+        detail={detail}
+        history={[]}
+        onSettle={jest.fn()}
+        onLoadMore={jest.fn()}
+        settling={false}
+      />,
+    );
+  }
+
+  it('nudges you to invite a placeholder person so they see the score too', async () => {
+    await renderLedger(fresh);
+    expect(screen.getByText('Brother isn’t on Ur Late yet.')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Invite Brother' }));
+    expect(router.push).toHaveBeenCalledWith({
+      pathname: '/invite',
+      params: { ledgerId: 'l-new' },
+    });
+  });
+
+  it('stops nudging once they have joined', async () => {
+    await renderLedger({ ...fresh, members: [me, { ...brother, isPlaceholder: false }] });
+    expect(screen.queryByRole('button', { name: 'Invite Brother' })).toBeNull();
+  });
+
+  it('lets anyone in a group invite more people', async () => {
+    await renderLedger({
+      ...fresh,
+      kind: 'GROUP',
+      name: 'Football',
+      members: [me, { ...brother, isPlaceholder: false }],
+    });
+    await fireEvent.press(screen.getByRole('button', { name: 'Invite people' }));
+    expect(router.push).toHaveBeenCalledWith({
+      pathname: '/invite',
+      params: { ledgerId: 'l-new' },
+    });
+  });
+});

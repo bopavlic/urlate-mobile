@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, FlatList, Pressable, Text, View } from 'react-native';
 
@@ -44,6 +45,23 @@ function Stepper({
       >
         <Text className="font-display text-3xl text-ink">+</Text>
       </Pressable>
+    </View>
+  );
+}
+
+/** Placeholders can't see the score; inviting them is how a tally becomes shared. */
+function InviteNudge({ detail }: { detail: LedgerDetail }) {
+  const openInvite = () => router.push({ pathname: '/invite', params: { ledgerId: detail.id } });
+  if (detail.kind === 'GROUP') {
+    return <Button title="Invite people" variant="secondary" onPress={openInvite} />;
+  }
+  const other = detail.members.find((member) => !member.isMe);
+  if (!other?.isPlaceholder) return null;
+  return (
+    <View className="gap-3 rounded-2xl border-2 border-line p-4">
+      <Text className="text-base text-ink">{other.displayName} isn’t on Ur Late yet.</Text>
+      <Text className="text-base text-muted">Invite them so they see the score too.</Text>
+      <Button title={`Invite ${other.displayName}`} variant="secondary" onPress={openInvite} />
     </View>
   );
 }
@@ -172,6 +190,8 @@ export function LedgerScreen({
       ) : null}
 
       {settleError ? <Text className="text-base text-danger">{settleError}</Text> : null}
+
+      <InviteNudge detail={detail} />
 
       {detail.kind === 'GROUP' ? <Leaderboard detail={detail} /> : null}
 

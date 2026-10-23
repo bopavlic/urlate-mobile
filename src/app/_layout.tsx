@@ -77,6 +77,8 @@ export default function RootLayout() {
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen name="code" />
               </Stack.Protected>
+              {/* Invite links (urlate.app/i/…, urlate://i/…) open signed in or out. */}
+              <Stack.Screen name="i/[code]" />
             </Stack>
           </View>
         </ThemeProvider>

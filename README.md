@@ -31,6 +31,10 @@ Profile photos are off locally (no storage bucket); people show initials.
 - **iPhone:** open `ios/UrLate.xcworkspace` in Xcode, set your Team under Signing & Capabilities, pick the iPhone and press Run. Same Wi-Fi as the Mac.
 - Office or guest Wi-Fi often blocks devices from reaching each other; use home Wi-Fi or a phone hotspot.
 
+### Invite links
+
+`urlate://i/{code}` opens the join screen on any dev build. `https://urlate.app/i/{code}` opens the app only once the site serves its app-link files (needs the Apple Team ID and the Android signing SHA-256, see `urlate-frontend/README.md`) and the app was rebuilt after the `associatedDomains`/`intentFilters` change (`pnpm ios:simulator`, `pnpm android`). To try a link on the simulator: `xcrun simctl openurl booted urlate://i/ABCD1234`.
+
 ## Environment
 
 Copy `.env.example` to `.env`; Expo loads it automatically.
@@ -43,14 +47,14 @@ Copy `.env.example` to `.env`; Expo loads it automatically.
 
 ## Code map
 
-| Path                  | What                                                                                                                                                                                |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/`            | Screens (Expo Router). `sign-in`, `code` and `onboarding` for signed-out/new users; `(app)/` is everything after sign-in: tabs, `ledgers/[id]`, `ledgers/new`, and the `log` modal. |
-| `src/api/client.ts`   | The axios instance: adds the session cookie, signs out on 401.                                                                                                                      |
-| `src/api/generated/`  | Orval output. Never edit; run `pnpm api:generate` after backend route changes.                                                                                                      |
-| `src/features/`       | Feature logic and components (auth, balance copy, ledgers, quick log, profile), each with tests.                                                                                    |
-| `src/ui/`             | Shared building blocks: Button, TextField, Screen, Title, Avatar, BigBalance (the yellow card), LateButton.                                                                         |
-| `src/theme/tokens.ts` | The palette (light/dark) and type. Change the look here.                                                                                                                            |
+| Path                  | What                                                                                                                                                                                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/`            | Screens (Expo Router). `sign-in`, `code` and `onboarding` for signed-out/new users; `(app)/` is everything after sign-in: tabs, `ledgers/[id]`, `ledgers/new`, the `log` modal, `invite` and `join`. `i/[code]` opens invite links signed in or out. |
+| `src/api/client.ts`   | The axios instance: adds the session cookie, signs out on 401.                                                                                                                                                                                       |
+| `src/api/generated/`  | Orval output. Never edit; run `pnpm api:generate` after backend route changes.                                                                                                                                                                       |
+| `src/features/`       | Feature logic and components (auth, balance copy, ledgers, quick log, profile, invites), each with tests.                                                                                                                                            |
+| `src/ui/`             | Shared building blocks: Button, TextField, Screen, Title, Avatar, BigBalance (the yellow card), LateButton.                                                                                                                                          |
+| `src/theme/tokens.ts` | The palette (light/dark) and type. Change the look here.                                                                                                                                                                                             |
 
 ## Checks
 

@@ -59,3 +59,11 @@ export function apiErrorCode(error: unknown): string | undefined {
   const body = error.response?.data as { error?: { code?: unknown } } | undefined;
   return typeof body?.error?.code === 'string' ? body.error.code : undefined;
 }
+
+/** The `error.details` from an API error body, e.g. `{ ledgerId }` for ALREADY_MEMBER. */
+export function apiErrorDetails(error: unknown): Record<string, unknown> | undefined {
+  if (!(error instanceof AxiosError)) return undefined;
+  const body = error.response?.data as { error?: { details?: unknown } } | undefined;
+  const details = body?.error?.details;
+  return details && typeof details === 'object' ? (details as Record<string, unknown>) : undefined;
+}
