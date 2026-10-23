@@ -6,9 +6,9 @@ import { brother, me } from './fixtures';
 import { LedgerScreen } from './LedgerScreen';
 
 // jest.mock factories run before imports, so the mock module is required inline.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock(
   'react-native-safe-area-context',
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   () => require('react-native-safe-area-context/jest/mock').default,
 );
 jest.mock('expo-router', () => ({ router: { back: jest.fn(), push: jest.fn() } }));
