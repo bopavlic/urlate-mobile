@@ -2,6 +2,14 @@ import type { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
+/**
+ * Both platforms pad content above the keyboard. Android 15+ draws edge to edge, so the
+ * window no longer resizes for the keyboard (adjustResize is ignored) and inputs would hide.
+ */
+export function keyboardBehavior(_os: string): 'padding' {
+  return 'padding';
+}
+
 /** A page: safe-area aware, paper background, keyboard-friendly when it holds a form. */
 export function Screen({
   children,
@@ -29,7 +37,7 @@ export function Screen({
     <SafeAreaView edges={edges} className="flex-1 bg-paper">
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={keyboardBehavior(Platform.OS)}
       >
         {body}
       </KeyboardAvoidingView>
