@@ -1,4 +1,4 @@
-import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -6,7 +6,7 @@ import { CodeInput } from '@/features/auth/code-input';
 import { authClient } from '@/lib/auth';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
-import { Title } from '@/ui/Title';
+import { ScreenHeader } from '@/ui/ScreenHeader';
 
 export default function Code() {
   const { email } = useLocalSearchParams<{ email: string }>();
@@ -40,8 +40,8 @@ export default function Code() {
   }
 
   return (
-    <Screen scroll className="gap-6 pt-16">
-      <Title>Check your inbox</Title>
+    <Screen scroll className="gap-6">
+      <ScreenHeader title="Check your inbox" />
       <Text className="text-lg text-muted">
         We sent a 6-digit code to <Text className="font-semibold text-ink">{email}</Text>.
       </Text>
@@ -54,7 +54,6 @@ export default function Code() {
           onPress={resend}
           disabled={resent}
         />
-        <Button title="Use a different email" variant="ghost" onPress={() => router.back()} />
       </View>
     </Screen>
   );

@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, FlatList, Pressable, Text, View } from 'react-native';
 
@@ -7,6 +6,7 @@ import { BigBalance } from '@/ui/BigBalance';
 import { Button } from '@/ui/Button';
 import { LateButton } from '@/ui/LateButton';
 import { Screen } from '@/ui/Screen';
+import { ScreenHeader } from '@/ui/ScreenHeader';
 
 import { HistoryItem } from './HistoryItem';
 import { settleOptions, type SettleRequest } from './settle';
@@ -116,19 +116,7 @@ export function LedgerScreen({
 
   const header = (
     <View className="gap-8 pb-6">
-      <View className="flex-row items-center gap-3">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          hitSlop={12}
-        >
-          <Text className="font-display text-4xl text-ink">‹</Text>
-        </Pressable>
-        <Text className="flex-1 font-display text-4xl text-ink" numberOfLines={1}>
-          {title}
-        </Text>
-      </View>
+      <ScreenHeader title={title} />
 
       <BigBalance view={detail.myBalance} otherName={other?.displayName ?? ''} kind={detail.kind} />
 

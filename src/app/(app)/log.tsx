@@ -14,10 +14,9 @@ import { initialLogState, logReducer, toCreateEntryBody } from '@/features/log/l
 import { MinutePicker } from '@/features/log/MinutePicker';
 import { WhenPicker } from '@/features/log/WhenPicker';
 import { Button } from '@/ui/Button';
-import { CloseButton } from '@/ui/CloseButton';
 import { Screen } from '@/ui/Screen';
+import { ScreenHeader } from '@/ui/ScreenHeader';
 import { TextField } from '@/ui/TextField';
-import { Title } from '@/ui/Title';
 
 function WhoWasLate({
   members,
@@ -71,9 +70,7 @@ function PickLedger({ onPick }: { onPick: (ledgerId: string) => void }) {
   if (items.length === 0) {
     return (
       <View className="gap-4 pt-8">
-        <Text className="text-lg text-muted">
-          Add someone to your scoreboard first, then log away.
-        </Text>
+        <Text className="text-lg text-muted">Add someone first, then log away.</Text>
         <Button title="Add someone" onPress={() => router.replace('/ledgers/new')} />
       </View>
     );
@@ -149,15 +146,8 @@ export default function Log() {
 
   return (
     <Screen padded={false}>
-      <View className="px-6 pt-2">
-        <CloseButton onPress={() => router.back()} />
-      </View>
-
-      <ScrollView
-        contentContainerClassName="gap-8 px-6 pb-8 pt-4"
-        keyboardShouldPersistTaps="handled"
-      >
-        <Title>{state.ledgerId ? 'Who was late?' : 'Who was it with?'}</Title>
+      <ScrollView contentContainerClassName="gap-8 px-6 pb-8" keyboardShouldPersistTaps="handled">
+        <ScreenHeader title={state.ledgerId ? 'Who was late?' : 'Who was it with?'} />
         {!state.ledgerId ? (
           <PickLedger onPick={(ledgerId) => dispatch({ type: 'pickLedger', ledgerId })} />
         ) : !members ? (

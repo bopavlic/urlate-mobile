@@ -44,11 +44,11 @@ jest.mock('@/features/ledgers/queries', () => ({
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const Log = require('../app/(app)/log').default;
 
-it('has a Cancel button that closes the screen', async () => {
+it('has a Back button that leaves the screen', async () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { router } = require('expo-router');
   await render(<Log />);
-  await fireEvent.press(screen.getByRole('button', { name: 'Cancel' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
   expect(router.back).toHaveBeenCalled();
 });
 

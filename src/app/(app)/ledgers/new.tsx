@@ -6,11 +6,10 @@ import { useCreateLedger } from '@/api/generated/endpoints/ledgers/ledgers';
 import { buildCreateLedgerBody } from '@/features/ledgers/new-ledger';
 import { refreshLedgers } from '@/features/ledgers/queries';
 import { Button } from '@/ui/Button';
-import { CloseButton } from '@/ui/CloseButton';
 import { Screen } from '@/ui/Screen';
+import { ScreenHeader } from '@/ui/ScreenHeader';
 import { Segmented } from '@/ui/Segmented';
 import { TextField } from '@/ui/TextField';
-import { Title } from '@/ui/Title';
 
 export default function NewLedger() {
   const [kind, setKind] = useState<'PAIR' | 'GROUP'>('PAIR');
@@ -44,9 +43,8 @@ export default function NewLedger() {
   }
 
   return (
-    <Screen scroll className="gap-6 pt-2">
-      <CloseButton onPress={() => router.back()} />
-      <Title>Keep score with…</Title>
+    <Screen scroll className="gap-6">
+      <ScreenHeader title="Keep score with…" />
 
       <Segmented
         options={[
@@ -101,7 +99,7 @@ export default function NewLedger() {
         history.
       </Text>
       {error ? <Text className="text-base text-danger">{error}</Text> : null}
-      <Button title="Add to scoreboard" onPress={save} loading={create.isPending} />
+      <Button title="Save" onPress={save} loading={create.isPending} />
     </Screen>
   );
 }

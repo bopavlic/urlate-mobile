@@ -42,6 +42,9 @@ describe('LedgerScreen', () => {
     );
     expect(screen.getByText('All square')).toBeTruthy();
     expect(screen.getByText("No one's late yet. Give it time.")).toBeTruthy();
+    // Same back control and title layout as every other non-tab screen.
+    expect(screen.getByRole('button', { name: 'Back' })).toBeTruthy();
+    expect(screen.getByRole('header', { name: 'Brother' })).toBeTruthy();
     expect(screen.queryByText('Forgive')).toBeNull();
   });
 
