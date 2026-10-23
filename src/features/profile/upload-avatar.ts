@@ -1,6 +1,7 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 
+import { apiErrorCode } from '@/api/client';
 import { createAvatarUpload, updateMe } from '@/api/generated/endpoints/me/me';
 
 export type UploadAvatarDeps = {
@@ -12,6 +13,12 @@ export type UploadAvatarDeps = {
   put: (url: string, fileUri: string, contentType: string) => Promise<void>;
   save: (key: string) => Promise<unknown>;
 };
+
+export function avatarErrorMessage(error: unknown): string {
+  // Local servers run without photo storage until a bucket is configured.
+  if (apiErrorCode(error) === 'STORAGE_UNAVAILABLE') return "Profile photos aren't available yet.";
+  return "Couldn't upload that photo. Try another one?";
+}
 
 /** Pick → shrink on the phone → upload straight to the bucket → tell the API the new key. */
 export async function uploadAvatar(deps: UploadAvatarDeps): Promise<'cancelled' | 'saved'> {

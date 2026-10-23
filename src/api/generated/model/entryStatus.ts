@@ -6,11 +6,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type EntryStatus = (typeof EntryStatus)[keyof typeof EntryStatus];
+export type EntryStatus = typeof EntryStatus[keyof typeof EntryStatus];
+
 
 export const EntryStatus = {
-  ACTIVE: "ACTIVE",
-  PENDING: "PENDING",
-  DISPUTED: "DISPUTED",
-  REJECTED: "REJECTED",
+  ACTIVE: 'ACTIVE',
+  PENDING: 'PENDING',
+  DISPUTED: 'DISPUTED',
+  REJECTED: 'REJECTED',
 } as const;

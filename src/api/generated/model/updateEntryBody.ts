@@ -8,14 +8,14 @@
 
 export interface UpdateEntryBody {
   /**
-   * @minimum 1
-   * @maximum 1440
-   */
+     * @minimum 1
+     * @maximum 1440
+     */
   minutes?: number;
   /**
-   * @maxLength 140
-   * @nullable
-   */
+     * @maxLength 140
+     * @nullable
+     */
   note?: string | null;
   occurredAt?: string;
 }

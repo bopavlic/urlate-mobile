@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { HistoryItem } from "./historyItem";
+import type { HistoryItem } from './historyItem';
 
 export interface HistoryPage {
   items: HistoryItem[];

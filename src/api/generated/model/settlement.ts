@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { SettlementKind } from "./settlementKind";
+import type { SettlementKind } from './settlementKind';
 
 export interface Settlement {
   id: string;

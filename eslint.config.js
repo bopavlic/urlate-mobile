@@ -3,5 +3,5 @@ const expoConfig = require('eslint-config-expo/flat');
 
 module.exports = defineConfig([
   expoConfig,
-  { ignores: ['dist/*', 'ios/*', 'android/*', 'src/api/generated/*', '.superpowers/*'] },
+  { ignores: ['dist/*', 'ios/*', 'android/*', 'src/api/generated/*', '.superpowers/*', '.expo/*'] },
 ]);

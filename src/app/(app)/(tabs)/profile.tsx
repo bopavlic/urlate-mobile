@@ -4,7 +4,11 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { getGetMeQueryKey, useGetMe } from '@/api/generated/endpoints/me/me';
 import { refreshLedgers } from '@/features/ledgers/queries';
 import { ProfileForm } from '@/features/profile/ProfileForm';
-import { avatarUploadDeps, uploadAvatar } from '@/features/profile/upload-avatar';
+import {
+  avatarErrorMessage,
+  avatarUploadDeps,
+  uploadAvatar,
+} from '@/features/profile/upload-avatar';
 import { signOut } from '@/lib/auth';
 import { queryClient } from '@/providers/query';
 import { Avatar } from '@/ui/Avatar';
@@ -26,8 +30,8 @@ export default function Profile() {
         await queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
         void refreshLedgers();
       }
-    } catch {
-      setAvatarError("Couldn't upload that photo. Try another one?");
+    } catch (err) {
+      setAvatarError(avatarErrorMessage(err));
     } finally {
       setUploading(false);
     }

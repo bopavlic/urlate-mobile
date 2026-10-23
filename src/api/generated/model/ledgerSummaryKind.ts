@@ -6,10 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type LedgerSummaryKind =
-  (typeof LedgerSummaryKind)[keyof typeof LedgerSummaryKind];
+export type LedgerSummaryKind = typeof LedgerSummaryKind[keyof typeof LedgerSummaryKind];
+
 
 export const LedgerSummaryKind = {
-  PAIR: "PAIR",
-  GROUP: "GROUP",
+  PAIR: 'PAIR',
+  GROUP: 'GROUP',
 } as const;

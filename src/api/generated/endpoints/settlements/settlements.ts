@@ -5,116 +5,95 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation } from "@tanstack/react-query";
+import {
+  useMutation
+} from '@tanstack/react-query';
 import type {
   MutationFunction,
   QueryClient,
   UseMutationOptions,
-  UseMutationResult,
-} from "@tanstack/react-query";
+  UseMutationResult
+} from '@tanstack/react-query';
 
-import type { CreateSettlementBody, Error, Settlement } from "../../model";
+import type {
+  CreateSettlementBody,
+  Error,
+  Settlement
+} from '../../model';
 
-import { customInstance } from "../../../client";
-import type { ErrorType, BodyType } from "../../../client";
+import { customInstance } from '../../../client';
+import type { ErrorType , BodyType } from '../../../client';
+
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
 
 /**
  * @summary Forgive some minutes, or reset the balance to zero (only the person owed)
  */
 export const createSettlement = (
-  id: string,
-  createSettlementBody?: BodyType<CreateSettlementBody>,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
+    id: string,
+    createSettlementBody?: BodyType<CreateSettlementBody>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-  return customInstance<Settlement>(
-    {
-      url: `/ledgers/${id}/settlements`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: createSettlementBody,
-      signal,
+
+
+      return customInstance<Settlement>(
+      {url: `/ledgers/${id}/settlements`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createSettlementBody, signal
     },
-    options,
-  );
-};
+      options);
+    }
 
-export const getCreateSettlementMutationKey = () =>
-  ["createSettlement"] as const;
 
-export const getCreateSettlementMutationOptions = <
-  TError = ErrorType<Error>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createSettlement>>,
-    TError,
-    CreateSettlementMutationVariables,
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createSettlement>>,
-  TError,
-  CreateSettlementMutationVariables,
-  TContext
-> => {
-  const mutationKey = getCreateSettlementMutationKey();
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createSettlement>>,
-    CreateSettlementMutationVariables
-  > = (props) => {
-    const { id, data } = props ?? {};
 
-    return createSettlement(id, data, requestOptions);
-  };
+export const getCreateSettlementMutationKey = () => ['createSettlement'] as const;
 
-  return { mutationFn, ...mutationOptions };
-};
+export const getCreateSettlementMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSettlement>>, TError,CreateSettlementMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createSettlement>>, TError,CreateSettlementMutationVariables, TContext> => {
 
-export type CreateSettlementMutationResult = NonNullable<
-  Awaited<ReturnType<typeof createSettlement>>
->;
-export type CreateSettlementMutationBody =
-  BodyType<CreateSettlementBody> | undefined;
-export type CreateSettlementMutationError = ErrorType<Error>;
-export type CreateSettlementMutationVariables = {
-  id: string;
-  data?: BodyType<CreateSettlementBody>;
-};
+const mutationKey = getCreateSettlementMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
 
-/**
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createSettlement>>, CreateSettlementMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  createSettlement(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateSettlementMutationResult = NonNullable<Awaited<ReturnType<typeof createSettlement>>>
+    export type CreateSettlementMutationBody = BodyType<CreateSettlementBody> | undefined
+    export type CreateSettlementMutationError = ErrorType<Error>
+    export type CreateSettlementMutationVariables = {id: string;data?: BodyType<CreateSettlementBody>}
+
+    /**
  * @summary Forgive some minutes, or reset the balance to zero (only the person owed)
  */
-export const useCreateSettlement = <
-  TError = ErrorType<Error>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createSettlement>>,
-      TError,
-      CreateSettlementMutationVariables,
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof createSettlement>>,
-  TError,
-  CreateSettlementMutationVariables,
-  TContext
-> => {
-  return useMutation(getCreateSettlementMutationOptions(options), queryClient);
-};
+export const useCreateSettlement = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSettlement>>, TError,CreateSettlementMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createSettlement>>,
+        TError,
+        CreateSettlementMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateSettlementMutationOptions(options), queryClient);
+    }

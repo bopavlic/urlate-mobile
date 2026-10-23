@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { EntryRevision } from "./entryRevision";
+import type { EntryRevision } from './entryRevision';
 
 export interface EntryRevisionList {
   items: EntryRevision[];

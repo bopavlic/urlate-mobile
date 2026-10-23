@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { ErrorError } from "./errorError";
+import type { ErrorError } from './errorError';
 
 export interface Error {
   error: ErrorError;

@@ -1,4 +1,6 @@
-import { uploadAvatar, type UploadAvatarDeps } from './upload-avatar';
+import { AxiosError } from 'axios';
+
+import { avatarErrorMessage, uploadAvatar, type UploadAvatarDeps } from './upload-avatar';
 
 function deps(overrides: Partial<UploadAvatarDeps> = {}) {
   const calls: string[] = [];
@@ -52,5 +54,24 @@ describe('uploadAvatar', () => {
     });
     await expect(uploadAvatar(d)).rejects.toThrow('network');
     expect(calls.some((call) => call.startsWith('save'))).toBe(false);
+  });
+});
+
+describe('avatarErrorMessage', () => {
+  it('explains when the server has no photo storage yet', () => {
+    const error = new AxiosError('Service Unavailable', 'ERR_BAD_RESPONSE', undefined, null, {
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: {},
+      config: {} as never,
+      data: { error: { code: 'STORAGE_UNAVAILABLE', message: 'not set up' } },
+    });
+    expect(avatarErrorMessage(error)).toBe("Profile photos aren't available yet.");
+  });
+
+  it('falls back to a retry hint', () => {
+    expect(avatarErrorMessage(new Error('network'))).toBe(
+      "Couldn't upload that photo. Try another one?",
+    );
   });
 });

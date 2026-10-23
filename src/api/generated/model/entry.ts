@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { EntryStatus } from "./entryStatus";
+import type { EntryStatus } from './entryStatus';
 
 export interface Entry {
   id: string;

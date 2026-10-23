@@ -5,5 +5,5 @@ The Ur Late iOS and Android app (Expo + Expo Router). The product brief lives at
 - Expo-specific rules are in `AGENTS.md` (always check the installed SDK's docs; use `npx expo install`).
 - API contract: `../urlate-backend/openapi.json` (also served at `/v1/openapi.json`). Generate the typed axios functions and TanStack Query hooks with Orval (`pnpm api:generate`); never hand-write API types.
 - Identifiers: bundle ID / package `app.urlate`, URL scheme `urlate://`. In-app purchases and AdMob need an EAS development build, not Expo Go.
-- Local API: http://localhost:4000 (port 3000 is taken on the owner's machine).
+- Local dev: backend via `docker compose up -d` in `~/UrLate`; Metro runs on the Mac (`pnpm start`). The app derives the API address from Metro's host (port 4000). Build the iOS simulator client with `pnpm ios:simulator` (Expo CLI misdetects Xcode 27 simulators). Profile photos are off locally (no S3 bucket).
 - Git: identity comes from `~/.gitconfig-urlate` via includeIf. Never use the `gh` CLI (it's logged into a work account).

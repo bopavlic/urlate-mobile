@@ -7,10 +7,10 @@
  */
 
 export type ListLedgersParams = {
-  cursor?: string;
-  /**
-   * @minimum 1
-   * @maximum 50
-   */
-  limit?: number;
+cursor?: string;
+/**
+ * @minimum 1
+ * @maximum 50
+ */
+limit?: number;
 };

@@ -6,10 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type CreateSettlementBodyKind =
-  (typeof CreateSettlementBodyKind)[keyof typeof CreateSettlementBodyKind];
+export type CreateSettlementBodyKind = typeof CreateSettlementBodyKind[keyof typeof CreateSettlementBodyKind];
+
 
 export const CreateSettlementBodyKind = {
-  FORGIVE: "FORGIVE",
-  RESET: "RESET",
+  FORGIVE: 'FORGIVE',
+  RESET: 'RESET',
 } as const;

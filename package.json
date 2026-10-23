@@ -67,7 +67,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "api:generate": "orval",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "ios:simulator": "sh scripts/build-ios-simulator.sh"
   },
   "private": true,
   "packageManager": "pnpm@10.29.3"
