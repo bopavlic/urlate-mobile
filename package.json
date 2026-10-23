@@ -52,6 +52,7 @@
     "jest": "^30.5.2",
     "jest-expo": "~58.0.12",
     "orval": "^8.44.0",
+    "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.19",
     "typescript": "~6.0.3"
@@ -63,7 +64,8 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "api:generate": "orval"
+    "api:generate": "orval",
+    "format": "prettier --write ."
   },
   "private": true,
   "packageManager": "pnpm@10.29.3"

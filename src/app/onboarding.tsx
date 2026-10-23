@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { useState } from 'react';
+import { Text, View } from 'react-native';
 
-import { apiErrorCode } from "@/api/client";
-import { useUpdateMe } from "@/api/generated/endpoints/me/me";
-import { authClient } from "@/lib/auth";
-import { Button } from "@/ui/Button";
-import { Screen } from "@/ui/Screen";
-import { TextField } from "@/ui/TextField";
-import { Title } from "@/ui/Title";
+import { apiErrorCode } from '@/api/client';
+import { useUpdateMe } from '@/api/generated/endpoints/me/me';
+import { authClient } from '@/lib/auth';
+import { Button } from '@/ui/Button';
+import { Screen } from '@/ui/Screen';
+import { TextField } from '@/ui/TextField';
+import { Title } from '@/ui/Title';
 
 export default function Onboarding() {
   const { refetch } = authClient.useSession();
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [error, setError] = useState<{ name?: string; username?: string }>({});
   const updateMe = useUpdateMe();
 
   async function save() {
     const displayName = name.trim();
     if (!displayName) {
-      setError({ name: "Add the name your friends know you by." });
+      setError({ name: 'Add the name your friends know you by.' });
       return;
     }
     setError({});
@@ -33,10 +33,9 @@ export default function Onboarding() {
       await refetch(); // the session now has a name, so the app opens
     } catch (err) {
       const code = apiErrorCode(err);
-      if (code === "USERNAME_TAKEN")
-        setError({ username: "That username is taken." });
-      else if (code === "VALIDATION_ERROR")
-        setError({ username: "3–20 letters, numbers or underscores." });
+      if (code === 'USERNAME_TAKEN') setError({ username: 'That username is taken.' });
+      else if (code === 'VALIDATION_ERROR')
+        setError({ username: '3–20 letters, numbers or underscores.' });
       else
         setError({
           name: "Couldn't save. Check your connection and try again.",
@@ -71,11 +70,7 @@ export default function Onboarding() {
           error={error.username}
         />
       </View>
-      <Button
-        title="Start keeping score"
-        onPress={save}
-        loading={updateMe.isPending}
-      />
+      <Button title="Start keeping score" onPress={save} loading={updateMe.isPending} />
     </Screen>
   );
 }

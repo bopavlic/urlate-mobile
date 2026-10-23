@@ -1,19 +1,15 @@
-import {
-  GoogleSignin,
-  isSuccessResponse,
-} from "@react-native-google-signin/google-signin";
-import * as AppleAuthentication from "expo-apple-authentication";
-import { Platform } from "react-native";
+import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { Platform } from 'react-native';
 
-import { updateMe } from "@/api/generated/endpoints/me/me";
-import { authClient } from "@/lib/auth";
+import { updateMe } from '@/api/generated/endpoints/me/me';
+import { authClient } from '@/lib/auth';
 
 const googleWebClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 const googleIosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
 
 /** Google needs client IDs from Google Cloud (see SETUP.md); without them the button stays hidden. */
-export const googleEnabled =
-  !!googleWebClientId && (Platform.OS !== "ios" || !!googleIosClientId);
+export const googleEnabled = !!googleWebClientId && (Platform.OS !== 'ios' || !!googleIosClientId);
 
 if (googleEnabled) {
   GoogleSignin.configure({
@@ -22,12 +18,10 @@ if (googleEnabled) {
   });
 }
 
-export type SocialResult = "signed-in" | "cancelled";
+export type SocialResult = 'signed-in' | 'cancelled';
 
 export async function appleAvailable(): Promise<boolean> {
-  return (
-    Platform.OS === "ios" && (await AppleAuthentication.isAvailableAsync())
-  );
+  return Platform.OS === 'ios' && (await AppleAuthentication.isAvailableAsync());
 }
 
 export async function signInWithApple(): Promise<SocialResult> {
@@ -40,36 +34,34 @@ export async function signInWithApple(): Promise<SocialResult> {
       ],
     });
   } catch (err) {
-    if ((err as { code?: string }).code === "ERR_REQUEST_CANCELED")
-      return "cancelled";
+    if ((err as { code?: string }).code === 'ERR_REQUEST_CANCELED') return 'cancelled';
     throw err;
   }
-  if (!credential.identityToken)
-    throw new Error("Apple did not return a sign-in token");
+  if (!credential.identityToken) throw new Error('Apple did not return a sign-in token');
   const { error } = await authClient.signIn.social({
-    provider: "apple",
+    provider: 'apple',
     idToken: { token: credential.identityToken },
   });
-  if (error) throw new Error(error.message ?? "Apple sign-in failed");
+  if (error) throw new Error(error.message ?? 'Apple sign-in failed');
 
   // Apple shares the name only on the very first sign-in, and not inside the token.
   const name = [credential.fullName?.givenName, credential.fullName?.familyName]
     .filter(Boolean)
-    .join(" ");
+    .join(' ');
   if (name) await updateMe({ displayName: name }).catch(() => undefined);
-  return "signed-in";
+  return 'signed-in';
 }
 
 export async function signInWithGoogle(): Promise<SocialResult> {
   await GoogleSignin.hasPlayServices();
   const response = await GoogleSignin.signIn();
-  if (!isSuccessResponse(response)) return "cancelled";
+  if (!isSuccessResponse(response)) return 'cancelled';
   const token = response.data.idToken;
-  if (!token) throw new Error("Google did not return a sign-in token");
+  if (!token) throw new Error('Google did not return a sign-in token');
   const { error } = await authClient.signIn.social({
-    provider: "google",
+    provider: 'google',
     idToken: { token },
   });
-  if (error) throw new Error(error.message ?? "Google sign-in failed");
-  return "signed-in";
+  if (error) throw new Error(error.message ?? 'Google sign-in failed');
+  return 'signed-in';
 }

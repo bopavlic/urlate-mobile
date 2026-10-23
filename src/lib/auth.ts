@@ -1,20 +1,20 @@
-import { expoClient } from "@better-auth/expo/client";
-import { emailOTPClient } from "better-auth/client/plugins";
-import { createAuthClient } from "better-auth/react";
-import * as SecureStore from "expo-secure-store";
+import { expoClient } from '@better-auth/expo/client';
+import { emailOTPClient } from 'better-auth/client/plugins';
+import { createAuthClient } from 'better-auth/react';
+import * as SecureStore from 'expo-secure-store';
 
-import { configureApiAuth } from "@/api/client";
-import { queryClient } from "@/providers/query";
+import { configureApiAuth } from '@/api/client';
+import { queryClient } from '@/providers/query';
 
-import { apiUrl } from "./config";
+import { apiUrl } from './config';
 
 export const authClient = createAuthClient({
   // The API mounts Better Auth under /v1/auth.
   baseURL: `${apiUrl}/v1/auth`,
   plugins: [
     expoClient({
-      scheme: "urlate",
-      storagePrefix: "urlate",
+      scheme: 'urlate',
+      storagePrefix: 'urlate',
       storage: SecureStore,
     }),
     emailOTPClient(),

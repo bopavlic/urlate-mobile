@@ -1,26 +1,26 @@
-import "../../global.css";
+import '../../global.css';
 
 import {
   BigShoulders_600SemiBold,
   BigShoulders_800ExtraBold,
   BigShoulders_900Black,
   useFonts,
-} from "@expo-google-fonts/big-shoulders";
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { useColorScheme, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+} from '@expo-google-fonts/big-shoulders';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { useColorScheme, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { authClient } from "@/lib/auth";
-import { QueryProvider } from "@/providers/query";
-import { palette, themeVars } from "@/theme/tokens";
+import { authClient } from '@/lib/auth';
+import { QueryProvider } from '@/providers/query';
+import { palette, themeVars } from '@/theme/tokens';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const scheme = useColorScheme() === "dark" ? "dark" : "light";
+  const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = palette[scheme];
   const [fontsLoaded] = useFonts({
     BigShoulders_600SemiBold,
@@ -38,7 +38,7 @@ export default function RootLayout() {
 
   const signedIn = !!session;
   const needsName = signedIn && !session.user.name;
-  const base = scheme === "dark" ? DarkTheme : DefaultTheme;
+  const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
 
   return (
     <SafeAreaProvider>
@@ -57,7 +57,7 @@ export default function RootLayout() {
           }}
         >
           <View style={[{ flex: 1 }, themeVars(scheme)]}>
-            <StatusBar style={scheme === "dark" ? "light" : "dark"} />
+            <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Protected guard={!signedIn}>
                 <Stack.Screen name="(auth)" />

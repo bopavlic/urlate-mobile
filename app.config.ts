@@ -53,10 +53,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     ...(googleIosUrlScheme
-      ? [['@react-native-google-signin/google-signin', { iosUrlScheme: googleIosUrlScheme }] as [
-          string,
-          unknown,
-        ]]
+      ? [
+          ['@react-native-google-signin/google-signin', { iosUrlScheme: googleIosUrlScheme }] as [
+            string,
+            unknown,
+          ],
+        ]
       : []),
   ],
   experiments: {

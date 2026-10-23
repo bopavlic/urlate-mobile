@@ -150,6 +150,9 @@ importers:
       orval:
         specifier: ^8.44.0
         version: 8.44.0(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.0))(prettier@3.9.10)(typescript@6.0.3)(zod@4.6.7)
+      prettier:
+        specifier: ^3.9.10
+        version: 3.9.10
       prettier-plugin-tailwindcss:
         specifier: ^0.5.14
         version: 0.5.14(prettier@3.9.10)
@@ -8038,9 +8041,7 @@ snapshots:
       metro-runtime: 0.87.1
     transitivePeerDependencies:
       - '@babel/core'
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@react-native/normalize-colors@0.74.89':
     optional: true

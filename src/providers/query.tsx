@@ -3,18 +3,14 @@ import {
   onlineManager,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import * as Network from "expo-network";
-import { useEffect, type ReactNode } from "react";
-import { AppState } from "react-native";
+} from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import * as Network from 'expo-network';
+import { useEffect, type ReactNode } from 'react';
+import { AppState } from 'react-native';
 
 function isClientError(error: unknown): boolean {
-  return (
-    error instanceof AxiosError &&
-    !!error.response &&
-    error.response.status < 500
-  );
+  return error instanceof AxiosError && !!error.response && error.response.status < 500;
 }
 
 export const queryClient = new QueryClient({
@@ -37,12 +33,10 @@ onlineManager.setEventListener((setOnline) => {
 
 export function QueryProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", (status) => {
-      focusManager.setFocused(status === "active");
+    const subscription = AppState.addEventListener('change', (status) => {
+      focusManager.setFocused(status === 'active');
     });
     return () => subscription.remove();
   }, []);
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

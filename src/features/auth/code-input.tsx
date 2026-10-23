@@ -1,7 +1,7 @@
-import { useRef, useState, type ComponentRef } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useRef, useState, type ComponentRef } from 'react';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { normaliseCode } from "./email";
+import { normaliseCode } from './email';
 
 const LENGTH = 6;
 
@@ -13,7 +13,7 @@ export function CodeInput({
   onComplete: (code: string) => void;
   disabled?: boolean;
 }) {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
   const reported = useRef<string | null>(null);
   const input = useRef<ComponentRef<typeof TextInput>>(null);
 
@@ -28,10 +28,7 @@ export function CodeInput({
   }
 
   return (
-    <Pressable
-      onPress={() => input.current?.focus()}
-      className="flex-row justify-between gap-2"
-    >
+    <Pressable onPress={() => input.current?.focus()} className="flex-row justify-between gap-2">
       {Array.from({ length: LENGTH }, (_, i) => {
         const filled = i < code.length;
         const active = i === code.length;
@@ -39,16 +36,10 @@ export function CodeInput({
           <View
             key={i}
             className={`h-16 flex-1 items-center justify-center rounded-xl border-2 ${
-              active
-                ? "border-ink"
-                : filled
-                  ? "border-line bg-surface"
-                  : "border-line"
+              active ? 'border-ink' : filled ? 'border-line bg-surface' : 'border-line'
             }`}
           >
-            <Text className="font-display text-4xl text-ink">
-              {code[i] ?? ""}
-            </Text>
+            <Text className="font-display text-4xl text-ink">{code[i] ?? ''}</Text>
           </View>
         );
       })}

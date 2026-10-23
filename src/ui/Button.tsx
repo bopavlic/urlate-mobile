@@ -1,32 +1,32 @@
-import type { ReactNode } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import type { ReactNode } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-import { palette } from "@/theme/tokens";
+import { palette } from '@/theme/tokens';
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const container: Record<Variant, string> = {
-  primary: "bg-accent",
-  secondary: "border-2 border-ink",
-  ghost: "",
-  danger: "border-2 border-danger",
+  primary: 'bg-accent',
+  secondary: 'border-2 border-ink',
+  ghost: '',
+  danger: 'border-2 border-danger',
 };
 
 const label: Record<Variant, string> = {
-  primary: "text-on-accent",
-  secondary: "text-ink",
-  ghost: "text-ink underline",
-  danger: "text-danger",
+  primary: 'text-on-accent',
+  secondary: 'text-ink',
+  ghost: 'text-ink underline',
+  danger: 'text-danger',
 };
 
 export function Button({
   title,
   onPress,
-  variant = "primary",
+  variant = 'primary',
   disabled = false,
   loading = false,
   icon,
-  className = "",
+  className = '',
 }: {
   title: string;
   onPress: () => void;
@@ -45,7 +45,7 @@ export function Button({
       disabled={inactive}
       className={`min-h-14 flex-row items-center justify-center gap-2 rounded-2xl px-5 active:opacity-80 ${
         container[variant]
-      } ${inactive ? "opacity-50" : ""} ${className}`}
+      } ${inactive ? 'opacity-50' : ''} ${className}`}
     >
       {loading ? (
         <ActivityIndicator color={palette.light.ink} />

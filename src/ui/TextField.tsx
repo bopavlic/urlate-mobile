@@ -1,11 +1,11 @@
-import type { ComponentRef, Ref } from "react";
-import { Text, TextInput, View, type TextInputProps } from "react-native";
+import type { ComponentRef, Ref } from 'react';
+import { Text, TextInput, View, type TextInputProps } from 'react-native';
 
 export function TextField({
   label,
   hint,
   error,
-  className = "",
+  className = '',
   ref,
   ...props
 }: TextInputProps & {
@@ -22,7 +22,7 @@ export function TextField({
         accessibilityLabel={label}
         placeholderTextColor="#8FA39A"
         className={`min-h-14 rounded-2xl border-2 bg-surface px-4 text-lg text-ink ${
-          error ? "border-danger" : "border-line focus:border-ink"
+          error ? 'border-danger' : 'border-line focus:border-ink'
         } ${className}`}
         {...props}
       />

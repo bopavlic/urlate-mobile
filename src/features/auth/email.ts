@@ -5,5 +5,5 @@ export function isValidEmail(value: string): boolean {
 
 /** Digits only, at most six: tolerates pasted codes like "123 456". */
 export function normaliseCode(value: string): string {
-  return value.replace(/\D/g, "").slice(0, 6);
+  return value.replace(/\D/g, '').slice(0, 6);
 }

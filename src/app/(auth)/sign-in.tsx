@@ -1,24 +1,24 @@
-import * as AppleAuthentication from "expo-apple-authentication";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { Text, useColorScheme, View } from "react-native";
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Text, useColorScheme, View } from 'react-native';
 
-import { isValidEmail } from "@/features/auth/email";
+import { isValidEmail } from '@/features/auth/email';
 import {
   appleAvailable,
   googleEnabled,
   signInWithApple,
   signInWithGoogle,
-} from "@/features/auth/social";
-import { authClient } from "@/lib/auth";
-import { Button } from "@/ui/Button";
-import { Screen } from "@/ui/Screen";
-import { TextField } from "@/ui/TextField";
-import { Title } from "@/ui/Title";
+} from '@/features/auth/social';
+import { authClient } from '@/lib/auth';
+import { Button } from '@/ui/Button';
+import { Screen } from '@/ui/Screen';
+import { TextField } from '@/ui/TextField';
+import { Title } from '@/ui/Title';
 
 export default function SignIn() {
   const scheme = useColorScheme();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [showApple, setShowApple] = useState(false);
@@ -30,23 +30,21 @@ export default function SignIn() {
   async function sendCode() {
     const address = email.trim().toLowerCase();
     if (!isValidEmail(address)) {
-      setError("That email address looks incomplete.");
+      setError('That email address looks incomplete.');
       return;
     }
     setError(null);
     setSending(true);
     const { error: sendError } = await authClient.emailOtp.sendVerificationOtp({
       email: address,
-      type: "sign-in",
+      type: 'sign-in',
     });
     setSending(false);
     if (sendError) {
-      setError(
-        "Couldn't send the code. Check the address and your connection.",
-      );
+      setError("Couldn't send the code. Check the address and your connection.");
       return;
     }
-    router.push({ pathname: "/code", params: { email: address } });
+    router.push({ pathname: '/code', params: { email: address } });
   }
 
   async function social(run: () => Promise<unknown>) {
@@ -62,9 +60,7 @@ export default function SignIn() {
     <Screen scroll className="justify-between pt-16">
       <View className="gap-4">
         <View className="h-12 w-9 -rotate-6 rounded-md bg-accent" />
-        <Title className="text-6xl leading-[60px]">
-          Who&apos;s been waiting on who?
-        </Title>
+        <Title className="text-6xl leading-[60px]">Who&apos;s been waiting on who?</Title>
         <Text className="text-lg text-muted">
           Ur Late keeps score of who kept whom waiting, in minutes.
         </Text>
@@ -96,11 +92,9 @@ export default function SignIn() {
 
         {showApple ? (
           <AppleAuthentication.AppleAuthenticationButton
-            buttonType={
-              AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
-            }
+            buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
             buttonStyle={
-              scheme === "dark"
+              scheme === 'dark'
                 ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
                 : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
             }
