@@ -1,0 +1,13 @@
+# syntax=docker/dockerfile:1
+# Development only: runs the Metro bundler for the Ur Late dev client.
+# Native builds happen on the host (expo run:ios|android) or on EAS.
+
+FROM node:24-slim
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH EXPO_NO_TELEMETRY=1
+RUN corepack enable
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+COPY . .
+EXPOSE 8081
+CMD ["pnpm", "expo", "start", "--dev-client", "--port", "8081"]
