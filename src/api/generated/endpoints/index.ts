@@ -1,3 +1,4 @@
+export * from './account/account';
 export * from './entries/entries';
 export * from './invites/invites';
 export * from './ledgers/ledgers';

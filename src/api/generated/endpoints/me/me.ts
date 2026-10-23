@@ -215,6 +215,71 @@ export const useUpdateMe = <TError = ErrorType<Error>,
       return useMutation(getUpdateMeMutationOptions(options), queryClient);
     }
     /**
+ * @summary Delete my account and the data only I can see; shared ledgers keep their history
+ */
+export const deleteMe = (
+
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<void>(
+      {url: `/me`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getDeleteMeMutationKey = () => ['deleteMe'] as const;
+
+export const getDeleteMeMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext> => {
+
+const mutationKey = getDeleteMeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteMe>>, void> = () => {
+
+
+          return  deleteMe(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteMeMutationResult = NonNullable<Awaited<ReturnType<typeof deleteMe>>>
+
+    export type DeleteMeMutationError = ErrorType<Error>
+
+
+    /**
+ * @summary Delete my account and the data only I can see; shared ledgers keep their history
+ */
+export const useDeleteMe = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMe>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteMe>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getDeleteMeMutationOptions(options), queryClient);
+    }
+    /**
  * @summary Get a short-lived URL to PUT a new avatar to, then save its key with PATCH /me
  */
 export const createAvatarUpload = (

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-import { getGetMeQueryKey, useGetMe } from '@/api/generated/endpoints/me/me';
+import { deleteMe, getGetMeQueryKey, useGetMe } from '@/api/generated/endpoints/me/me';
 import { refreshLedgers } from '@/features/ledgers/queries';
+import { DeleteAccount } from '@/features/profile/DeleteAccount';
 import { ProfileForm } from '@/features/profile/ProfileForm';
 import {
   avatarErrorMessage,
@@ -78,6 +79,14 @@ export default function Profile() {
       <ProfileForm key={me.data.id} me={me.data} />
 
       <Button title="Sign out" variant="ghost" onPress={() => void signOut()} />
+
+      {/* The server ends every session; signing out locally takes the app back to sign-in. */}
+      <DeleteAccount
+        onDelete={async () => {
+          await deleteMe();
+          await signOut();
+        }}
+      />
     </Screen>
   );
 }

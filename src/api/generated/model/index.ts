@@ -6,9 +6,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './accepted';
 export * from './avatarUpload';
 export * from './balanceView';
 export * from './balanceViewDirection';
+export * from './confirmAccountDeletionBody';
 export * from './createAvatarUploadBody';
 export * from './createAvatarUploadBodyContentType';
 export * from './createEntryBody';
@@ -39,6 +41,7 @@ export * from './me';
 export * from './member';
 export * from './memberRole';
 export * from './pairBalance';
+export * from './requestAccountDeletionBody';
 export * from './settlement';
 export * from './settlementKind';
 export * from './updateEntryBody';
