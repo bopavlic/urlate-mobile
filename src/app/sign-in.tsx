@@ -60,7 +60,7 @@ export default function SignIn() {
     <Screen scroll className="justify-between pt-16">
       <View className="gap-4">
         <View className="h-12 w-9 -rotate-6 rounded-md bg-accent" />
-        <Title className="text-6xl leading-[60px]">Who&apos;s been waiting on who?</Title>
+        <Title className="text-6xl leading-[60px]">Who’s been waiting on who?</Title>
         <Text className="text-lg text-muted">
           Ur Late keeps score of who kept whom waiting, in minutes.
         </Text>
