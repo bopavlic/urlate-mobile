@@ -70,8 +70,10 @@ function PickLedger({ onPick }: { onPick: (ledgerId: string) => void }) {
   if (items.length === 0) {
     return (
       <View className="gap-4 pt-8">
-        <Text className="text-lg text-muted">Start a tally first, then log away.</Text>
-        <Button title="Start a tally" onPress={() => router.replace('/ledgers/new')} />
+        <Text className="text-lg text-muted">
+          Add someone to your scoreboard first, then log away.
+        </Text>
+        <Button title="Add someone" onPress={() => router.replace('/ledgers/new')} />
       </View>
     );
   }

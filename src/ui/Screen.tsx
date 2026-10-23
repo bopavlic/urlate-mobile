@@ -35,10 +35,7 @@ export function Screen({
   );
   return (
     <SafeAreaView edges={edges} className="flex-1 bg-paper">
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={keyboardBehavior(Platform.OS)}
-      >
+      <KeyboardAvoidingView className="flex-1" behavior={keyboardBehavior(Platform.OS)}>
         {body}
       </KeyboardAvoidingView>
     </SafeAreaView>

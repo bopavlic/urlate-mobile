@@ -45,7 +45,7 @@ export default function NewLedger() {
   return (
     <Screen scroll className="gap-6 pt-6">
       <View className="flex-row items-center justify-between">
-        <Title className="text-4xl leading-[44px]">Start a tally</Title>
+        <Title className="text-4xl leading-[44px]">Keep score with…</Title>
         <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12}>
           <Text className="text-base font-semibold text-muted">Cancel</Text>
         </Pressable>
@@ -104,7 +104,7 @@ export default function NewLedger() {
         history.
       </Text>
       {error ? <Text className="text-base text-danger">{error}</Text> : null}
-      <Button title="Start the tally" onPress={save} loading={create.isPending} />
+      <Button title="Add to scoreboard" onPress={save} loading={create.isPending} />
     </Screen>
   );
 }

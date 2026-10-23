@@ -22,7 +22,9 @@ export default function LedgerRoute() {
     return (
       <Screen className="items-center justify-center">
         {detail.isError ? (
-          <Text className="text-center text-lg text-muted">Couldn&apos;t load this tally.</Text>
+          <Text className="text-center text-lg text-muted">
+            Couldn&apos;t load this one. Check your connection.
+          </Text>
         ) : (
           <ActivityIndicator />
         )}

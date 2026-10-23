@@ -30,7 +30,7 @@ const fresh: LedgerDetail = {
 };
 
 describe('LedgerScreen', () => {
-  it('shows a brand-new tally as all square with an inviting empty history', async () => {
+  it('shows a brand-new score as all square with an inviting empty history', async () => {
     await render(
       <LedgerScreen
         detail={fresh}

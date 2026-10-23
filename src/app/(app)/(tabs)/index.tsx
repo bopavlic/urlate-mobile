@@ -14,10 +14,10 @@ export default function Home() {
   return (
     <Screen edges={['top']} className="px-0">
       <View className="flex-row items-center justify-between px-6 pb-2 pt-4">
-        <Title>Tallies</Title>
+        <Title>Scoreboard</Title>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Start a tally"
+          accessibilityLabel="Add someone to the scoreboard"
           onPress={() => router.push('/ledgers/new')}
           className="h-11 w-11 items-center justify-center rounded-full border-2 border-ink active:opacity-70"
         >
@@ -30,7 +30,7 @@ export default function Home() {
       ) : ledgers.isError && items.length === 0 ? (
         <View className="items-center gap-4 px-6 pt-16">
           <Text className="text-center text-lg text-muted">
-            Couldn&apos;t load your tallies. Check your connection.
+            Couldn&apos;t load your scoreboard. Check your connection.
           </Text>
           <Button title="Try again" variant="secondary" onPress={() => void ledgers.refetch()} />
         </View>
@@ -57,7 +57,7 @@ export default function Home() {
               <Text className="text-center font-display-bold text-3xl text-ink">
                 No one&apos;s late yet. Give it time.
               </Text>
-              <Button title="Start a tally" onPress={() => router.push('/ledgers/new')} />
+              <Button title="Add someone" onPress={() => router.push('/ledgers/new')} />
             </View>
           }
         />

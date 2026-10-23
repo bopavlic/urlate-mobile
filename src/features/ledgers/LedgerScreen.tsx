@@ -90,7 +90,7 @@ export function LedgerScreen({
   onRefresh?: () => void;
 }) {
   const other = detail.members.find((member) => !member.isMe);
-  const title = detail.name ?? other?.displayName ?? 'Tally';
+  const title = detail.name ?? other?.displayName ?? 'Someone';
   const settle = settleOptions(detail);
   const [forgiving, setForgiving] = useState(false);
   const [forgiveMinutes, setForgiveMinutes] = useState(settle.owedMinutes);
