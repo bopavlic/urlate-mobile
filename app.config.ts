@@ -24,7 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: 'app.urlate',
     adaptiveIcon: {
-      backgroundColor: '#FF5A36',
+      backgroundColor: '#FFCC1A',
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -47,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: '#FF5A36',
+        backgroundColor: '#FFCC1A',
         image: './assets/images/splash-icon.png',
         imageWidth: 76,
       },

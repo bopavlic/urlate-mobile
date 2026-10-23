@@ -18,6 +18,11 @@ module.exports = {
         'on-accent': color('on-accent'),
         danger: color('danger'),
       },
+      fontFamily: {
+        display: ['BigShoulders_900Black'],
+        'display-bold': ['BigShoulders_800ExtraBold'],
+        'display-semi': ['BigShoulders_600SemiBold'],
+      },
     },
   },
   plugins: [],

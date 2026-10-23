@@ -6,11 +6,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type BalanceViewDirection = typeof BalanceViewDirection[keyof typeof BalanceViewDirection];
-
+export type BalanceViewDirection =
+  (typeof BalanceViewDirection)[keyof typeof BalanceViewDirection];
 
 export const BalanceViewDirection = {
-  THEY_OWE_YOU: 'THEY_OWE_YOU',
-  YOU_OWE_THEM: 'YOU_OWE_THEM',
-  ALL_SQUARE: 'ALL_SQUARE',
+  THEY_OWE_YOU: "THEY_OWE_YOU",
+  YOU_OWE_THEM: "YOU_OWE_THEM",
+  ALL_SQUARE: "ALL_SQUARE",
 } as const;

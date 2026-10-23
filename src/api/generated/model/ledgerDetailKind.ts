@@ -6,10 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type LedgerDetailKind = typeof LedgerDetailKind[keyof typeof LedgerDetailKind];
-
+export type LedgerDetailKind =
+  (typeof LedgerDetailKind)[keyof typeof LedgerDetailKind];
 
 export const LedgerDetailKind = {
-  PAIR: 'PAIR',
-  GROUP: 'GROUP',
+  PAIR: "PAIR",
+  GROUP: "GROUP",
 } as const;

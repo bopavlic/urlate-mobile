@@ -1,5 +1,5 @@
-import Constants from 'expo-constants';
-import { Platform } from 'react-native';
+import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 const API_PORT = 4000;
 
@@ -10,13 +10,13 @@ const API_PORT = 4000;
 export function resolveApiUrl(input: {
   envUrl?: string;
   hostUri?: string | null;
-  platform: 'ios' | 'android';
+  platform: "ios" | "android";
 }): string {
-  if (input.envUrl) return input.envUrl.replace(/\/+$/, '');
-  const host = input.hostUri?.split(':')[0];
+  if (input.envUrl) return input.envUrl.replace(/\/+$/, "");
+  const host = input.hostUri?.split(":")[0];
   if (host) return `http://${host}:${API_PORT}`;
   // Android emulators reach the host machine through 10.0.2.2.
-  return input.platform === 'android'
+  return input.platform === "android"
     ? `http://10.0.2.2:${API_PORT}`
     : `http://localhost:${API_PORT}`;
 }
@@ -24,5 +24,5 @@ export function resolveApiUrl(input: {
 export const apiUrl = resolveApiUrl({
   envUrl: process.env.EXPO_PUBLIC_API_URL,
   hostUri: Constants.expoConfig?.hostUri,
-  platform: Platform.OS === 'android' ? 'android' : 'ios',
+  platform: Platform.OS === "android" ? "android" : "ios",
 });

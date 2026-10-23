@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { BalanceViewDirection } from './balanceViewDirection';
+import type { BalanceViewDirection } from "./balanceViewDirection";
 
 export interface BalanceView {
   direction: BalanceViewDirection;

@@ -1,10 +1,11 @@
-import { AxiosError, create, type AxiosRequestConfig } from 'axios';
+import { AxiosError, create, type AxiosRequestConfig } from "axios";
 
-import { apiUrl } from '@/lib/config';
+import { apiUrl } from "@/lib/config";
 
 type AuthHooks = {
   /** The Better Auth session cookie header value, if signed in. */
-  getCookie: () => string | null | undefined | Promise<string | null | undefined>;
+  getCookie: () =>
+    string | null | undefined | Promise<string | null | undefined>;
   /** Called when the API says the session is gone. */
   onUnauthorized: () => void;
 };
@@ -28,7 +29,7 @@ export function configureApiAuth(next: AuthHooks): void {
 
 api.interceptors.request.use(async (config) => {
   const cookie = await hooks?.getCookie();
-  if (cookie) config.headers.set('Cookie', cookie);
+  if (cookie) config.headers.set("Cookie", cookie);
   return config;
 });
 
@@ -48,7 +49,8 @@ api.interceptors.response.use(undefined, (error: unknown) => {
 export const customInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
-): Promise<T> => api.request<T>({ ...config, ...options }).then((response) => response.data);
+): Promise<T> =>
+  api.request<T>({ ...config, ...options }).then((response) => response.data);
 
 export type ErrorType<E> = AxiosError<E>;
 export type BodyType<B> = B;
@@ -56,6 +58,7 @@ export type BodyType<B> = B;
 /** The `error.code` from an API error body, e.g. 'USERNAME_TAKEN'. */
 export function apiErrorCode(error: unknown): string | undefined {
   if (!(error instanceof AxiosError)) return undefined;
-  const body = error.response?.data as { error?: { code?: unknown } } | undefined;
-  return typeof body?.error?.code === 'string' ? body.error.code : undefined;
+  const body = error.response?.data as
+    { error?: { code?: unknown } } | undefined;
+  return typeof body?.error?.code === "string" ? body.error.code : undefined;
 }

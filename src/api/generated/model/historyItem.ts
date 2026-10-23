@@ -5,15 +5,17 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { Entry } from './entry';
-import type { Settlement } from './settlement';
+import type { Entry } from "./entry";
+import type { Settlement } from "./settlement";
 
-export type HistoryItem = {
-  type: 'entry';
-  at: string;
-  entry: Entry;
-} | {
-  type: 'settlement';
-  at: string;
-  settlement: Settlement;
-};
+export type HistoryItem =
+  | {
+      type: "entry";
+      at: string;
+      entry: Entry;
+    }
+  | {
+      type: "settlement";
+      at: string;
+      settlement: Settlement;
+    };

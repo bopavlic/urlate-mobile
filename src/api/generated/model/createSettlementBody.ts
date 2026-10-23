@@ -5,15 +5,15 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateSettlementBodyKind } from './createSettlementBodyKind';
+import type { CreateSettlementBodyKind } from "./createSettlementBodyKind";
 
 export interface CreateSettlementBody {
   kind: CreateSettlementBodyKind;
   counterpartMemberId: string;
   /**
-     * @minimum 1
-     * @maximum 1000000
-     */
+   * @minimum 1
+   * @maximum 1000000
+   */
   minutes?: number;
   clientRequestId?: string;
 }

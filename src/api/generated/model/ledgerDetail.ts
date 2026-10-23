@@ -5,11 +5,11 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { BalanceView } from './balanceView';
-import type { LeaderboardRow } from './leaderboardRow';
-import type { LedgerDetailKind } from './ledgerDetailKind';
-import type { Member } from './member';
-import type { PairBalance } from './pairBalance';
+import type { BalanceView } from "./balanceView";
+import type { LeaderboardRow } from "./leaderboardRow";
+import type { LedgerDetailKind } from "./ledgerDetailKind";
+import type { Member } from "./member";
+import type { PairBalance } from "./pairBalance";
 
 export interface LedgerDetail {
   id: string;

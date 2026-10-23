@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { LedgerSummary } from './ledgerSummary';
+import type { LedgerSummary } from "./ledgerSummary";
 
 export interface LedgerPage {
   items: LedgerSummary[];

@@ -9,9 +9,9 @@
 export interface CreateEntryBody {
   lateMemberId: string;
   /**
-     * @minimum 1
-     * @maximum 1440
-     */
+   * @minimum 1
+   * @maximum 1440
+   */
   minutes: number;
   /** @maxLength 140 */
   note?: string;

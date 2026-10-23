@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { CreateAvatarUploadBodyContentType } from './createAvatarUploadBodyContentType';
+import type { CreateAvatarUploadBodyContentType } from "./createAvatarUploadBodyContentType";
 
 export interface CreateAvatarUploadBody {
   contentType: CreateAvatarUploadBodyContentType;

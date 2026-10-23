@@ -6,10 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type CreateAvatarUploadBodyContentType = typeof CreateAvatarUploadBodyContentType[keyof typeof CreateAvatarUploadBodyContentType];
-
+export type CreateAvatarUploadBodyContentType =
+  (typeof CreateAvatarUploadBodyContentType)[keyof typeof CreateAvatarUploadBodyContentType];
 
 export const CreateAvatarUploadBodyContentType = {
-  'image/jpeg': 'image/jpeg',
-  'image/png': 'image/png',
+  "image/jpeg": "image/jpeg",
+  "image/png": "image/png",
 } as const;

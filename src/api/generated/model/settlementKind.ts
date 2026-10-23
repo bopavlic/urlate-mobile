@@ -6,10 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type SettlementKind = typeof SettlementKind[keyof typeof SettlementKind];
-
+export type SettlementKind =
+  (typeof SettlementKind)[keyof typeof SettlementKind];
 
 export const SettlementKind = {
-  FORGIVE: 'FORGIVE',
-  RESET: 'RESET',
+  FORGIVE: "FORGIVE",
+  RESET: "RESET",
 } as const;

@@ -1,27 +1,28 @@
-import { vars } from 'nativewind';
+import { vars } from "nativewind";
 
-// The Ur Late palette. Tailwind classes (bg-paper, text-ink, bg-accent, …) read these
-// through CSS variables, so this file is the single place to change the look.
+// The Ur Late palette: a referee's yellow card on a football pitch at night. Being late
+// earns a card, cheekily, not a punishment. Tailwind classes (bg-paper, text-ink,
+// bg-accent, …) read these through CSS variables, so this is the one place to change the look.
 export const palette = {
   light: {
-    paper: '#FFF7F2',
-    surface: '#FFFFFF',
-    ink: '#17120F',
-    muted: '#7A6E66',
-    line: '#EADFD7',
-    accent: '#FF5A36',
-    onAccent: '#FFFFFF',
-    danger: '#C8322B',
+    paper: "#FFFFFF",
+    surface: "#F2F5F2",
+    ink: "#0B1F16",
+    muted: "#5E6E66",
+    line: "#E1E7E2",
+    accent: "#FFCC1A",
+    onAccent: "#0B1F16",
+    danger: "#C62E2E",
   },
   dark: {
-    paper: '#120E0C',
-    surface: '#1E1916',
-    ink: '#F6EEE8',
-    muted: '#A39890',
-    line: '#2E2723',
-    accent: '#FF6B4A',
-    onAccent: '#FFFFFF',
-    danger: '#FF6B61',
+    paper: "#08140F",
+    surface: "#10211A",
+    ink: "#EEF3EF",
+    muted: "#8FA39A",
+    line: "#1E3329",
+    accent: "#FFCC1A",
+    onAccent: "#0B1F16",
+    danger: "#FF6B61",
   },
 } as const;
 
@@ -34,25 +35,38 @@ function toRgbTriplet(hex: string): string {
 }
 
 const cssName: Record<keyof Palette, string> = {
-  paper: 'paper',
-  surface: 'surface',
-  ink: 'ink',
-  muted: 'muted',
-  line: 'line',
-  accent: 'accent',
-  onAccent: 'on-accent',
-  danger: 'danger',
+  paper: "paper",
+  surface: "surface",
+  ink: "ink",
+  muted: "muted",
+  line: "line",
+  accent: "accent",
+  onAccent: "on-accent",
+  danger: "danger",
 };
 
-/** CSS variables for NativeWind, e.g. `--color-accent: "255 90 54"`. */
+/** CSS variables for NativeWind, e.g. `--color-accent: "255 204 26"`. */
 export function themeVars(scheme: Scheme) {
   const entries = (Object.keys(cssName) as (keyof Palette)[]).map(
-    (key) => [`--color-${cssName[key]}`, toRgbTriplet(palette[scheme][key])] as const,
+    (key) =>
+      [`--color-${cssName[key]}`, toRgbTriplet(palette[scheme][key])] as const,
   );
   return vars(Object.fromEntries(entries));
 }
 
+/** Big Shoulders: condensed scoreboard type for numbers and titles. Body text uses the system font. */
+export const fonts = {
+  display: "BigShoulders_900Black",
+  displayBold: "BigShoulders_800ExtraBold",
+  displaySemi: "BigShoulders_600SemiBold",
+} as const;
+
 export const type = {
-  /** The balance numeral: huge, heavy, fixed-width digits so it doesn't jump. */
-  balance: { fontSize: 96, lineHeight: 100, fontWeight: '900' as const, fontVariant: ['tabular-nums' as const] },
+  /** The balance numeral: huge scoreboard digits that don't jump as they change. */
+  balance: {
+    fontFamily: fonts.display,
+    fontSize: 120,
+    lineHeight: 120,
+    fontVariant: ["tabular-nums" as const],
+  },
 };

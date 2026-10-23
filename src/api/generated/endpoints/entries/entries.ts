@@ -5,10 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -21,31 +18,31 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   CreateEntryBody,
   Entry,
   EntryRevisionList,
   Error,
-  UpdateEntryBody
-} from '../../model';
+  UpdateEntryBody,
+} from "../../model";
 
-import { customInstance } from '../../../client';
-import type { ErrorType , BodyType } from '../../../client';
-
+import { customInstance } from "../../../client";
+import type { ErrorType, BodyType } from "../../../client";
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-
-
-const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+const withQueryKey = <T extends object, K>(
+  query: T,
+  queryKey: K,
+): T & { queryKey: K } => {
   const result = { queryKey } as T & { queryKey: K };
   for (const key of Object.keys(query)) {
     // The explicit queryKey always wins, matching the previous
     // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
+    if (key === "queryKey") continue;
     Object.defineProperty(result, key, {
       enumerable: true,
       configurable: true,
@@ -59,292 +56,432 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
  * @summary Log who was late, by how many minutes
  */
 export const createEntry = (
-    id: string,
-    createEntryBody?: BodyType<CreateEntryBody>,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  id: string,
+  createEntryBody?: BodyType<CreateEntryBody>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
-
-
-      return customInstance<Entry>(
-      {url: `/ledgers/${id}/entries`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createEntryBody, signal
+  return customInstance<Entry>(
+    {
+      url: `/ledgers/${id}/entries`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: createEntryBody,
+      signal,
     },
-      options);
-    }
+    options,
+  );
+};
 
+export const getCreateEntryMutationKey = () => ["createEntry"] as const;
 
+export const getCreateEntryMutationOptions = <
+  TError = ErrorType<Error>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createEntry>>,
+    TError,
+    CreateEntryMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createEntry>>,
+  TError,
+  CreateEntryMutationVariables,
+  TContext
+> => {
+  const mutationKey = getCreateEntryMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createEntry>>,
+    CreateEntryMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
 
-export const getCreateEntryMutationKey = () => ['createEntry'] as const;
+    return createEntry(id, data, requestOptions);
+  };
 
-export const getCreateEntryMutationOptions = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEntry>>, TError,CreateEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof createEntry>>, TError,CreateEntryMutationVariables, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = getCreateEntryMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
+export type CreateEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createEntry>>
+>;
+export type CreateEntryMutationBody = BodyType<CreateEntryBody> | undefined;
+export type CreateEntryMutationError = ErrorType<Error>;
+export type CreateEntryMutationVariables = {
+  id: string;
+  data?: BodyType<CreateEntryBody>;
+};
 
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createEntry>>, CreateEntryMutationVariables> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  createEntry(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateEntryMutationResult = NonNullable<Awaited<ReturnType<typeof createEntry>>>
-    export type CreateEntryMutationBody = BodyType<CreateEntryBody> | undefined
-    export type CreateEntryMutationError = ErrorType<Error>
-    export type CreateEntryMutationVariables = {id: string;data?: BodyType<CreateEntryBody>}
-
-    /**
+/**
  * @summary Log who was late, by how many minutes
  */
-export const useCreateEntry = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEntry>>, TError,CreateEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createEntry>>,
-        TError,
-        CreateEntryMutationVariables,
-        TContext
-      > => {
-      return useMutation(getCreateEntryMutationOptions(options), queryClient);
-    }
-    /**
+export const useCreateEntry = <TError = ErrorType<Error>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createEntry>>,
+      TError,
+      CreateEntryMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createEntry>>,
+  TError,
+  CreateEntryMutationVariables,
+  TContext
+> => {
+  return useMutation(getCreateEntryMutationOptions(options), queryClient);
+};
+/**
  * @summary Edit my entry (the previous values are kept as a revision)
  */
 export const updateEntry = (
-    id: string,
-    updateEntryBody?: BodyType<UpdateEntryBody>,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  id: string,
+  updateEntryBody?: BodyType<UpdateEntryBody>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
-
-
-      return customInstance<Entry>(
-      {url: `/entries/${id}`, method: 'PATCH',
-      headers: {'Content-Type': 'application/json', },
-      data: updateEntryBody, signal
+  return customInstance<Entry>(
+    {
+      url: `/entries/${id}`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      data: updateEntryBody,
+      signal,
     },
-      options);
-    }
+    options,
+  );
+};
 
+export const getUpdateEntryMutationKey = () => ["updateEntry"] as const;
 
+export const getUpdateEntryMutationOptions = <
+  TError = ErrorType<Error>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateEntry>>,
+    TError,
+    UpdateEntryMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateEntry>>,
+  TError,
+  UpdateEntryMutationVariables,
+  TContext
+> => {
+  const mutationKey = getUpdateEntryMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateEntry>>,
+    UpdateEntryMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
 
-export const getUpdateEntryMutationKey = () => ['updateEntry'] as const;
+    return updateEntry(id, data, requestOptions);
+  };
 
-export const getUpdateEntryMutationOptions = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEntry>>, TError,UpdateEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateEntry>>, TError,UpdateEntryMutationVariables, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = getUpdateEntryMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
+export type UpdateEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateEntry>>
+>;
+export type UpdateEntryMutationBody = BodyType<UpdateEntryBody> | undefined;
+export type UpdateEntryMutationError = ErrorType<Error>;
+export type UpdateEntryMutationVariables = {
+  id: string;
+  data?: BodyType<UpdateEntryBody>;
+};
 
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEntry>>, UpdateEntryMutationVariables> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  updateEntry(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateEntryMutationResult = NonNullable<Awaited<ReturnType<typeof updateEntry>>>
-    export type UpdateEntryMutationBody = BodyType<UpdateEntryBody> | undefined
-    export type UpdateEntryMutationError = ErrorType<Error>
-    export type UpdateEntryMutationVariables = {id: string;data?: BodyType<UpdateEntryBody>}
-
-    /**
+/**
  * @summary Edit my entry (the previous values are kept as a revision)
  */
-export const useUpdateEntry = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEntry>>, TError,UpdateEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateEntry>>,
-        TError,
-        UpdateEntryMutationVariables,
-        TContext
-      > => {
-      return useMutation(getUpdateEntryMutationOptions(options), queryClient);
-    }
-    /**
+export const useUpdateEntry = <TError = ErrorType<Error>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateEntry>>,
+      TError,
+      UpdateEntryMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateEntry>>,
+  TError,
+  UpdateEntryMutationVariables,
+  TContext
+> => {
+  return useMutation(getUpdateEntryMutationOptions(options), queryClient);
+};
+/**
  * @summary Delete my entry (kept in history, no longer counted)
  */
 export const deleteEntry = (
-    id: string,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
+  return customInstance<void>(
+    { url: `/entries/${id}`, method: "DELETE", signal },
+    options,
+  );
+};
 
+export const getDeleteEntryMutationKey = () => ["deleteEntry"] as const;
 
-      return customInstance<void>(
-      {url: `/entries/${id}`, method: 'DELETE', signal
-    },
-      options);
-    }
+export const getDeleteEntryMutationOptions = <
+  TError = ErrorType<Error>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteEntry>>,
+    TError,
+    DeleteEntryMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteEntry>>,
+  TError,
+  DeleteEntryMutationVariables,
+  TContext
+> => {
+  const mutationKey = getDeleteEntryMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteEntry>>,
+    DeleteEntryMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
 
+    return deleteEntry(id, requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-export const getDeleteEntryMutationKey = () => ['deleteEntry'] as const;
+export type DeleteEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteEntry>>
+>;
 
-export const getDeleteEntryMutationOptions = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEntry>>, TError,DeleteEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteEntry>>, TError,DeleteEntryMutationVariables, TContext> => {
+export type DeleteEntryMutationError = ErrorType<Error>;
+export type DeleteEntryMutationVariables = { id: string };
 
-const mutationKey = getDeleteEntryMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteEntry>>, DeleteEntryMutationVariables> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteEntry(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteEntryMutationResult = NonNullable<Awaited<ReturnType<typeof deleteEntry>>>
-
-    export type DeleteEntryMutationError = ErrorType<Error>
-    export type DeleteEntryMutationVariables = {id: string}
-
-    /**
+/**
  * @summary Delete my entry (kept in history, no longer counted)
  */
-export const useDeleteEntry = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEntry>>, TError,DeleteEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteEntry>>,
-        TError,
-        DeleteEntryMutationVariables,
-        TContext
-      > => {
-      return useMutation(getDeleteEntryMutationOptions(options), queryClient);
-    }
-    /**
+export const useDeleteEntry = <TError = ErrorType<Error>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteEntry>>,
+      TError,
+      DeleteEntryMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteEntry>>,
+  TError,
+  DeleteEntryMutationVariables,
+  TContext
+> => {
+  return useMutation(getDeleteEntryMutationOptions(options), queryClient);
+};
+/**
  * @summary Earlier versions of an edited entry, oldest first
  */
 export const listEntryRevisions = (
-    id: string,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
+  return customInstance<EntryRevisionList>(
+    { url: `/entries/${id}/revisions`, method: "GET", signal },
+    options,
+  );
+};
 
+export const getListEntryRevisionsQueryKey = (id: string) => {
+  return [`/entries/${id}/revisions`] as const;
+};
 
-      return customInstance<EntryRevisionList>(
-      {url: `/entries/${id}/revisions`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getListEntryRevisionsQueryKey = (id: string,) => {
-    return [
-    `/entries/${id}/revisions`
-    ] as const;
-    }
-
-
-export const getListEntryRevisionsQueryOptions = <TData = Awaited<ReturnType<typeof listEntryRevisions>>, TError = ErrorType<Error>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listEntryRevisions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getListEntryRevisionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listEntryRevisions>>,
+  TError = ErrorType<Error>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listEntryRevisions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getListEntryRevisionsQueryKey(id);
 
-  const queryKey =  queryOptions?.queryKey ?? getListEntryRevisionsQueryKey(id);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listEntryRevisions>>
+  > = ({ signal }) => listEntryRevisions(id, requestOptions, signal);
 
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listEntryRevisions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
+export type ListEntryRevisionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listEntryRevisions>>
+>;
+export type ListEntryRevisionsQueryError = ErrorType<Error>;
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listEntryRevisions>>> = ({ signal }) => listEntryRevisions(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listEntryRevisions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ListEntryRevisionsQueryResult = NonNullable<Awaited<ReturnType<typeof listEntryRevisions>>>
-export type ListEntryRevisionsQueryError = ErrorType<Error>
-
-
-export function useListEntryRevisions<TData = Awaited<ReturnType<typeof listEntryRevisions>>, TError = ErrorType<Error>>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listEntryRevisions>>, TError, TData>> & Pick<
+export function useListEntryRevisions<
+  TData = Awaited<ReturnType<typeof listEntryRevisions>>,
+  TError = ErrorType<Error>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listEntryRevisions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listEntryRevisions>>,
           TError,
           Awaited<ReturnType<typeof listEntryRevisions>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListEntryRevisions<TData = Awaited<ReturnType<typeof listEntryRevisions>>, TError = ErrorType<Error>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listEntryRevisions>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListEntryRevisions<
+  TData = Awaited<ReturnType<typeof listEntryRevisions>>,
+  TError = ErrorType<Error>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listEntryRevisions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listEntryRevisions>>,
           TError,
           Awaited<ReturnType<typeof listEntryRevisions>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListEntryRevisions<TData = Awaited<ReturnType<typeof listEntryRevisions>>, TError = ErrorType<Error>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listEntryRevisions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListEntryRevisions<
+  TData = Awaited<ReturnType<typeof listEntryRevisions>>,
+  TError = ErrorType<Error>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listEntryRevisions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary Earlier versions of an edited entry, oldest first
  */
 
-export function useListEntryRevisions<TData = Awaited<ReturnType<typeof listEntryRevisions>>, TError = ErrorType<Error>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listEntryRevisions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useListEntryRevisions<
+  TData = Awaited<ReturnType<typeof listEntryRevisions>>,
+  TError = ErrorType<Error>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof listEntryRevisions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getListEntryRevisionsQueryOptions(id, options);
 
-  const queryOptions = getListEntryRevisionsQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
-

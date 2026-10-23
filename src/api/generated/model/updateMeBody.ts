@@ -8,16 +8,16 @@
 
 export interface UpdateMeBody {
   /**
-     * @minLength 1
-     * @maxLength 40
-     */
+   * @minLength 1
+   * @maxLength 40
+   */
   displayName?: string;
   /** @pattern ^[a-z0-9_]{3,20}$ */
   username?: string;
   /**
-     * @minLength 1
-     * @maxLength 200
-     * @nullable
-     */
+   * @minLength 1
+   * @maxLength 200
+   * @nullable
+   */
   avatarKey?: string | null;
 }

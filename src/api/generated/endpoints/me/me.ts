@@ -5,10 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -21,31 +18,31 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   AvatarUpload,
   CreateAvatarUploadBody,
   Error,
   Me,
-  UpdateMeBody
-} from '../../model';
+  UpdateMeBody,
+} from "../../model";
 
-import { customInstance } from '../../../client';
-import type { ErrorType , BodyType } from '../../../client';
-
+import { customInstance } from "../../../client";
+import type { ErrorType, BodyType } from "../../../client";
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-
-
-const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+const withQueryKey = <T extends object, K>(
+  query: T,
+  queryKey: K,
+): T & { queryKey: K } => {
   const result = { queryKey } as T & { queryKey: K };
   for (const key of Object.keys(query)) {
     // The explicit queryKey always wins, matching the previous
     // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
+    if (key === "queryKey") continue;
     Object.defineProperty(result, key, {
       enumerable: true,
       configurable: true,
@@ -59,225 +56,314 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
  * @summary My profile
  */
 export const getMe = (
-
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
-
-
-      return customInstance<Me>(
-      {url: `/me`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
+  return customInstance<Me>({ url: `/me`, method: "GET", signal }, options);
+};
 
 export const getGetMeQueryKey = () => {
-    return [
-    `/me`
-    ] as const;
-    }
+  return [`/me`] as const;
+};
 
+export const getGetMeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMe>>,
+  TError = ErrorType<Error>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<Error>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
+  const queryKey = queryOptions?.queryKey ?? getGetMeQueryKey();
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMe>>> = ({
+    signal,
+  }) => getMe(requestOptions, signal);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMeQueryKey();
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMe>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
+export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>;
+export type GetMeQueryError = ErrorType<Error>;
 
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMe>>> = ({ signal }) => getMe(requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = ErrorType<Error>
-
-
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<Error>>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+export function useGetMe<
+  TData = Awaited<ReturnType<typeof getMe>>,
+  TError = ErrorType<Error>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
           TError,
           Awaited<ReturnType<typeof getMe>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<Error>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMe<
+  TData = Awaited<ReturnType<typeof getMe>>,
+  TError = ErrorType<Error>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMe>>,
           TError,
           Awaited<ReturnType<typeof getMe>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<Error>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMe<
+  TData = Awaited<ReturnType<typeof getMe>>,
+  TError = ErrorType<Error>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary My profile
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<Error>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetMe<
+  TData = Awaited<ReturnType<typeof getMe>>,
+  TError = ErrorType<Error>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMeQueryOptions(options);
 
-  const queryOptions = getGetMeQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
 
 /**
  * @summary Change my display name, username or avatar
  */
 export const updateMe = (
-    updateMeBody?: BodyType<UpdateMeBody>,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  updateMeBody?: BodyType<UpdateMeBody>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
-
-
-      return customInstance<Me>(
-      {url: `/me`, method: 'PATCH',
-      headers: {'Content-Type': 'application/json', },
-      data: updateMeBody, signal
+  return customInstance<Me>(
+    {
+      url: `/me`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      data: updateMeBody,
+      signal,
     },
-      options);
-    }
+    options,
+  );
+};
 
+export const getUpdateMeMutationKey = () => ["updateMe"] as const;
 
+export const getUpdateMeMutationOptions = <
+  TError = ErrorType<Error>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateMe>>,
+    TError,
+    UpdateMeMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateMe>>,
+  TError,
+  UpdateMeMutationVariables,
+  TContext
+> => {
+  const mutationKey = getUpdateMeMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateMe>>,
+    UpdateMeMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
 
-export const getUpdateMeMutationKey = () => ['updateMe'] as const;
+    return updateMe(data, requestOptions);
+  };
 
-export const getUpdateMeMutationOptions = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,UpdateMeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,UpdateMeMutationVariables, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = getUpdateMeMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
+export type UpdateMeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateMe>>
+>;
+export type UpdateMeMutationBody = BodyType<UpdateMeBody> | undefined;
+export type UpdateMeMutationError = ErrorType<Error>;
+export type UpdateMeMutationVariables = { data?: BodyType<UpdateMeBody> };
 
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMe>>, UpdateMeMutationVariables> = (props) => {
-          const {data} = props ?? {};
-
-          return  updateMe(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateMeMutationResult = NonNullable<Awaited<ReturnType<typeof updateMe>>>
-    export type UpdateMeMutationBody = BodyType<UpdateMeBody> | undefined
-    export type UpdateMeMutationError = ErrorType<Error>
-    export type UpdateMeMutationVariables = {data?: BodyType<UpdateMeBody>}
-
-    /**
+/**
  * @summary Change my display name, username or avatar
  */
-export const useUpdateMe = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,UpdateMeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateMe>>,
-        TError,
-        UpdateMeMutationVariables,
-        TContext
-      > => {
-      return useMutation(getUpdateMeMutationOptions(options), queryClient);
-    }
-    /**
+export const useUpdateMe = <TError = ErrorType<Error>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateMe>>,
+      TError,
+      UpdateMeMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateMe>>,
+  TError,
+  UpdateMeMutationVariables,
+  TContext
+> => {
+  return useMutation(getUpdateMeMutationOptions(options), queryClient);
+};
+/**
  * @summary Get a short-lived URL to PUT a new avatar to, then save its key with PATCH /me
  */
 export const createAvatarUpload = (
-    createAvatarUploadBody?: BodyType<CreateAvatarUploadBody>,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  createAvatarUploadBody?: BodyType<CreateAvatarUploadBody>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
 ) => {
-
-
-      return customInstance<AvatarUpload>(
-      {url: `/me/avatar-upload`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createAvatarUploadBody, signal
+  return customInstance<AvatarUpload>(
+    {
+      url: `/me/avatar-upload`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: createAvatarUploadBody,
+      signal,
     },
-      options);
-    }
+    options,
+  );
+};
 
+export const getCreateAvatarUploadMutationKey = () =>
+  ["createAvatarUpload"] as const;
 
+export const getCreateAvatarUploadMutationOptions = <
+  TError = ErrorType<Error>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAvatarUpload>>,
+    TError,
+    CreateAvatarUploadMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createAvatarUpload>>,
+  TError,
+  CreateAvatarUploadMutationVariables,
+  TContext
+> => {
+  const mutationKey = getCreateAvatarUploadMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createAvatarUpload>>,
+    CreateAvatarUploadMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
 
-export const getCreateAvatarUploadMutationKey = () => ['createAvatarUpload'] as const;
+    return createAvatarUpload(data, requestOptions);
+  };
 
-export const getCreateAvatarUploadMutationOptions = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAvatarUpload>>, TError,CreateAvatarUploadMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof createAvatarUpload>>, TError,CreateAvatarUploadMutationVariables, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = getCreateAvatarUploadMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
+export type CreateAvatarUploadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createAvatarUpload>>
+>;
+export type CreateAvatarUploadMutationBody =
+  BodyType<CreateAvatarUploadBody> | undefined;
+export type CreateAvatarUploadMutationError = ErrorType<Error>;
+export type CreateAvatarUploadMutationVariables = {
+  data?: BodyType<CreateAvatarUploadBody>;
+};
 
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAvatarUpload>>, CreateAvatarUploadMutationVariables> = (props) => {
-          const {data} = props ?? {};
-
-          return  createAvatarUpload(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateAvatarUploadMutationResult = NonNullable<Awaited<ReturnType<typeof createAvatarUpload>>>
-    export type CreateAvatarUploadMutationBody = BodyType<CreateAvatarUploadBody> | undefined
-    export type CreateAvatarUploadMutationError = ErrorType<Error>
-    export type CreateAvatarUploadMutationVariables = {data?: BodyType<CreateAvatarUploadBody>}
-
-    /**
+/**
  * @summary Get a short-lived URL to PUT a new avatar to, then save its key with PATCH /me
  */
-export const useCreateAvatarUpload = <TError = ErrorType<Error>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAvatarUpload>>, TError,CreateAvatarUploadMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createAvatarUpload>>,
-        TError,
-        CreateAvatarUploadMutationVariables,
-        TContext
-      > => {
-      return useMutation(getCreateAvatarUploadMutationOptions(options), queryClient);
-    }
+export const useCreateAvatarUpload = <
+  TError = ErrorType<Error>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createAvatarUpload>>,
+      TError,
+      CreateAvatarUploadMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createAvatarUpload>>,
+  TError,
+  CreateAvatarUploadMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getCreateAvatarUploadMutationOptions(options),
+    queryClient,
+  );
+};

@@ -5,7 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
-import type { MemberRole } from './memberRole';
+import type { MemberRole } from "./memberRole";
 
 export interface Member {
   id: string;

@@ -8,8 +8,8 @@
 
 export interface UpdateLedgerBody {
   /**
-     * @minLength 1
-     * @maxLength 40
-     */
+   * @minLength 1
+   * @maxLength 40
+   */
   name: string;
 }

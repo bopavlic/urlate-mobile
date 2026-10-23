@@ -6,36 +6,38 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type CreateLedgerBody = {
-  kind: 'PAIR';
-  /**
-     * @minLength 1
-     * @maxLength 40
-     */
-  name?: string;
-  members: {
-  /**
-     * @minLength 1
-     * @maxLength 40
-     */
-  placeholderName: string;
-}[];
-} | {
-  kind: 'GROUP';
-  /**
-     * @minLength 1
-     * @maxLength 40
-     */
-  name: string;
-  /**
-     * @minItems 1
-     * @maxItems 49
-     */
-  members: {
-  /**
-     * @minLength 1
-     * @maxLength 40
-     */
-  placeholderName: string;
-}[];
-};
+export type CreateLedgerBody =
+  | {
+      kind: "PAIR";
+      /**
+       * @minLength 1
+       * @maxLength 40
+       */
+      name?: string;
+      members: {
+        /**
+         * @minLength 1
+         * @maxLength 40
+         */
+        placeholderName: string;
+      }[];
+    }
+  | {
+      kind: "GROUP";
+      /**
+       * @minLength 1
+       * @maxLength 40
+       */
+      name: string;
+      /**
+       * @minItems 1
+       * @maxItems 49
+       */
+      members: {
+        /**
+         * @minLength 1
+         * @maxLength 40
+         */
+        placeholderName: string;
+      }[];
+    };
