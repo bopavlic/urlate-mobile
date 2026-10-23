@@ -6,6 +6,7 @@ export default function AppLayout() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="ledgers/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="ledgers/[id]" />
+      <Stack.Screen name="log" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }
