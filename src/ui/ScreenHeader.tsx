@@ -1,13 +1,13 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, useColorScheme, View } from 'react-native';
+import { Platform, Pressable, Text, useColorScheme, View } from 'react-native';
 
 import { palette } from '@/theme/tokens';
 
 import { Title } from './Title';
 
-/** The one back control: a round button with a chevron, top left. */
+/** The one back control: a pill with a chevron and the word Back, top left. */
 export function BackButton({ onPress }: { onPress: () => void }) {
   const color = palette[useColorScheme() === 'dark' ? 'dark' : 'light'].ink;
   return (
@@ -16,13 +16,14 @@ export function BackButton({ onPress }: { onPress: () => void }) {
       accessibilityLabel="Back"
       onPress={onPress}
       hitSlop={8}
-      className="h-11 w-11 items-center justify-center rounded-full bg-surface active:opacity-70"
+      className="h-11 flex-row items-center gap-1 self-start rounded-full bg-surface pl-2 pr-4 active:opacity-70"
     >
       {Platform.OS === 'ios' ? (
-        <SymbolView name="chevron.left" size={18} weight="bold" tintColor={color} />
+        <SymbolView name="chevron.left" size={16} weight="bold" tintColor={color} />
       ) : (
-        <MaterialCommunityIcons name="chevron-left" size={28} color={color} />
+        <MaterialCommunityIcons name="chevron-left" size={24} color={color} />
       )}
+      <Text className="text-base font-semibold text-ink">Back</Text>
     </Pressable>
   );
 }

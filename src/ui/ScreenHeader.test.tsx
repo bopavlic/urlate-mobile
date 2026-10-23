@@ -9,6 +9,8 @@ describe('ScreenHeader', () => {
   it('shows a Back button and the title on its own line', async () => {
     await render(<ScreenHeader title="Who was late?" />);
     expect(screen.getByRole('header', { name: 'Who was late?' })).toBeTruthy();
+    // A visible word, not just an arrow, so the top row doesn't look empty.
+    expect(screen.getByText('Back')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
