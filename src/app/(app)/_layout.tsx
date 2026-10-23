@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 
-export default function AuthLayout() {
+// Becomes the tab bar in the next step.
+export default function AppLayout() {
   return <Stack screenOptions={{ headerShown: false }} />;
 }

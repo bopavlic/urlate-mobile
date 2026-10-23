@@ -58,15 +58,20 @@ export default function RootLayout() {
         >
           <View style={[{ flex: 1 }, themeVars(scheme)]}>
             <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+            {/* Order matters: a denied route falls back to the first screen that is allowed. */}
             <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Protected guard={!signedIn}>
-                <Stack.Screen name="(auth)" />
+              <Stack.Protected
+                guard={signedIn && !needsName}
+                redirectTo={needsName ? '/onboarding' : '/sign-in'}
+              >
+                <Stack.Screen name="(app)" />
               </Stack.Protected>
               <Stack.Protected guard={needsName}>
                 <Stack.Screen name="onboarding" />
               </Stack.Protected>
-              <Stack.Protected guard={signedIn && !needsName}>
-                <Stack.Screen name="index" />
+              <Stack.Protected guard={!signedIn}>
+                <Stack.Screen name="sign-in" />
+                <Stack.Screen name="code" />
               </Stack.Protected>
             </Stack>
           </View>

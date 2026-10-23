@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -14,6 +14,9 @@ export default function Code() {
   const [checking, setChecking] = useState(false);
   const [resent, setResent] = useState(false);
   const [attempt, setAttempt] = useState(0);
+
+  // Reached without an address (e.g. a restored route): start over.
+  if (!email) return <Redirect href="/sign-in" />;
 
   async function verify(otp: string) {
     setError(null);
