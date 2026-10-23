@@ -14,24 +14,27 @@ export function keyboardBehavior(_os: string): 'padding' {
 export function Screen({
   children,
   scroll = false,
+  padded = true,
   edges = ['top', 'bottom'],
   className = '',
 }: {
   children: ReactNode;
   scroll?: boolean;
+  /** Side padding. Off for edge-to-edge lists that pad their own rows. */
+  padded?: boolean;
   edges?: Edge[];
   className?: string;
 }) {
   const body = scroll ? (
     <ScrollView
       className="flex-1"
-      contentContainerClassName={`grow px-6 pb-8 ${className}`}
+      contentContainerClassName={`grow pb-8 ${padded ? 'px-6' : ''} ${className}`}
       keyboardShouldPersistTaps="handled"
     >
       {children}
     </ScrollView>
   ) : (
-    <View className={`flex-1 px-6 ${className}`}>{children}</View>
+    <View className={`flex-1 ${padded ? 'px-6' : ''} ${className}`}>{children}</View>
   );
   return (
     <SafeAreaView edges={edges} className="flex-1 bg-paper">

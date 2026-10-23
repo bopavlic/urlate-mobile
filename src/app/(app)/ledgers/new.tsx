@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useCreateLedger } from '@/api/generated/endpoints/ledgers/ledgers';
 import { buildCreateLedgerBody } from '@/features/ledgers/new-ledger';
 import { refreshLedgers } from '@/features/ledgers/queries';
 import { Button } from '@/ui/Button';
+import { CloseButton } from '@/ui/CloseButton';
 import { Screen } from '@/ui/Screen';
 import { Segmented } from '@/ui/Segmented';
 import { TextField } from '@/ui/TextField';
@@ -43,13 +44,9 @@ export default function NewLedger() {
   }
 
   return (
-    <Screen scroll className="gap-6 pt-6">
-      <View className="flex-row items-center justify-between">
-        <Title className="text-4xl leading-[44px]">Keep score with…</Title>
-        <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-base font-semibold text-muted">Cancel</Text>
-        </Pressable>
-      </View>
+    <Screen scroll className="gap-6 pt-2">
+      <CloseButton onPress={() => router.back()} />
+      <Title>Keep score with…</Title>
 
       <Segmented
         options={[

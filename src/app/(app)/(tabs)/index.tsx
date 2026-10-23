@@ -12,7 +12,7 @@ export default function Home() {
   const items = ledgers.data?.pages.flatMap((page) => page.items) ?? [];
 
   return (
-    <Screen edges={['top']} className="px-0">
+    <Screen edges={['top']} padded={false}>
       <View className="flex-row items-center justify-between px-6 pb-2 pt-4">
         <Title>Scoreboard</Title>
         <Pressable

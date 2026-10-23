@@ -44,13 +44,21 @@ jest.mock('@/features/ledgers/queries', () => ({
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const Log = require('../app/(app)/log').default;
 
+it('has a Cancel button that closes the screen', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { router } = require('expo-router');
+  await render(<Log />);
+  await fireEvent.press(screen.getByRole('button', { name: 'Cancel' }));
+  expect(router.back).toHaveBeenCalled();
+});
+
 it('retries a failed save with the same request id', async () => {
   mockMutateAsync.mockRejectedValueOnce(new Error('timeout')).mockResolvedValueOnce({});
   await render(<Log />);
 
-  await fireEvent.press(screen.getByRole('button', { name: 'Log it' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Save' }));
   expect(await screen.findByText(/Couldn't save/)).toBeTruthy();
-  await fireEvent.press(screen.getByRole('button', { name: 'Log it' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Save' }));
 
   await waitFor(() => expect(mockMutateAsync).toHaveBeenCalledTimes(2));
   const ids = mockMutateAsync.mock.calls.map((call) => call[0].data.clientRequestId);

@@ -14,6 +14,7 @@ import { initialLogState, logReducer, toCreateEntryBody } from '@/features/log/l
 import { MinutePicker } from '@/features/log/MinutePicker';
 import { WhenPicker } from '@/features/log/WhenPicker';
 import { Button } from '@/ui/Button';
+import { CloseButton } from '@/ui/CloseButton';
 import { Screen } from '@/ui/Screen';
 import { TextField } from '@/ui/TextField';
 import { Title } from '@/ui/Title';
@@ -147,15 +148,16 @@ export default function Log() {
   }
 
   return (
-    <Screen className="px-0">
-      <View className="flex-row items-center justify-between px-6 pb-2 pt-6">
-        <Title className="text-4xl leading-[44px]">Who was late?</Title>
-        <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-base font-semibold text-muted">Cancel</Text>
-        </Pressable>
+    <Screen padded={false}>
+      <View className="px-6 pt-2">
+        <CloseButton onPress={() => router.back()} />
       </View>
 
-      <ScrollView contentContainerClassName="gap-8 px-6 pb-10" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerClassName="gap-8 px-6 pb-8 pt-4"
+        keyboardShouldPersistTaps="handled"
+      >
+        <Title>{state.ledgerId ? 'Who was late?' : 'Who was it with?'}</Title>
         {!state.ledgerId ? (
           <PickLedger onPick={(ledgerId) => dispatch({ type: 'pickLedger', ledgerId })} />
         ) : !members ? (
@@ -167,11 +169,14 @@ export default function Log() {
               selected={state.lateMemberId}
               onPick={(memberId) => dispatch({ type: 'pickLate', memberId })}
             />
-            <MinutePicker
-              value={state.minutes}
-              onChange={(minutes) => dispatch({ type: 'chip', minutes })}
-              onStep={(delta) => dispatch({ type: 'step', delta })}
-            />
+            <View className="gap-4">
+              <Text className="text-lg font-semibold text-ink">How late?</Text>
+              <MinutePicker
+                value={state.minutes}
+                onChange={(minutes) => dispatch({ type: 'chip', minutes })}
+                onStep={(delta) => dispatch({ type: 'step', delta })}
+              />
+            </View>
             <TextField
               label="Note (optional)"
               value={state.note}
@@ -183,16 +188,17 @@ export default function Log() {
               value={state.occurredAt}
               onChange={(occurredAt) => dispatch({ type: 'date', occurredAt })}
             />
-            {error ? <Text className="text-base text-danger">{error}</Text> : null}
-            <Button
-              title="Log it"
-              onPress={save}
-              disabled={!body}
-              loading={createEntry.isPending}
-            />
           </>
         )}
       </ScrollView>
+
+      {/* Pinned: always one thumb away, and lifted above the keyboard. */}
+      {members ? (
+        <View className="gap-2 border-t border-line bg-paper px-6 pb-2 pt-3">
+          {error ? <Text className="text-base text-danger">{error}</Text> : null}
+          <Button title="Save" onPress={save} disabled={!body} loading={createEntry.isPending} />
+        </View>
+      ) : null}
     </Screen>
   );
 }

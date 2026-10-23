@@ -192,7 +192,7 @@ export function LedgerScreen({
   );
 
   return (
-    <Screen edges={['top']} className="px-0">
+    <Screen edges={['top']} padded={false}>
       <FlatList
         data={history}
         keyExtractor={(item) => (item.type === 'entry' ? item.entry.id : item.settlement.id)}

@@ -17,6 +17,11 @@ describe('logReducer', () => {
     expect(logReducer(picked, { type: 'chip', minutes: 10 }).minutes).toBe(10);
   });
 
+  it('keeps typed or chosen minutes within 1–1440', () => {
+    expect(logReducer(picked, { type: 'chip', minutes: 0 }).minutes).toBe(1);
+    expect(logReducer(picked, { type: 'chip', minutes: 2000 }).minutes).toBe(1440);
+  });
+
   it('steps within 1–1440', () => {
     expect(logReducer({ ...picked, minutes: 15 }, { type: 'step', delta: 1 }).minutes).toBe(16);
     expect(logReducer({ ...picked, minutes: 1 }, { type: 'step', delta: -1 }).minutes).toBe(1);
