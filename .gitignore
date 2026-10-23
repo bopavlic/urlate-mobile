@@ -41,3 +41,10 @@ example
 # generated native folders
 /ios
 /android
+
+# Native projects are generated (Continuous Native Generation)
+/ios
+/android
+
+# local env
+.env
