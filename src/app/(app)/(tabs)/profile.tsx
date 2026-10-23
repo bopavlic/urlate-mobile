@@ -6,14 +6,14 @@ import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { Title } from '@/ui/Title';
 
-// Temporary home until the tabs arrive (Task 7).
-export default function Home() {
+// Avatar, name and username editing arrive in the profile task.
+export default function Profile() {
   const me = useGetMe();
   return (
-    <Screen className="justify-center gap-6">
-      <Title>Hi {me.data?.displayName ?? '…'}</Title>
-      <Text className="text-lg text-muted">You&apos;re signed in as {me.data?.email}.</Text>
-      <View>
+    <Screen edges={['top']} className="gap-4 pt-4">
+      <Title>{me.data?.displayName ?? 'Profile'}</Title>
+      <Text className="text-lg text-muted">{me.data?.email}</Text>
+      <View className="mt-4">
         <Button title="Sign out" variant="secondary" onPress={() => void signOut()} />
       </View>
     </Screen>
