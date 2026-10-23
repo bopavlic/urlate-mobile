@@ -6,6 +6,7 @@
     "@better-auth/expo": "^1.7.12",
     "@expo-google-fonts/big-shoulders": "^0.4.1",
     "@expo/ui": "~58.0.22",
+    "@expo/vector-icons": "^15.1.1",
     "@react-native-community/datetimepicker": "9.2.1",
     "@react-native-google-signin/google-signin": "^16.1.5",
     "@tanstack/react-query": "^5.104.5",
