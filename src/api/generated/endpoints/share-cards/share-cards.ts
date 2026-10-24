@@ -27,7 +27,8 @@ import type {
 import type {
   CreateShareCardBody,
   Error,
-  ShareCard
+  ShareCard,
+  ShareCardList
 } from '../../model';
 
 import { customInstance } from '../../../client';
@@ -122,6 +123,98 @@ export const useCreateShareCard = <TError = ErrorType<Error>,
       return useMutation(getCreateShareCardMutationOptions(options), queryClient);
     }
     /**
+ * @summary Every card shared from this ledger, newest first (anyone in it can take one down)
+ */
+export const listShareCards = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<ShareCardList>(
+      {url: `/ledgers/${id}/share-cards`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getListShareCardsQueryKey = (id: string,) => {
+    return [
+    `/ledgers/${id}/share-cards`
+    ] as const;
+    }
+
+
+export const getListShareCardsQueryOptions = <TData = Awaited<ReturnType<typeof listShareCards>>, TError = ErrorType<Error>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listShareCards>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListShareCardsQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listShareCards>>> = ({ signal }) => listShareCards(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listShareCards>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListShareCardsQueryResult = NonNullable<Awaited<ReturnType<typeof listShareCards>>>
+export type ListShareCardsQueryError = ErrorType<Error>
+
+
+export function useListShareCards<TData = Awaited<ReturnType<typeof listShareCards>>, TError = ErrorType<Error>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listShareCards>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listShareCards>>,
+          TError,
+          Awaited<ReturnType<typeof listShareCards>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListShareCards<TData = Awaited<ReturnType<typeof listShareCards>>, TError = ErrorType<Error>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listShareCards>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listShareCards>>,
+          TError,
+          Awaited<ReturnType<typeof listShareCards>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListShareCards<TData = Awaited<ReturnType<typeof listShareCards>>, TError = ErrorType<Error>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listShareCards>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Every card shared from this ledger, newest first (anyone in it can take one down)
+ */
+
+export function useListShareCards<TData = Awaited<ReturnType<typeof listShareCards>>, TError = ErrorType<Error>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listShareCards>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListShareCardsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
  * @summary A shared card, for the website and its OG image
  */
 export const getShareCard = (
@@ -213,3 +306,68 @@ export function useGetShareCard<TData = Awaited<ReturnType<typeof getShareCard>>
 
 
 
+/**
+ * @summary Take a card down: its link stops working (anyone in the ledger can, since it shows them)
+ */
+export const deleteShareCard = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<void>(
+      {url: `/share-cards/${id}`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getDeleteShareCardMutationKey = () => ['deleteShareCard'] as const;
+
+export const getDeleteShareCardMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteShareCard>>, TError,DeleteShareCardMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteShareCard>>, TError,DeleteShareCardMutationVariables, TContext> => {
+
+const mutationKey = getDeleteShareCardMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteShareCard>>, DeleteShareCardMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteShareCard(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteShareCardMutationResult = NonNullable<Awaited<ReturnType<typeof deleteShareCard>>>
+
+    export type DeleteShareCardMutationError = ErrorType<Error>
+    export type DeleteShareCardMutationVariables = {id: string}
+
+    /**
+ * @summary Take a card down: its link stops working (anyone in the ledger can, since it shows them)
+ */
+export const useDeleteShareCard = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteShareCard>>, TError,DeleteShareCardMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteShareCard>>,
+        TError,
+        DeleteShareCardMutationVariables,
+        TContext
+      > => {
+      return useMutation(getDeleteShareCardMutationOptions(options), queryClient);
+    }

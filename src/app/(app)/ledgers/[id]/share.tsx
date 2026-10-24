@@ -3,13 +3,19 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Share } from 'react-native';
 
-import { createShareCard } from '@/api/generated/endpoints/share-cards/share-cards';
+import {
+  createShareCard,
+  deleteShareCard,
+  listShareCards,
+} from '@/api/generated/endpoints/share-cards/share-cards';
 import { useWatchAd } from '@/features/ads/useWatchAd';
 import { useEntitlements } from '@/features/premium/queries';
 import { shareLinkMessage } from '@/features/share/copy';
 import { FREE_LOOK, isFreeLook, type Look } from '@/features/share/look';
 import { shareCardImage } from '@/features/share/share-image';
+import { SharedCards } from '@/features/share/SharedCards';
 import { ShareScreen } from '@/features/share/ShareScreen';
+import { queryClient } from '@/providers/query';
 
 export default function ShareRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,6 +33,21 @@ export default function ShareRoute() {
     placeholderData: keepPreviousData,
     gcTime: 0,
   });
+  // Keyed by the card on screen: making a new card adds it to the list.
+  const shared = useQuery({
+    queryKey: ['share-cards', id, card.data?.id],
+    queryFn: () => listShareCards(id),
+    enabled: !!card.data,
+    placeholderData: keepPreviousData,
+  });
+
+  async function takeDown(cardId: string) {
+    await deleteShareCard(cardId);
+    // The card on screen was taken down: the next share makes a new link.
+    if (cardId === card.data?.id) queryClient.removeQueries({ queryKey: ['share-card', id] });
+    await queryClient.invalidateQueries({ queryKey: ['share-cards', id] });
+    if (cardId === card.data?.id) await card.refetch();
+  }
 
   return (
     <ShareScreen
@@ -46,6 +67,13 @@ export default function ShareRoute() {
       adOffer={ad.offer}
       adState={ad.state}
       onWatchAd={() => void ad.watch()}
+      sharedCards={
+        <SharedCards
+          cards={shared.data?.items ?? []}
+          currentId={card.data?.id ?? null}
+          onTakeDown={takeDown}
+        />
+      }
     />
   );
 }

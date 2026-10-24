@@ -1,4 +1,4 @@
-import { useRef, useState, type ComponentRef, type RefObject } from 'react';
+import { useRef, useState, type ComponentRef, type ReactNode, type RefObject } from 'react';
 import { ActivityIndicator, Pressable, Text, useWindowDimensions, View } from 'react-native';
 
 import type { ShareCard } from '@/api/generated/model';
@@ -109,6 +109,7 @@ export function ShareScreen({
   adOffer,
   adState,
   onWatchAd,
+  sharedCards,
 }: {
   card: ShareCard | undefined;
   errorMessage: string | null;
@@ -124,6 +125,8 @@ export function ShareScreen({
   adOffer: AdOffer;
   adState: WatchAdState;
   onWatchAd: () => void;
+  /** The ledger's live links, to take down (see SharedCards). */
+  sharedCards?: ReactNode;
 }) {
   const { width: screenWidth } = useWindowDimensions();
   const cardRef = useRef<ComponentRef<typeof View>>(null);
@@ -192,6 +195,7 @@ export function ShareScreen({
                 </View>
               </>
             )}
+            {sharedCards}
           </>
         ) : errorMessage ? (
           <View className="items-center gap-4 pt-8">
