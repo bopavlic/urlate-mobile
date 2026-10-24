@@ -3,12 +3,12 @@ import { entryFixture } from '@/features/ledgers/fixtures';
 import { initialEditState, toUpdateEntryBody } from './edit-form';
 
 describe('toUpdateEntryBody', () => {
-  const original = entryFixture({ minutes: 5, note: 'football' });
+  const original = entryFixture({ minutes: 5, note: 'dinner' });
 
   it('starts from the entry as it is', () => {
     expect(initialEditState(original)).toEqual({
       minutes: 5,
-      note: 'football',
+      note: 'dinner',
       occurredAt: new Date('2026-10-20T16:05:00.000Z'),
     });
   });
@@ -16,7 +16,7 @@ describe('toUpdateEntryBody', () => {
   it('sends nothing when nothing changed', () => {
     expect(toUpdateEntryBody(original, initialEditState(original))).toBeNull();
     expect(
-      toUpdateEntryBody(original, { ...initialEditState(original), note: '  football ' }),
+      toUpdateEntryBody(original, { ...initialEditState(original), note: '  dinner ' }),
     ).toBeNull();
   });
 

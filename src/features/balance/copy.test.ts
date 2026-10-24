@@ -26,8 +26,8 @@ describe('groupBalanceSentence', () => {
 
 describe('loggedToast', () => {
   it('teases the late one', () => {
-    expect(loggedToast(2, false)).toBe('Noted. 2 more minutes on their tab.');
-    expect(loggedToast(1, false)).toBe('Noted. 1 more minute on their tab.');
-    expect(loggedToast(5, true)).toBe('Noted. 5 minutes off your tab… or onto it.');
+    expect(loggedToast(2, false)).toBe('Noted. 2 more minutes they owe you.');
+    expect(loggedToast(1, false)).toBe('Noted. 1 more minute they owe you.');
+    expect(loggedToast(5, true)).toBe('Owned up. 5 minutes on you.');
   });
 });

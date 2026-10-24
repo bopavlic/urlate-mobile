@@ -17,6 +17,6 @@ export function groupBalanceSentence(view: BalanceView): string {
 export function loggedToast(minutes: number, lateWasMe: boolean): string {
   const unit = minutes === 1 ? 'minute' : 'minutes';
   return lateWasMe
-    ? `Noted. ${minutes} ${unit} off your tab… or onto it.`
-    : `Noted. ${minutes} more ${unit} on their tab.`;
+    ? `Owned up. ${minutes} ${unit} on you.`
+    : `Noted. ${minutes} more ${unit} they owe you.`;
 }

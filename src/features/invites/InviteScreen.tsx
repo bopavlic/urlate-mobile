@@ -24,7 +24,7 @@ function TargetChip({
       accessibilityLabel={label}
       accessibilityState={{ selected }}
       onPress={onPress}
-      className={`rounded-full border-2 px-4 py-2 ${selected ? 'border-ink bg-ink' : 'border-line'}`}
+      className={`rounded-full px-4 py-2.5 ${selected ? 'bg-ink' : 'bg-surface'}`}
     >
       <Text className={`text-base font-semibold ${selected ? 'text-paper' : 'text-ink'}`}>
         {label}
@@ -69,7 +69,7 @@ export function InviteScreen({
   const explainer =
     target === null
       ? 'Anyone with this link joins the group.'
-      : `When ${targetName ? `${targetName} joins` : 'they join'}, the score and its history become theirs too.`;
+      : `When ${targetName ? `${targetName} joins` : 'they join'}, every minute so far becomes theirs to see too.`;
 
   return (
     <Screen scroll>
@@ -105,7 +105,7 @@ export function InviteScreen({
             />
             <View className="items-center gap-1">
               <Text className="text-sm text-muted">Or enter this code in the app</Text>
-              <Text selectable className="font-display text-5xl tracking-widest text-ink">
+              <Text selectable className="font-display text-4xl tracking-wider text-ink">
                 {formatInviteCode(invite.code)}
               </Text>
             </View>

@@ -29,7 +29,7 @@ const ana = { ...brother, id: 'm-ana', displayName: 'Ana' };
 const group: LedgerDetail = {
   ...pair,
   kind: 'GROUP',
-  name: 'Football',
+  name: 'Friday lunch',
   members: [
     me,
     brother,
@@ -76,7 +76,7 @@ it('shows the link as a QR code and the code to type after installing', async ()
 it('lets a group invite anyone with the link, or hand over a placeholder', async () => {
   const onTargetChange = jest.fn();
   await renderInvite({ ledger: group, target: null, onTargetChange });
-  expect(screen.getByRole('header', { name: 'Invite to Football' })).toBeTruthy();
+  expect(screen.getByRole('header', { name: 'Invite to Friday lunch' })).toBeTruthy();
   expect(
     screen.getByRole('radio', { name: 'Anyone with the link' }).props.accessibilityState,
   ).toMatchObject({ selected: true });

@@ -2,13 +2,13 @@ import iconList from '../../../assets/icons/icons.json';
 
 // Which app icon is on, and switching it. No native code here, so it can be tested.
 
-export type IconId = 'classic' | 'red-card' | 'away-kit' | 'third-kit' | 'floodlights';
+export type IconId = 'classic' | 'concert' | 'library' | 'parking' | 'cinema' | 'raffle';
 
 export const ICON_IDS = iconList.map((icon) => icon.id as IconId);
 
 export const DEFAULT_ICON: IconId = 'classic';
 
-/** "red-card" → "RedCard", as app.config.ts names them; the default icon has no name. */
+/** "parking" → "Parking", as app.config.ts names them; the default icon has no name. */
 export function nativeIconName(id: IconId): string | null {
   if (id === DEFAULT_ICON) return null;
   return id.replace(/(^|-)(\w)/g, (_match, _dash, letter: string) => letter.toUpperCase());

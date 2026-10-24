@@ -26,7 +26,7 @@ function StyleChip({
       accessibilityLabel={label}
       accessibilityState={{ selected }}
       onPress={onPress}
-      className={`rounded-full border-2 px-4 py-2 ${selected ? 'border-ink bg-ink' : 'border-line'}`}
+      className={`rounded-full px-4 py-2.5 ${selected ? 'bg-ink' : 'bg-surface'}`}
     >
       <Text className={`text-base font-semibold ${selected ? 'text-paper' : 'text-ink'}`}>
         {label}
@@ -49,15 +49,15 @@ function ColorSwatch({
   return (
     <Pressable
       accessibilityRole="radio"
-      accessibilityLabel={`${label} card`}
+      accessibilityLabel={label}
       accessibilityState={{ selected }}
       onPress={onPress}
       hitSlop={4}
-      className={`rounded-xl border-[3px] p-0.5 ${selected ? 'border-ink' : 'border-transparent'}`}
+      className={`rounded-full border-2 p-0.5 ${selected ? 'border-ink' : 'border-transparent'}`}
     >
       <View
         style={{ backgroundColor: color }}
-        className="h-11 w-8 rotate-6 rounded-md border border-line"
+        className="h-9 w-9 rounded-full border border-line"
       />
     </Pressable>
   );
@@ -92,7 +92,7 @@ function LookPicker({ look, onChange }: { look: Look; onChange: (look: Look) => 
 }
 
 /**
- * The score as a card to post: the image for Stories, the link for chats (it unfurls into
+ * Who owes whom, as a card to post: the image for Stories, the link for chats (it unfurls into
  * the same card and lands on urlate.app/s/…). The classic look is free; the others come with
  * Premium or a day's ad reward.
  */
@@ -150,7 +150,7 @@ export function ShareScreen({
   return (
     <Screen scroll>
       <View className="gap-6">
-        <ScreenHeader title="Share the score" />
+        <ScreenHeader title="Share" />
         {card ? (
           <>
             <View className="items-center">
@@ -166,9 +166,7 @@ export function ShareScreen({
             <LookPicker look={look} onChange={onLookChange} />
             {lookLocked ? (
               <View className="gap-3 rounded-2xl bg-surface p-5">
-                <Text className="font-display-bold text-2xl text-ink">
-                  This look comes with Premium.
-                </Text>
+                <Text className="font-display text-lg text-ink">This look comes with Premium.</Text>
                 <Button title="Get Premium" onPress={onGetPremium} />
                 <WatchAdButton offer={adOffer} state={adState} onWatch={onWatchAd} />
               </View>

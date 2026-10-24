@@ -23,7 +23,7 @@ export function SharedCardScreen({
   return (
     <Screen scroll>
       <View className="flex-1 gap-6">
-        <ScreenHeader title="Shared score" onBack={onBack} />
+        <ScreenHeader title="Shared from Ur Late" onBack={onBack} />
         {card ? (
           <>
             <View className="items-center">
@@ -32,7 +32,7 @@ export function SharedCardScreen({
               </View>
             </View>
             <Text className="text-base text-muted">
-              Shared by {card.sharedByName}. The score may have moved since.
+              Shared by {card.sharedByName}. The minutes may have moved since.
             </Text>
           </>
         ) : errorMessage ? (

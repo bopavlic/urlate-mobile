@@ -14,7 +14,7 @@ it('shows the QR, the code and the username to give out', async () => {
   await render(
     <MyInviteCode invite={invite} username="borna" onShare={onShare} onReset={jest.fn()} />,
   );
-  expect(screen.getByLabelText('QR code to start keeping score with you')).toBeTruthy();
+  expect(screen.getByLabelText('QR code to add you on Ur Late')).toBeTruthy();
   expect(screen.getByText('ABCD-EFGH')).toBeTruthy();
   expect(screen.getByText(/@borna/)).toBeTruthy();
   await fireEvent.press(screen.getByRole('button', { name: 'Share my link' }));

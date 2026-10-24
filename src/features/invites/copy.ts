@@ -7,11 +7,11 @@ import { formatInviteCode } from './invite-code';
 
 export function inviteTitle(preview: InvitePreview): string {
   return preview.ledgerKind === 'PAIR'
-    ? `${preview.inviterName} wants to keep score with you`
+    ? `${preview.inviterName} wants to add you on Ur Late`
     : `${preview.inviterName} invited you to ${preview.ledgerName ?? 'a group'}`;
 }
 
-/** The score you join with, from your side; null when there is none yet (open group invite). */
+/** The balance you join with, from your side; null when there is none yet (open group invite). */
 export function inviteBalanceLine(preview: InvitePreview): string | null {
   if (!preview.balance) return null;
   return preview.ledgerKind === 'PAIR'
@@ -19,9 +19,9 @@ export function inviteBalanceLine(preview: InvitePreview): string | null {
     : groupBalanceSentence(preview.balance);
 }
 
-/** A profile code starts a new tally; every other invite joins one. */
+/** A profile code connects two people; every other invite joins something that exists. */
 export function joinButtonTitle(preview: InvitePreview): string {
-  return preview.kind === 'PERSON' ? 'Start keeping score' : 'Join';
+  return preview.kind === 'PERSON' ? 'Accept' : 'Join';
 }
 
 /** Lowercase, without the @; null when it can't be a username (3–20 letters, digits, _). */
@@ -65,10 +65,10 @@ export function shareMessage(
 ): string {
   const tail = `${invite.url} (code ${formatInviteCode(invite.code)})`;
   return ledger.kind === 'GROUP'
-    ? `Join ${ledger.name ?? 'us'} on Ur Late, the scoreboard for who’s late: ${tail}`
-    : `I’m keeping score of who’s late on Ur Late. Join me: ${tail}`;
+    ? `Join ${ledger.name ?? 'us'} on Ur Late to keep track of who’s late: ${tail}`
+    : `I’m keeping track of who’s late on Ur Late. Join me: ${tail}`;
 }
 
 export function personalShareMessage(invite: Pick<Invite, 'code' | 'url'>): string {
-  return `Let’s keep score of who’s late on Ur Late: ${invite.url} (code ${formatInviteCode(invite.code)})`;
+  return `Let’s keep track of who’s late on Ur Late: ${invite.url} (code ${formatInviteCode(invite.code)})`;
 }

@@ -32,7 +32,7 @@ export default function EnterInviteCode() {
           autoComplete="off"
           maxLength={11}
           returnKeyType="go"
-          className="font-display text-3xl tracking-widest"
+          className="font-display text-2xl tracking-wider"
         />
         <Button title="Next" onPress={open} disabled={!code} />
       </View>

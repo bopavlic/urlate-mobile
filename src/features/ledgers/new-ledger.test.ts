@@ -21,19 +21,25 @@ describe('buildCreateLedgerBody', () => {
   });
 
   it('can start a group with just you, to fill through the invite link', () => {
-    expect(buildCreateLedgerBody({ kind: 'GROUP', name: 'Football', people: ['', ' '] })).toEqual({
+    expect(
+      buildCreateLedgerBody({ kind: 'GROUP', name: 'Friday lunch', people: ['', ' '] }),
+    ).toEqual({
       kind: 'GROUP',
-      name: 'Football',
+      name: 'Friday lunch',
       members: [],
     });
   });
 
   it('trims and de-duplicates group members', () => {
     expect(
-      buildCreateLedgerBody({ kind: 'GROUP', name: ' Football ', people: ['Ana', 'ana', ' Bro '] }),
+      buildCreateLedgerBody({
+        kind: 'GROUP',
+        name: ' Friday lunch ',
+        people: ['Ana', 'ana', ' Bro '],
+      }),
     ).toEqual({
       kind: 'GROUP',
-      name: 'Football',
+      name: 'Friday lunch',
       members: [{ placeholderName: 'Ana' }, { placeholderName: 'Bro' }],
     });
   });

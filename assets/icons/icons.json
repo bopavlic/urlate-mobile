@@ -1,7 +1,8 @@
 [
-  { "id": "classic", "label": "Classic", "top": "#14402C", "bottom": "#06120C", "card": "#FFCC1A", "face": "#0B1F16" },
-  { "id": "red-card", "label": "Red card", "top": "#14402C", "bottom": "#06120C", "card": "#F03A2E", "face": "#FFFFFF" },
-  { "id": "away-kit", "label": "Away kit", "top": "#16295A", "bottom": "#050B1A", "card": "#4DA3FF", "face": "#0A1630" },
-  { "id": "third-kit", "label": "Third kit", "top": "#4A1838", "bottom": "#12060E", "card": "#FF5FA2", "face": "#24101C" },
-  { "id": "floodlights", "label": "Floodlights", "top": "#34343A", "bottom": "#0B0B0D", "card": "#FF8A1F", "face": "#18181B" }
+  { "id": "classic", "label": "Classic", "background": "#D63A1F", "ticket": "#FFFFFF", "band": "#16182B" },
+  { "id": "concert", "label": "Concert", "background": "#DB2253", "ticket": "#FFFFFF", "band": "#1C1736" },
+  { "id": "library", "label": "Library", "background": "#2B5FEA", "ticket": "#FFFFFF", "band": "#111A3A" },
+  { "id": "parking", "label": "Parking", "background": "#FFB020", "ticket": "#FFFFFF", "band": "#2A1E05" },
+  { "id": "cinema", "label": "Cinema", "background": "#7C3AED", "ticket": "#FFFFFF", "band": "#1E1433" },
+  { "id": "raffle", "label": "Raffle", "background": "#12B76A", "ticket": "#FFFFFF", "band": "#0E2418" }
 ]

@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Text, View } from 'react-native';
 
-import { Button } from '@/ui/Button';
+import { MenuRow } from '@/ui/MenuList';
 
 import { exportDataDeps, exportMyDataFile } from './export-data';
 
@@ -22,14 +21,11 @@ export function ExportData({ onExport = () => exportMyDataFile(exportDataDeps) }
   }
 
   return (
-    <View className="gap-2">
-      <Button
-        title="Download my data"
-        variant="ghost"
-        loading={exporting}
-        onPress={() => void run()}
-      />
-      {error ? <Text className="text-base text-danger">{error}</Text> : null}
-    </View>
+    <MenuRow
+      title="Download my data"
+      loading={exporting}
+      error={error}
+      onPress={() => void run()}
+    />
   );
 }

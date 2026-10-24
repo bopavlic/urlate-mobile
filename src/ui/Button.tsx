@@ -7,9 +7,9 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const container: Record<Variant, string> = {
   primary: 'bg-accent',
-  secondary: 'border-2 border-ink',
+  secondary: 'bg-surface',
   ghost: '',
-  danger: 'border-2 border-danger',
+  danger: 'bg-surface',
 };
 
 const label: Record<Variant, string> = {
@@ -48,7 +48,7 @@ export function Button({
       accessibilityState={{ disabled: inactive, busy: loading }}
       onPress={onPress}
       disabled={inactive}
-      className={`min-h-14 flex-row items-center justify-center gap-2 rounded-2xl px-5 active:opacity-80 ${
+      className={`min-h-14 flex-row items-center justify-center gap-2 rounded-full px-6 active:opacity-80 ${
         container[variant]
       } ${inactive ? 'opacity-50' : ''} ${className}`}
     >
@@ -57,7 +57,7 @@ export function Button({
       ) : (
         <View className="flex-row items-center gap-2">
           {icon}
-          <Text className={`text-lg font-bold ${label[variant]}`}>{title}</Text>
+          <Text className={`text-[17px] font-semibold ${label[variant]}`}>{title}</Text>
         </View>
       )}
     </Pressable>

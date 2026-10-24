@@ -4,7 +4,9 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@better-auth/expo": "^1.7.12",
-    "@expo-google-fonts/big-shoulders": "^0.4.1",
+    "@expo-google-fonts/archivo": "^0.4.2",
+    "@expo-google-fonts/archivo-black": "^0.4.1",
+    "@expo-google-fonts/space-mono": "^0.4.2",
     "@expo/ui": "~58.0.22",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-community/datetimepicker": "9.2.1",

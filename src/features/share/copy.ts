@@ -10,17 +10,22 @@ export function normalizeShareCardId(input: string): string | null {
   return UUID.test(id) ? id : null;
 }
 
-/** The yellow card: whoever owes the time, and how much. Null when everyone is square. */
-export function cardScore(card: ShareCard): { label: string; minutes: number } | null {
+/** What the ticket on the card says: who was late, who waited, and how many minutes. Null when everyone is square. */
+export function cardTicket(
+  card: ShareCard,
+): { offender: string; waiter: string; minutes: number } | null {
   if (card.kind === 'GROUP') {
     const worst = card.rows[0];
-    return worst ? { label: `${worst.name}’s tab`, minutes: worst.minutes } : null;
+    return worst
+      ? { offender: worst.name, waiter: card.groupName ?? 'The group', minutes: worst.minutes }
+      : null;
   }
+  const other = card.otherName ?? 'Them';
   switch (card.balance?.direction) {
     case 'THEY_OWE_YOU':
-      return { label: `${card.otherName}’s tab`, minutes: card.balance.minutes };
+      return { offender: other, waiter: card.sharedByName, minutes: card.balance.minutes };
     case 'YOU_OWE_THEM':
-      return { label: `${card.sharedByName}’s tab`, minutes: card.balance.minutes };
+      return { offender: card.sharedByName, waiter: other, minutes: card.balance.minutes };
     default:
       return null;
   }

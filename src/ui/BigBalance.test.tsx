@@ -16,6 +16,7 @@ describe('BigBalance', () => {
     expect(screen.queryByText('18')).toBeNull();
     expect(screen.getByText('Brother owes you 18 min')).toBeTruthy();
     expect(screen.queryByText('Enjoy it while it lasts.')).toBeNull();
+    expect(screen.getByText('Pay up in minutes, not money.')).toBeTruthy();
   });
 
   it('cheers you on when all square', async () => {

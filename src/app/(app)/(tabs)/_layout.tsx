@@ -27,7 +27,7 @@ export default function TabsLayout() {
             height: TAB_BAR_HEIGHT + insets.bottom,
             paddingTop: 6,
           },
-          // Room for the floating "+ Late" card above the tab bar.
+          // Room for the floating "Late" button above the tab bar.
           sceneStyle: { paddingBottom: 72 },
         }}
       >
@@ -55,7 +55,7 @@ export default function TabsLayout() {
           }}
         />
       </Tabs>
-      {/* One tap from anywhere: the card floats above the middle of the tab bar. */}
+      {/* One tap from anywhere: the button floats above the middle of the tab bar. */}
       <View
         pointerEvents="box-none"
         className="absolute inset-x-0 items-center"

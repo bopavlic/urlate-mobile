@@ -20,9 +20,14 @@ export function PremiumRow({
       onPress={onOpen}
       className="flex-row items-center gap-4 rounded-2xl bg-surface p-5 active:opacity-80"
     >
-      <View className="h-9 w-7 rotate-6 rounded-[4px] bg-accent" />
+      <View
+        style={{ transform: [{ rotate: '-8deg' }] }}
+        className="h-8 w-11 overflow-hidden rounded-md bg-paper"
+      >
+        <View className="h-2.5 bg-accent" />
+      </View>
       <View className="flex-1 gap-0.5">
-        <Text className="font-display-bold text-2xl text-ink">{title}</Text>
+        <Text className="font-display text-lg text-ink">{title}</Text>
         <Text className="text-base text-muted">
           {premiumStatus(entitlements) ?? 'Unlimited groups, every card look, no ads.'}
         </Text>

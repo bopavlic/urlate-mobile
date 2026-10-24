@@ -10,17 +10,17 @@ export const pairCard: ShareCard = {
   groupName: null,
   balance: { direction: 'THEY_OWE_YOU', minutes: 18 },
   rows: [],
-  style: 'PITCH',
-  cardColor: 'YELLOW',
+  style: 'CHALK',
+  cardColor: 'RED',
   createdAt: '2026-10-24T09:30:00.000Z',
 };
 
 export const groupCard: ShareCard = {
   ...pairCard,
   kind: 'GROUP',
-  headline: 'Ana owes Football 20 minutes.',
+  headline: 'Ana owes Friday lunch 20 minutes.',
   otherName: null,
-  groupName: 'Football',
+  groupName: 'Friday lunch',
   balance: null,
   rows: [
     { name: 'Ana', minutes: 20 },

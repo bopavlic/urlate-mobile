@@ -1,4 +1,4 @@
-// Draws the app icons: a referee's card with a stopwatch face, on a pitch at night.
+// Draws the app icons: a late ticket, slightly tilted, on the theme's colour.
 // One set per icon in assets/icons/icons.json. Run `node scripts/icons/generate.mjs`
 // after changing the art; it needs rsvg-convert (`brew install librsvg`). The PNGs are committed.
 
@@ -15,94 +15,90 @@ const ICONS = JSON.parse(readFileSync('assets/icons/icons.json', 'utf8'));
 const SIZE = 1024;
 const C = SIZE / 2;
 
-/** The card with a stopwatch on it, centred on (0, 0), before rotation. */
-function cardMark({ card, face }, { cutOut = false } = {}) {
-  const w = 400;
-  const h = 540;
-  const r = 140; // stopwatch face
-  const ink = cutOut ? 'black' : face;
-  // Hand at "a few minutes past": the whole joke.
-  const hand = { x: Math.sin(Math.PI / 5) * (r - 46), y: -Math.cos(Math.PI / 5) * (r - 46) };
+const W = 620;
+const H = 440;
+const BAND = 120;
+const PERFORATION = 70; // below the middle
+
+/** The ticket's outline with the two perforation notches cut out, as a mask. */
+function ticketMask(id) {
+  return `<mask id="${id}">
+    <rect x="${-W / 2}" y="${-H / 2}" width="${W}" height="${H}" rx="40" fill="white"/>
+    <circle cx="${-W / 2}" cy="${PERFORATION}" r="38" fill="black"/>
+    <circle cx="${W / 2}" cy="${PERFORATION}" r="38" fill="black"/>
+  </mask>`;
+}
+
+/** Barcode bars along the bottom: a fixed pattern so every icon matches. */
+function barcode(color) {
+  const widths = [8, 4, 12, 4, 6, 10, 4, 8, 4, 14, 6, 4, 10, 4, 8, 6, 12, 4, 6, 8, 4, 10, 4, 6];
+  let x = -W / 2 + 60;
+  return widths
+    .map((w, i) => {
+      const bar =
+        i % 2 === 0
+          ? `<rect x="${x}" y="${PERFORATION + 50}" width="${w}" height="70" fill="${color}"/>`
+          : '';
+      x += w + 6;
+      return bar;
+    })
+    .join('');
+}
+
+/** The ticket centred on (0, 0) before rotation. Monochrome draws it in one colour. */
+function ticket({ ticket, band }, id, mono = false) {
+  const paper = mono ? 'white' : ticket;
+  const ink = mono ? 'black' : band;
   return `
-    <rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="48" fill="${cutOut ? 'white' : card}"/>
-    ${cutOut ? '' : `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="48" fill="url(#sheen)"/>`}
-    <g transform="translate(0 28)">
-      <rect x="-28" y="${-r - 52}" width="56" height="46" rx="10" fill="${ink}"/>
-      <circle r="${r}" fill="none" stroke="${ink}" stroke-width="30"/>
-      <line x1="0" y1="0" x2="${hand.x}" y2="${hand.y}" stroke="${ink}" stroke-width="30" stroke-linecap="round"/>
-      <circle r="22" fill="${ink}"/>
+    ${ticketMask(id)}
+    <g mask="url(#${id})">
+      <rect x="${-W / 2}" y="${-H / 2}" width="${W}" height="${H}" fill="${paper}"/>
+      <rect x="${-W / 2}" y="${-H / 2}" width="${W}" height="${BAND}" fill="${mono ? paper : ink}"/>
+      <rect x="${-W / 2 + 60}" y="${-H / 2 + BAND + 46}" width="240" height="26" rx="13" fill="${ink}" opacity="${mono ? 1 : 0.18}"/>
+      <rect x="${-W / 2 + 60}" y="${-H / 2 + BAND + 96}" width="160" height="26" rx="13" fill="${ink}" opacity="${mono ? 1 : 0.18}"/>
+      <line x1="${-W / 2 + 50}" y1="${PERFORATION}" x2="${W / 2 - 50}" y2="${PERFORATION}" stroke="${ink}" stroke-width="10" stroke-dasharray="22 16" opacity="${mono ? 1 : 0.3}"/>
+      ${barcode(ink)}
     </g>`;
 }
 
-const defs = `
+function svg(body, background) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">
   <defs>
-    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
-      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/>
-    </linearGradient>
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="28"/>
-      <feOffset dx="0" dy="26" result="blur"/>
-      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="22"/>
+      <feOffset dx="0" dy="22"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
       <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-  </defs>`;
-
-/** Mowing stripes, the halfway line and the centre circle. */
-function pitch() {
-  const stripes = Array.from({ length: 8 }, (_, i) =>
-    i % 2 ? `<rect x="${i * 128}" y="0" width="128" height="${SIZE}" fill="#FFFFFF" fill-opacity="0.035"/>` : '',
-  ).join('');
-  return `${stripes}
-    <g fill="none" stroke="#FFFFFF" stroke-opacity="0.13" stroke-width="12">
-      <line x1="0" y1="${C}" x2="${SIZE}" y2="${C}"/>
-      <circle cx="${C}" cy="${C}" r="330"/>
-    </g>`;
+  </defs>
+  ${background ? `<rect width="${SIZE}" height="${SIZE}" fill="${background}"/>` : ''}
+  ${body}
+</svg>`;
 }
+
+const placed = (scale, inner) =>
+  `<g transform="translate(${C} ${C + 10}) rotate(-8) scale(${scale})" filter="url(#shadow)">${inner}</g>`;
 
 /** iOS (and the store listing): full square, no transparency. */
-function fullIcon(icon) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">
-  ${defs}
-  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="${icon.top}"/><stop offset="1" stop-color="${icon.bottom}"/>
-  </linearGradient>
-  <rect width="${SIZE}" height="${SIZE}" fill="url(#bg)"/>
-  ${pitch()}
-  <g transform="translate(${C} ${C + 10}) rotate(-10)" filter="url(#shadow)">${cardMark(icon)}</g>
-</svg>`;
-}
+const fullIcon = (icon) => svg(placed(1.14, ticket(icon, 't')), icon.background);
 
-/** Android adaptive foreground: the mark inside the 66% safe zone, on transparent. */
-function foreground(icon) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">
-  ${defs}
-  <g transform="translate(${C} ${C + 8}) rotate(-10) scale(0.8)" filter="url(#shadow)">${cardMark(icon)}</g>
-</svg>`;
-}
+/** Android adaptive foreground: the ticket inside the 66% safe zone, on transparent. */
+const foreground = (icon) => svg(placed(0.86, ticket(icon, 't')));
 
-/** Android themed (monochrome) icon: the card's silhouette with the stopwatch cut out. */
-function monochrome(icon) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">
-  <mask id="m"><g transform="translate(${C} ${C + 8}) rotate(-10) scale(0.8)">${cardMark(icon, { cutOut: true })}</g></mask>
-  <rect width="${SIZE}" height="${SIZE}" fill="#FFFFFF" mask="url(#m)"/>
-</svg>`;
-}
+/** Android themed (monochrome) icon: the ticket's silhouette with its details cut out. */
+const monochrome = (icon) =>
+  svg(`<mask id="m"><g transform="translate(${C} ${C}) rotate(-8) scale(0.86)">${ticket(icon, 'mt', true)}</g></mask>
+  <rect width="${SIZE}" height="${SIZE}" fill="#FFFFFF" mask="url(#m)"/>`);
 
-/** Splash: the mark alone; the splash background colour comes from app.config.ts. */
-function splash(icon) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">
-  ${defs}
-  <g transform="translate(${C} ${C}) rotate(-10) scale(0.9)">${cardMark(icon)}</g>
-</svg>`;
-}
+/** Splash: the ticket alone; the splash background colour comes from app.config.ts. */
+const splash = (icon) => svg(placed(1.2, ticket(icon, 't')));
 
-function render(svg, file, size = SIZE) {
+function render(source, file, size = SIZE) {
   const dir = join(tmpdir(), 'urlate-icons');
   mkdirSync(dir, { recursive: true });
-  const source = join(dir, 'icon.svg');
-  writeFileSync(source, svg);
-  execFileSync('rsvg-convert', ['-w', String(size), '-h', String(size), '-o', file, source]);
+  const path = join(dir, 'icon.svg');
+  writeFileSync(path, source);
+  execFileSync('rsvg-convert', ['-w', String(size), '-h', String(size), '-o', file, path]);
 }
 
 mkdirSync(OUT, { recursive: true });

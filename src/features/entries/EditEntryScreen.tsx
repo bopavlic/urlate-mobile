@@ -59,7 +59,7 @@ export function EditEntryScreen({
           label="Note (optional)"
           value={state.note}
           onChangeText={(note) => setState((s) => ({ ...s, note }))}
-          placeholder="football"
+          placeholder="dinner"
           maxLength={140}
         />
         <WhenPicker
@@ -69,7 +69,7 @@ export function EditEntryScreen({
           }
         />
         <Text className="text-base text-muted">
-          Everyone in this tally is told about the change, and the old version stays in its history.
+          Everyone involved is told about the change, and the old version stays in its history.
         </Text>
       </ScrollView>
       <View className="gap-2 border-t border-line bg-paper px-6 pb-2 pt-3">

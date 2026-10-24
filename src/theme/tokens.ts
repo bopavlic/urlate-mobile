@@ -1,8 +1,8 @@
 import { vars } from 'nativewind';
 
-// The Ur Late palette: a referee's yellow card on a football pitch at night. Being late
-// earns a card, cheekily, not a punishment. Tailwind classes (bg-paper, text-ink,
-// bg-accent, …) read these through CSS variables, so this is the one place to change the look.
+// The Ur Late palette: being late gets you a ticket, like a parking fine. A coloured
+// ticket on a tinted page. Tailwind classes (bg-paper, text-ink, bg-accent, …) read these
+// through CSS variables, so this is the one place to change the look.
 // Classic is everyone's; the other themes come with Premium. Each matches an app icon
 // (assets/icons/icons.json), in the same order.
 
@@ -18,122 +18,147 @@ type Colors = {
 };
 
 export const themes = {
+  // A tomato-red late ticket on cool grey. Danger goes deep red so it doesn't read as the accent.
   classic: {
     label: 'Classic',
     light: {
-      paper: '#FFFFFF',
-      surface: '#F2F5F2',
-      ink: '#0B1F16',
-      muted: '#5E6E66',
-      line: '#E1E7E2',
-      accent: '#FFCC1A',
-      onAccent: '#0B1F16',
-      danger: '#C62E2E',
+      paper: '#EEF0F4',
+      surface: '#FFFFFF',
+      ink: '#16182B',
+      muted: '#5C6070',
+      line: '#DDE0E8',
+      accent: '#D63A1F',
+      onAccent: '#FFFFFF',
+      danger: '#A61B1B',
     },
     dark: {
-      paper: '#08140F',
-      surface: '#10211A',
-      ink: '#EEF3EF',
-      muted: '#8FA39A',
-      line: '#1E3329',
-      accent: '#FFCC1A',
-      onAccent: '#0B1F16',
-      danger: '#FF6B61',
+      paper: '#111318',
+      surface: '#1B1E26',
+      ink: '#F1F2F5',
+      muted: '#9A9EAD',
+      line: '#2A2E39',
+      accent: '#FF6A4D',
+      onAccent: '#16182B',
+      danger: '#FF8A80',
     },
   },
-  // Same pitch, a red card. Danger moves to orange so it doesn't read as the accent.
-  'red-card': {
-    label: 'Red card',
+  // A pink concert ticket on lavender.
+  concert: {
+    label: 'Concert',
     light: {
-      paper: '#FFFFFF',
-      surface: '#F2F5F2',
-      ink: '#0B1F16',
-      muted: '#5E6E66',
-      line: '#E1E7E2',
-      accent: '#D42A1F',
+      paper: '#F3F0FD',
+      surface: '#FFFFFF',
+      ink: '#1C1736',
+      muted: '#635C82',
+      line: '#E2DCF3',
+      accent: '#DB2253',
       onAccent: '#FFFFFF',
       danger: '#B54708',
     },
     dark: {
-      paper: '#08140F',
-      surface: '#10211A',
-      ink: '#EEF3EF',
-      muted: '#8FA39A',
-      line: '#1E3329',
-      accent: '#F2483D',
-      onAccent: '#0B0505',
-      danger: '#FF9F5A',
+      paper: '#13101E',
+      surface: '#1E1930',
+      ink: '#F3F0FD',
+      muted: '#A39CC0',
+      line: '#2E2745',
+      accent: '#FF5C86',
+      onAccent: '#1C1736',
+      danger: '#FF9A5C',
     },
   },
-  // The away strip: navy and sky blue.
-  'away-kit': {
-    label: 'Away kit',
+  // A blue overdue slip from the library.
+  library: {
+    label: 'Library',
     light: {
-      paper: '#FFFFFF',
-      surface: '#EEF3FA',
-      ink: '#0A1630',
-      muted: '#56657F',
-      line: '#DCE4F0',
-      accent: '#4DA3FF',
-      onAccent: '#0A1630',
+      paper: '#EEF2FD',
+      surface: '#FFFFFF',
+      ink: '#111A3A',
+      muted: '#56607F',
+      line: '#DCE3F5',
+      accent: '#2B5FEA',
+      onAccent: '#FFFFFF',
       danger: '#C62E2E',
     },
     dark: {
-      paper: '#060D1E',
-      surface: '#0E1932',
-      ink: '#EEF3FB',
-      muted: '#8E9CB8',
-      line: '#1B2946',
-      accent: '#4DA3FF',
-      onAccent: '#0A1630',
+      paper: '#0B1022',
+      surface: '#141B33',
+      ink: '#EEF2FD',
+      muted: '#949DBB',
+      line: '#222C4A',
+      accent: '#6E95FF',
+      onAccent: '#0B1022',
       danger: '#FF6B61',
     },
   },
-  // The loud third kit: pink on aubergine.
-  'third-kit': {
-    label: 'Third kit',
+  // An amber parking ticket.
+  parking: {
+    label: 'Parking',
     light: {
-      paper: '#FFFFFF',
-      surface: '#F8EFF4',
-      ink: '#24101C',
-      muted: '#6F5966',
-      line: '#EEDFE7',
-      accent: '#FF5FA2',
-      onAccent: '#24101C',
+      paper: '#FAF3E3',
+      surface: '#FFFFFF',
+      ink: '#2A1E05',
+      muted: '#6E5F44',
+      line: '#EFE3C8',
+      accent: '#FFB020',
+      onAccent: '#2A1E05',
       danger: '#C62E2E',
     },
     dark: {
-      paper: '#150910',
-      surface: '#22101B',
-      ink: '#F8EEF4',
-      muted: '#AB929F',
-      line: '#36202D',
-      accent: '#FF5FA2',
-      onAccent: '#24101C',
-      danger: '#FF7A6B',
+      paper: '#16110A',
+      surface: '#231B10',
+      ink: '#FAF3E3',
+      muted: '#B3A385',
+      line: '#3A2F1D',
+      accent: '#FFC24D',
+      onAccent: '#2A1E05',
+      danger: '#FF6B61',
     },
   },
-  // Evening kick-off under the lights: graphite and orange.
-  floodlights: {
-    label: 'Floodlights',
+  // A violet cinema ticket, like the velvet seats.
+  cinema: {
+    label: 'Cinema',
     light: {
-      paper: '#FFFFFF',
-      surface: '#F3F3F1',
-      ink: '#18181B',
-      muted: '#63636B',
-      line: '#E4E4E7',
-      accent: '#FF8A1F',
-      onAccent: '#18181B',
+      paper: '#F3EFFD',
+      surface: '#FFFFFF',
+      ink: '#1E1433',
+      muted: '#645A80',
+      line: '#E4DCF5',
+      accent: '#7C3AED',
+      onAccent: '#FFFFFF',
       danger: '#C62E2E',
     },
     dark: {
-      paper: '#0D0D0F',
-      surface: '#19191C',
-      ink: '#F2F2F3',
-      muted: '#9C9CA4',
-      line: '#2A2A2E',
-      accent: '#FF8A1F',
-      onAccent: '#18181B',
+      paper: '#120D1E',
+      surface: '#1D162E',
+      ink: '#F3EFFD',
+      muted: '#A69BC2',
+      line: '#2E2545',
+      accent: '#A78BFA',
+      onAccent: '#1E1433',
+      danger: '#FF6B61',
+    },
+  },
+  // A green raffle ticket.
+  raffle: {
+    label: 'Raffle',
+    light: {
+      paper: '#EAF7EF',
+      surface: '#FFFFFF',
+      ink: '#0E2418',
+      muted: '#4F6B5B',
+      line: '#D3EBDC',
+      accent: '#12B76A',
+      onAccent: '#0E2418',
+      danger: '#C62E2E',
+    },
+    dark: {
+      paper: '#08150E',
+      surface: '#102218',
+      ink: '#EAF7EF',
+      muted: '#8FB09C',
+      line: '#1D3527',
+      accent: '#32D583',
+      onAccent: '#0E2418',
       danger: '#FF6B61',
     },
   },
@@ -147,7 +172,7 @@ export function isThemeId(value: unknown): value is ThemeId {
   return typeof value === 'string' && value in themes;
 }
 
-/** The classic colours, for the few places outside the theme (e.g. the yellow LATE button). */
+/** The classic colours, for the few places outside the theme (e.g. share-card looks). */
 export const palette = { light: themes.classic.light, dark: themes.classic.dark };
 
 export type Scheme = 'light' | 'dark';
@@ -197,19 +222,22 @@ export function themeVars(scheme: Scheme, theme: ThemeId = FREE_THEME) {
   return vars(Object.fromEntries(entries));
 }
 
-/** Big Shoulders: condensed scoreboard type for numbers and titles. Body text uses the system font. */
+/** Archivo Black for titles and numbers, Space Mono for the ticket's printed fields. */
 export const fonts = {
-  display: 'BigShoulders_900Black',
-  displayBold: 'BigShoulders_800ExtraBold',
-  displaySemi: 'BigShoulders_600SemiBold',
+  display: 'ArchivoBlack_400Regular',
+  displayBold: 'Archivo_800ExtraBold',
+  displaySemi: 'Archivo_700Bold',
+  mono: 'SpaceMono_400Regular',
+  monoBold: 'SpaceMono_700Bold',
 } as const;
 
 export const type = {
-  /** The balance numeral: huge scoreboard digits that don't jump as they change. */
+  /** The minutes on the ticket: big digits that don't jump as they change. */
   balance: {
     fontFamily: fonts.display,
-    fontSize: 120,
-    lineHeight: 120,
+    fontSize: 76,
+    lineHeight: 80,
+    letterSpacing: -2,
     fontVariant: ['tabular-nums' as const],
   },
 };

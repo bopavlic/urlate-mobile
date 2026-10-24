@@ -67,14 +67,25 @@ export function HistoryItem({
   const needsMe = !!entry && (entry.actions.confirm || entry.actions.reject);
   const late = entry ? nameOf(members, entry.lateMemberId) : null;
   const waited = entry ? waitedLine(entry.waiterMemberIds, entry.lateMemberId, members) : null;
-  // A yellow tab for entries against them, ink for my own, none for settlements.
+  // A stub with the minutes: the accent for entries against them, ink for my own, grey for settlements.
   const marker = item.type === 'settlement' ? 'bg-line' : late?.isMe ? 'bg-ink' : 'bg-accent';
+  const markerText =
+    item.type === 'settlement' ? 'text-muted' : late?.isMe ? 'text-paper' : 'text-on-accent';
+  const stub =
+    item.type === 'entry'
+      ? `${late?.isMe ? '−' : '+'}${item.entry.minutes}`
+      : item.settlement.kind === 'RESET'
+        ? '0'
+        : `−${item.settlement.minutes}`;
 
   const row = (
     <View className="flex-row gap-4 py-4">
       <View
-        className={`mt-1 h-6 w-4 -rotate-6 rounded-sm ${marker} ${counts ? '' : 'opacity-40'}`}
-      />
+        importantForAccessibility="no-hide-descendants"
+        className={`mt-0.5 h-7 min-w-10 items-center justify-center rounded-md px-1.5 ${marker} ${counts ? '' : 'opacity-40'}`}
+      >
+        <Text className={`font-mono-bold text-xs ${markerText}`}>{stub}</Text>
+      </View>
       <View className={`flex-1 gap-1 ${counts ? '' : 'opacity-60'}`}>
         <Text className={`text-lg font-semibold text-ink ${struck ? 'line-through' : ''}`}>
           {describe(item, members)}

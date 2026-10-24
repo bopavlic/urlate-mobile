@@ -5,7 +5,7 @@ import { useGetShareCard } from '@/api/generated/endpoints/share-cards/share-car
 import { normalizeShareCardId } from '@/features/share/copy';
 import { SharedCardScreen } from '@/features/share/SharedCardScreen';
 
-const GONE = 'This card has left the pitch. The link may be mistyped, or the card was removed.';
+const GONE = 'This card isn’t here any more. The link may be mistyped, or the card was taken down.';
 
 /** urlate.app/s/{id} and urlate://s/{id} land here, signed in or not. */
 export default function SharedCardRoute() {

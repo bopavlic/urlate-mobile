@@ -11,7 +11,7 @@ jest.mock('expo-router', () => ({ router: { back: jest.fn() } }));
 jest.mock('./icons', () => ({
   ICONS: [
     { id: 'classic', label: 'Classic', preview: 1 },
-    { id: 'red-card', label: 'Red card', preview: 2 },
+    { id: 'concert', label: 'Concert', preview: 2 },
   ],
 }));
 
@@ -39,10 +39,10 @@ it('lets Premium pick any theme and icon', async () => {
   expect(
     screen.getByRole('radio', { name: 'Classic theme' }).props.accessibilityState,
   ).toMatchObject({ selected: true });
-  await fireEvent.press(screen.getByRole('radio', { name: 'Away kit theme' }));
-  expect(onThemeChange).toHaveBeenCalledWith('away-kit');
-  await fireEvent.press(screen.getByRole('radio', { name: 'Red card icon' }));
-  expect(onIconChange).toHaveBeenCalledWith('red-card');
+  await fireEvent.press(screen.getByRole('radio', { name: 'Library theme' }));
+  expect(onThemeChange).toHaveBeenCalledWith('library');
+  await fireEvent.press(screen.getByRole('radio', { name: 'Concert icon' }));
+  expect(onIconChange).toHaveBeenCalledWith('concert');
   expect(screen.queryByRole('button', { name: 'Get Premium' })).toBeNull();
 });
 
@@ -57,7 +57,7 @@ it('keeps the others for Premium, and offers it instead', async () => {
       onGetPremium={onGetPremium}
     />,
   );
-  await fireEvent.press(screen.getByRole('radio', { name: 'Floodlights theme, Premium' }));
+  await fireEvent.press(screen.getByRole('radio', { name: 'Raffle theme, Premium' }));
   expect(onThemeChange).not.toHaveBeenCalled();
   expect(onGetPremium).toHaveBeenCalled();
   await fireEvent.press(screen.getByRole('radio', { name: 'Classic theme' }));

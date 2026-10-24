@@ -1,22 +1,23 @@
-import { cardScore, normalizeShareCardId, shareLinkMessage } from './copy';
+import { cardTicket, normalizeShareCardId, shareLinkMessage } from './copy';
 import { groupCard, pairCard } from './fixtures';
 
-describe('cardScore', () => {
-  it('puts the minutes on the tab of whoever owes them', () => {
-    expect(cardScore(pairCard)).toEqual({ label: 'Brother’s tab', minutes: 18 });
-    expect(cardScore({ ...pairCard, balance: { direction: 'YOU_OWE_THEM', minutes: 7 } })).toEqual({
-      label: 'Borna’s tab',
-      minutes: 7,
-    });
+describe('cardTicket', () => {
+  it('issues the ticket to whoever owes the minutes', () => {
+    expect(cardTicket(pairCard)).toEqual({ offender: 'Brother', waiter: 'Borna', minutes: 18 });
+    expect(cardTicket({ ...pairCard, balance: { direction: 'YOU_OWE_THEM', minutes: 7 } })).toEqual(
+      { offender: 'Borna', waiter: 'Brother', minutes: 7 },
+    );
   });
 
-  it('puts a group’s worst offender on the card', () => {
-    expect(cardScore(groupCard)).toEqual({ label: 'Ana’s tab', minutes: 20 });
+  it('issues a group’s ticket to its worst offender', () => {
+    expect(cardTicket(groupCard)).toEqual({ offender: 'Ana', waiter: 'Friday lunch', minutes: 20 });
   });
 
-  it('has no card when everyone is square', () => {
-    expect(cardScore({ ...pairCard, balance: { direction: 'ALL_SQUARE', minutes: 0 } })).toBeNull();
-    expect(cardScore({ ...groupCard, rows: [] })).toBeNull();
+  it('has no ticket when everyone is square', () => {
+    expect(
+      cardTicket({ ...pairCard, balance: { direction: 'ALL_SQUARE', minutes: 0 } }),
+    ).toBeNull();
+    expect(cardTicket({ ...groupCard, rows: [] })).toBeNull();
   });
 });
 

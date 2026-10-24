@@ -16,13 +16,13 @@ beforeEach(() => {
   jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
 });
 
-it('asks before deleting, and explains what happens to shared tallies', async () => {
+it('asks before deleting, and explains what happens where others are involved', async () => {
   const onDelete = jest.fn(async () => undefined);
   await render(<DeleteAccount onDelete={onDelete} />);
   await fireEvent.press(screen.getByRole('button', { name: 'Delete account' }));
   expect(Alert.alert).toHaveBeenCalledWith(
     'Delete your account?',
-    expect.stringMatching(/shared with people who have an account/),
+    expect.stringMatching(/Where people with an account are involved/),
     expect.any(Array),
   );
   expect(onDelete).not.toHaveBeenCalled();

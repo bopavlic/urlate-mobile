@@ -22,7 +22,7 @@ describe('SharedCardScreen', () => {
       />,
     );
     expect(screen.getByText('Brother owes me 18 minutes.')).toBeTruthy();
-    expect(screen.getByText('Shared by Borna. The score may have moved since.')).toBeTruthy();
+    expect(screen.getByText('Shared by Borna. The minutes may have moved since.')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Open Ur Late' }));
     expect(onOpenApp).toHaveBeenCalled();
   });
@@ -31,12 +31,12 @@ describe('SharedCardScreen', () => {
     await render(
       <SharedCardScreen
         card={undefined}
-        errorMessage="This card has left the pitch."
+        errorMessage="This card isn’t here any more."
         onBack={jest.fn()}
         onOpenApp={jest.fn()}
       />,
     );
-    expect(screen.getByText('This card has left the pitch.')).toBeTruthy();
+    expect(screen.getByText('This card isn’t here any more.')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Open Ur Late' })).toBeTruthy();
   });
 });

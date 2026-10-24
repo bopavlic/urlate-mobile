@@ -70,7 +70,7 @@ export default function Onboarding() {
           error={error.username}
         />
       </View>
-      <Button title="Start keeping score" onPress={save} loading={updateMe.isPending} />
+      <Button title="Start tracking" onPress={save} loading={updateMe.isPending} />
     </Screen>
   );
 }

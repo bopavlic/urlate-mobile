@@ -15,10 +15,11 @@ import { createIconSwitcher, type IconId } from './switcher';
 
 const PREVIEWS: Record<IconId, ImageSourcePropType> = {
   classic: require('../../../assets/icons/classic-preview.png'),
-  'red-card': require('../../../assets/icons/red-card-preview.png'),
-  'away-kit': require('../../../assets/icons/away-kit-preview.png'),
-  'third-kit': require('../../../assets/icons/third-kit-preview.png'),
-  floodlights: require('../../../assets/icons/floodlights-preview.png'),
+  concert: require('../../../assets/icons/concert-preview.png'),
+  library: require('../../../assets/icons/library-preview.png'),
+  parking: require('../../../assets/icons/parking-preview.png'),
+  cinema: require('../../../assets/icons/cinema-preview.png'),
+  raffle: require('../../../assets/icons/raffle-preview.png'),
 };
 
 export const ICONS = iconList.map((icon) => ({

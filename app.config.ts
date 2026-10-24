@@ -4,8 +4,8 @@ import icons from './assets/icons/icons.json';
 
 // The app icon and the Premium alternates (drawn by scripts/icons/generate.mjs).
 const [classicIcon] = icons;
-const PITCH_NIGHT = classicIcon!.bottom;
-/** Native names are PascalCase: "red-card" → "RedCard" (see src/features/appearance/icons.ts). */
+const SPLASH_BACKGROUND = classicIcon!.background;
+/** Native names are PascalCase: "parking" → "Parking" (see src/features/appearance/icons.ts). */
 const nativeIconName = (id: string) =>
   id.replace(/(^|-)(\w)/g, (_match, _dash, letter: string) => letter.toUpperCase());
 
@@ -42,7 +42,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: 'app.urlate',
     adaptiveIcon: {
-      backgroundColor: PITCH_NIGHT,
+      backgroundColor: SPLASH_BACKGROUND,
       foregroundImage: './assets/icons/classic-foreground.png',
       monochromeImage: './assets/icons/monochrome.png',
     },
@@ -67,7 +67,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     'expo-apple-authentication',
     // Push notifications (activity). The Android icon tint matches the accent.
-    ['expo-notifications', { color: '#FFCC1A', icon: './assets/icons/monochrome.png' }],
+    ['expo-notifications', { color: '#D63A1F', icon: './assets/icons/monochrome.png' }],
     [
       'expo-image-picker',
       {
@@ -79,7 +79,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: PITCH_NIGHT,
+        backgroundColor: SPLASH_BACKGROUND,
         image: './assets/icons/splash.png',
         imageWidth: 120,
       },
@@ -92,7 +92,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         ios: `./assets/icons/${icon.id}.png`,
         android: {
           foregroundImage: `./assets/icons/${icon.id}-foreground.png`,
-          backgroundColor: icon.bottom,
+          backgroundColor: icon.background,
         },
       })),
     ],

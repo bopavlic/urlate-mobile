@@ -57,7 +57,7 @@ export function SharedCards({
 
   return (
     <View className="gap-3">
-      <Text className="font-display-bold text-2xl text-ink">Links that work</Text>
+      <Text className="font-display text-lg text-ink">Links that work</Text>
       {error ? <Text className="text-base text-danger">{error}</Text> : null}
       {cards.map((card, index) => (
         <View key={card.id}>

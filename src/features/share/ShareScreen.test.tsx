@@ -17,7 +17,7 @@ function setup(overrides: Partial<Parameters<typeof ShareScreen>[0]> = {}) {
     onRetry: jest.fn(),
     onShareImage: jest.fn().mockResolvedValue(undefined),
     onShareLink: jest.fn(),
-    look: { style: 'PITCH' as const, cardColor: 'YELLOW' as const },
+    look: { style: 'CHALK' as const, cardColor: 'RED' as const },
     onLookChange: jest.fn(),
     lookLocked: false,
     onGetPremium: jest.fn(),
@@ -39,7 +39,7 @@ describe('ShareScreen', () => {
     const { view } = setup();
     await view;
     expect(screen.getByText('Brother owes me 18 minutes.')).toBeTruthy();
-    expect(screen.getByText('Brother’s tab')).toBeTruthy();
+    expect(screen.getByText('BROTHER')).toBeTruthy();
     expect(screen.getByText('18')).toBeTruthy();
     expect(screen.getByText('urlate.app')).toBeTruthy();
   });
@@ -47,7 +47,7 @@ describe('ShareScreen', () => {
   it('ranks who owes a group, most first', async () => {
     const { view } = setup({ card: groupCard });
     await view;
-    expect(screen.getByText('Ana owes Football 20 minutes.')).toBeTruthy();
+    expect(screen.getByText('Ana owes Friday lunch 20 minutes.')).toBeTruthy();
     expect(screen.getByText('Ivo')).toBeTruthy();
     expect(screen.getByText('5 min')).toBeTruthy();
   });
@@ -83,15 +83,15 @@ describe('ShareScreen', () => {
   it('picks a background and a card colour', async () => {
     const { props, view } = setup();
     await view;
-    await fireEvent.press(screen.getByRole('radio', { name: 'Chalk' }));
-    expect(props.onLookChange).toHaveBeenCalledWith({ style: 'CHALK', cardColor: 'YELLOW' });
-    await fireEvent.press(screen.getByRole('radio', { name: 'Red card' }));
+    await fireEvent.press(screen.getByRole('radio', { name: 'Night' }));
     expect(props.onLookChange).toHaveBeenCalledWith({ style: 'PITCH', cardColor: 'RED' });
+    await fireEvent.press(screen.getByRole('radio', { name: 'Pink' }));
+    expect(props.onLookChange).toHaveBeenCalledWith({ style: 'CHALK', cardColor: 'PINK' });
   });
 
   it('offers Premium or an ad instead of sharing a locked look', async () => {
     const { props, view } = setup({
-      look: { style: 'CHALK', cardColor: 'RED' },
+      look: { style: 'PITCH', cardColor: 'BLUE' },
       lookLocked: true,
     });
     await view;
@@ -104,7 +104,7 @@ describe('ShareScreen', () => {
   });
 
   it('waits for the card in the new look before sharing it', async () => {
-    const { view } = setup({ look: { style: 'CHALK', cardColor: 'RED' } });
+    const { view } = setup({ look: { style: 'PITCH', cardColor: 'BLUE' } });
     await view;
     expect(screen.getByRole('button', { name: 'Share image' })).toBeDisabled();
   });

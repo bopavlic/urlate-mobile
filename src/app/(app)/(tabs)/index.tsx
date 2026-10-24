@@ -5,6 +5,7 @@ import { LedgerRow } from '@/features/ledgers/LedgerRow';
 import { useLedgers } from '@/features/ledgers/queries';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
+import { Ticket } from '@/ui/Ticket';
 import { Title } from '@/ui/Title';
 
 /** Someone who installed from an invite page types the code shown there. */
@@ -24,9 +25,9 @@ export default function Home() {
           accessibilityRole="button"
           accessibilityLabel="Add someone"
           onPress={() => router.push('/ledgers/new')}
-          className="h-11 w-11 items-center justify-center rounded-full border-2 border-ink active:opacity-70"
+          className="h-11 w-11 items-center justify-center rounded-full bg-surface active:opacity-70"
         >
-          <Text className="font-display text-3xl leading-8 text-ink">+</Text>
+          <Text className="font-display text-2xl leading-7 text-ink">+</Text>
         </Pressable>
       </View>
 
@@ -59,7 +60,16 @@ export default function Home() {
           }
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center gap-6 pb-24">
-              <Text className="text-center font-display-bold text-3xl text-ink">
+              <Ticket
+                tone="clear"
+                minutes={0}
+                offender="NOBODY YET"
+                waiter="NOBODY YET"
+                scale={0.7}
+                tilt={-3}
+                style={{ width: 250 }}
+              />
+              <Text className="text-center font-display text-xl text-ink">
                 No one&apos;s late yet. Give it time.
               </Text>
               <Button title="Add someone" onPress={() => router.push('/ledgers/new')} />

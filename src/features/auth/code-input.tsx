@@ -35,11 +35,11 @@ export function CodeInput({
         return (
           <View
             key={i}
-            className={`h-16 flex-1 items-center justify-center rounded-xl border-2 ${
-              active ? 'border-ink' : filled ? 'border-line bg-surface' : 'border-line'
+            className={`h-16 flex-1 items-center justify-center rounded-xl border-[1.5px] bg-surface ${
+              active ? 'border-accent' : filled ? 'border-line' : 'border-surface'
             }`}
           >
-            <Text className="font-display text-4xl text-ink">{code[i] ?? ''}</Text>
+            <Text className="font-display text-3xl text-ink">{code[i] ?? ''}</Text>
           </View>
         );
       })}

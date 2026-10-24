@@ -24,7 +24,7 @@ export default function ShareRoute() {
   const ad = useWatchAd('SHARE_STYLES');
   const lookLocked = !isFreeLook(look) && !entitlements.data?.features.shareStyles;
 
-  // POST as a query: the API hands back the same card while the score and look are unchanged,
+  // POST as a query: the API hands back the same card while the minutes and look are unchanged,
   // and a fresh one after either moved. The last card stays on screen while the next loads.
   const card = useQuery({
     queryKey: ['share-card', id, look.style, look.cardColor],

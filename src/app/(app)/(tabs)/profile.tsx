@@ -29,6 +29,7 @@ import { queryClient } from '@/providers/query';
 import { Avatar } from '@/ui/Avatar';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
+import { MenuList, MenuRow } from '@/ui/MenuList';
 import { Title } from '@/ui/Title';
 
 export default function Profile() {
@@ -92,7 +93,7 @@ export default function Profile() {
           ) : null}
         </Pressable>
         <View className="flex-1 gap-1">
-          <Text className="font-display-bold text-3xl text-ink" numberOfLines={1}>
+          <Text className="font-display text-xl text-ink" numberOfLines={1}>
             {me.data.displayName}
           </Text>
           <Text className="text-base text-muted" numberOfLines={1}>
@@ -134,26 +135,26 @@ export default function Profile() {
         }}
       />
 
-      {adPrivacy.data ? (
-        <Button
-          title="Ad privacy choices"
-          variant="ghost"
-          onPress={() => void showPrivacyChoices().catch(() => undefined)}
+      <MenuList>
+        {adPrivacy.data ? (
+          <MenuRow
+            title="Ad privacy choices"
+            onPress={() => void showPrivacyChoices().catch(() => undefined)}
+          />
+        ) : null}
+        <ExportData />
+        <MenuRow title="Sign out" onPress={() => void signOut()} />
+        {/* The server ends every session; signing out locally takes the app back to sign-in. */}
+        <DeleteAccount
+          subscribedIn={
+            entitlements.data?.premium ? storeName(entitlements.data.premiumStore) : null
+          }
+          onDelete={async () => {
+            await deleteMe();
+            await signOut();
+          }}
         />
-      ) : null}
-
-      <ExportData />
-
-      <Button title="Sign out" variant="ghost" onPress={() => void signOut()} />
-
-      {/* The server ends every session; signing out locally takes the app back to sign-in. */}
-      <DeleteAccount
-        subscribedIn={entitlements.data?.premium ? storeName(entitlements.data.premiumStore) : null}
-        onDelete={async () => {
-          await deleteMe();
-          await signOut();
-        }}
-      />
+      </MenuList>
     </Screen>
   );
 }

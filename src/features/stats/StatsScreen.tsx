@@ -33,7 +33,7 @@ function People({ title, people }: { title: string; people: FullStats['keepsYouW
   if (people.length === 0) return null;
   return (
     <View className="gap-1">
-      <Text className="font-display-bold text-2xl text-ink">{title}</Text>
+      <Text className="font-display text-lg text-ink">{title}</Text>
       {people.map((person, index) => (
         <View key={`${person.name}-${index}`}>
           {index > 0 ? <View className="h-px bg-line" /> : null}
@@ -52,12 +52,12 @@ function FullStatsView({ full }: { full: FullStats }) {
     <View className="gap-8">
       <View>
         {full.worstWeekday ? (
-          <Text className="font-display-bold text-2xl text-ink">
+          <Text className="font-display text-lg text-ink">
             Most often late on {weekdayText(full.worstWeekday.weekday)} (
             {timesText(full.worstWeekday.lateCount)})
           </Text>
         ) : (
-          <Text className="font-display-bold text-2xl text-ink">Never late. Keep it that way.</Text>
+          <Text className="font-display text-lg text-ink">Never late. Keep it that way.</Text>
         )}
         {full.averageLateMinutes !== null ? (
           <Fact
@@ -80,7 +80,7 @@ function FullStatsView({ full }: { full: FullStats }) {
   );
 }
 
-/** Your lateness across every tally: totals for everyone, the rest with Premium or an ad. */
+/** Your lateness across everyone you keep track of: totals for everyone, the rest with Premium or an ad. */
 export function StatsScreen({
   stats,
   loading,
@@ -120,7 +120,7 @@ export function StatsScreen({
               <FullStatsView full={stats.full} />
             ) : (
               <View className="gap-3 rounded-2xl bg-surface p-5">
-                <Text className="font-display-bold text-2xl text-ink">There’s more to know.</Text>
+                <Text className="font-display text-lg text-ink">There’s more to know.</Text>
                 <Text className="text-base text-muted">
                   Your averages, worst weekday, on-time streaks and who keeps you waiting come with
                   Premium.

@@ -2,7 +2,15 @@ import { randomUUID } from 'expo-crypto';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useReducer, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  AccessibilityInfo,
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 
 import { useCreateEntry } from '@/api/generated/endpoints/entries/entries';
 import { useGetLedger } from '@/api/generated/endpoints/ledgers/ledgers';
@@ -17,6 +25,7 @@ import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { ScreenHeader } from '@/ui/ScreenHeader';
 import { TextField } from '@/ui/TextField';
+import { Ticket } from '@/ui/Ticket';
 
 function WhoWasLate({
   members,
@@ -39,17 +48,12 @@ function WhoWasLate({
             accessibilityRole="radio"
             accessibilityState={{ selected: isSelected }}
             onPress={() => onPick(member.id)}
-            // rotate-0 by default: NativeWind remounts elements that gain transform variables later.
-            className={`min-h-16 min-w-[46%] flex-1 rotate-0 items-center justify-center rounded-2xl border-2 px-4 ${
-              isSelected
-                ? member.isMe
-                  ? 'border-ink bg-ink'
-                  : '-rotate-2 border-accent bg-accent'
-                : 'border-line'
+            className={`min-h-16 min-w-[46%] flex-1 items-center justify-center rounded-2xl px-4 ${
+              isSelected ? (member.isMe ? 'bg-ink' : 'bg-accent') : 'bg-surface'
             }`}
           >
             <Text
-              className={`font-display-bold text-2xl ${
+              className={`font-display-bold text-xl ${
                 isSelected ? (member.isMe ? 'text-paper' : 'text-on-accent') : 'text-ink'
               }`}
               numberOfLines={1}
@@ -97,9 +101,7 @@ function WhoWaited({
               accessibilityState={{ checked: waited, disabled: locked }}
               disabled={locked}
               onPress={() => onToggle(member.id)}
-              className={`rounded-full border-2 px-4 py-2 ${
-                waited ? 'border-ink bg-ink' : 'border-line'
-              }`}
+              className={`rounded-full px-4 py-2.5 ${waited ? 'bg-ink' : 'bg-surface'}`}
             >
               <Text className={`text-base font-semibold ${waited ? 'text-paper' : 'text-muted'}`}>
                 {member.isMe ? 'Me' : member.displayName}
@@ -133,13 +135,58 @@ function PickLedger({ onPick }: { onPick: (ledgerId: string) => void }) {
   );
 }
 
-function Logged({ message, minutes }: { message: string; minutes: number }) {
+/** The one animation in the app: the fresh ticket slides up and lands, slightly tilted. */
+function Logged({
+  message,
+  minutes,
+  lateWasMe,
+  offender,
+  waiter,
+}: {
+  message: string;
+  minutes: number;
+  lateWasMe: boolean;
+  offender: string;
+  waiter: string;
+}) {
+  const [land] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    let cancelled = false;
+    void AccessibilityInfo.isReduceMotionEnabled().then((reduce) => {
+      if (cancelled) return;
+      if (reduce) land.setValue(1);
+      else
+        Animated.spring(land, {
+          toValue: 1,
+          friction: 6,
+          tension: 60,
+          useNativeDriver: true,
+        }).start();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [land]);
+  const motion = {
+    opacity: land.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0, 1, 1] }),
+    transform: [
+      { translateY: land.interpolate({ inputRange: [0, 1], outputRange: [260, 0] }) },
+      { rotate: land.interpolate({ inputRange: [0, 1], outputRange: ['-14deg', '-3deg'] }) },
+    ],
+  };
   return (
-    <View className="flex-1 items-center justify-center gap-8 px-8">
-      <View className="h-[200px] w-[150px] -rotate-6 items-center justify-center rounded-[18px] bg-accent shadow-lg shadow-black/30">
-        <Text className="font-display text-7xl text-on-accent">+{minutes}</Text>
-      </View>
-      <Text className="text-center font-display-bold text-3xl text-ink">{message}</Text>
+    <View className="flex-1 justify-center gap-8 px-4">
+      <Animated.View style={motion}>
+        <Ticket
+          tone={lateWasMe ? 'owing' : 'owed'}
+          minutes={minutes}
+          prefix="+"
+          offender={offender}
+          waiter={waiter}
+          tilt={0}
+        />
+      </Animated.View>
+      <Text className="text-center font-display text-2xl text-ink">{message}</Text>
     </View>
   );
 }
@@ -152,7 +199,12 @@ export default function Log() {
   // Same id for every retry of this save, so a double tap or flaky network logs it once.
   const [requestId] = useState(randomUUID);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState<string | null>(null);
+  const [done, setDone] = useState<{
+    message: string;
+    lateWasMe: boolean;
+    offender: string;
+    waiter: string;
+  } | null>(null);
 
   // A pair has only one "them": preselect them so logging is tap-minutes-save.
   const members = ledger.data?.members;
@@ -181,8 +233,18 @@ export default function Log() {
     try {
       await createEntry.mutateAsync({ id: state.ledgerId, data: body });
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      const lateWasMe = !!members?.find((m) => m.id === state.lateMemberId)?.isMe;
-      setDone(loggedToast(state.minutes, lateWasMe));
+      const late = members?.find((m) => m.id === state.lateMemberId);
+      const lateWasMe = !!late?.isMe;
+      const them =
+        ledger.data?.kind === 'PAIR'
+          ? (members?.find((m) => !m.isMe)?.displayName ?? 'Them')
+          : 'Everyone';
+      setDone({
+        message: loggedToast(state.minutes, lateWasMe),
+        lateWasMe,
+        offender: (lateWasMe ? 'You' : (late?.displayName ?? 'Someone')).toUpperCase(),
+        waiter: (lateWasMe ? them : 'You').toUpperCase(),
+      });
       void refreshLedgers();
     } catch {
       setError("Couldn't save. Try again; it'll still count only once.");
@@ -192,7 +254,7 @@ export default function Log() {
   if (done) {
     return (
       <Screen>
-        <Logged message={done} minutes={state.minutes} />
+        <Logged {...done} minutes={state.minutes} />
       </Screen>
     );
   }
@@ -232,7 +294,7 @@ export default function Log() {
               label="Note (optional)"
               value={state.note}
               onChangeText={(note) => dispatch({ type: 'note', note })}
-              placeholder="football"
+              placeholder="dinner"
               maxLength={140}
             />
             <WhenPicker

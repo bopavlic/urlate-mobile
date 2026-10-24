@@ -20,7 +20,7 @@ function NotificationsPrompt({
 }) {
   if (permission !== 'undetermined' && permission !== 'denied') return null;
   return (
-    <View className="mb-4 gap-3 rounded-2xl border-2 border-line p-4">
+    <View className="mb-4 gap-3 rounded-2xl bg-surface p-4">
       <Text className="text-base text-ink">
         {permission === 'undetermined'
           ? 'Know the moment someone logs you late, so you can dispute it in time.'
@@ -51,7 +51,7 @@ function ActivityRow({ item, onPress }: { item: ActivityItem; onPress: () => voi
         </Text>
         <Text className="text-sm text-muted">{formatWhen(new Date(item.createdAt))}</Text>
       </View>
-      {/* The yellow dot: same accent as a card being shown. */}
+      {/* Unread: an accent dot. */}
       {item.read ? null : <View className="mt-2 h-3 w-3 rounded-full bg-accent" />}
     </Pressable>
   );

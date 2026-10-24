@@ -55,7 +55,7 @@ export default function NewLedger() {
 
   return (
     <Screen scroll className="gap-6">
-      <ScreenHeader title="Keep score with…" />
+      <ScreenHeader title="Who keeps you waiting?" />
 
       <Segmented
         options={[
@@ -85,7 +85,7 @@ export default function NewLedger() {
             label="Group name"
             value={name}
             onChangeText={setName}
-            placeholder="Football Tue & Thu"
+            placeholder="Friday lunch"
             autoFocus
           />
           {people.map((person, index) => (

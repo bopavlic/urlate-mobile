@@ -20,23 +20,24 @@ export function ledgerSentence(ledger: LedgerSummary): string {
     : groupBalanceSentence(ledger.myBalance);
 }
 
-/** The balance in miniature: a small tilted yellow card when they owe you. */
-function MiniCard({ ledger }: { ledger: LedgerSummary }) {
+/** The balance in miniature: a ticket stub, in the accent when they owe you, ink when you owe. */
+function MiniBalance({ ledger }: { ledger: LedgerSummary }) {
   const { direction, minutes } = ledger.myBalance;
   if (direction === 'ALL_SQUARE') return null;
   const owedToMe = direction === 'THEY_OWE_YOU';
   return (
     <View
       importantForAccessibility="no-hide-descendants"
-      className={`h-14 min-w-11 items-center justify-center rounded-lg px-2 ${
-        owedToMe ? '-rotate-6 bg-accent' : 'rotate-0 border-2 border-ink'
-      }`}
+      className={`min-w-14 items-center rounded-lg px-2.5 py-1.5 ${owedToMe ? 'bg-accent' : 'bg-ink'}`}
     >
       <Text
-        className={`font-display text-3xl ${owedToMe ? 'text-on-accent' : 'text-ink'}`}
+        className={`font-display text-xl leading-6 ${owedToMe ? 'text-on-accent' : 'text-paper'}`}
         style={{ fontVariant: ['tabular-nums'] }}
       >
         {minutes}
+      </Text>
+      <Text className={`font-mono-bold text-[10px] ${owedToMe ? 'text-on-accent' : 'text-paper'}`}>
+        MIN
       </Text>
     </View>
   );
@@ -55,14 +56,14 @@ export function LedgerRow({ ledger, onPress }: { ledger: LedgerSummary; onPress:
     >
       <Avatar name={title} url={other?.avatarUrl} size={48} />
       <View className="flex-1 gap-0.5">
-        <Text className="font-display-bold text-2xl text-ink" numberOfLines={1}>
+        <Text className="font-display text-lg text-ink" numberOfLines={1}>
           {title}
         </Text>
         <Text className="text-base text-muted" numberOfLines={1}>
           {sentence}
         </Text>
       </View>
-      <MiniCard ledger={ledger} />
+      <MiniBalance ledger={ledger} />
     </Pressable>
   );
 }

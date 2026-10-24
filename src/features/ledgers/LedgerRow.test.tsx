@@ -12,7 +12,7 @@ describe('LedgerRow', () => {
 
   it('shows the group name and the group balance', async () => {
     await render(<LedgerRow ledger={groupLedger()} onPress={jest.fn()} />);
-    expect(screen.getByText('Football')).toBeTruthy();
+    expect(screen.getByText('Friday lunch')).toBeTruthy();
     expect(screen.getByText('You owe the group 2 min')).toBeTruthy();
   });
 
@@ -29,7 +29,7 @@ describe('LedgerRow', () => {
 
 describe('ledgerTitle', () => {
   it('uses a pair ledger’s own name when it has one', () => {
-    expect(ledgerTitle(pairLedger({ name: 'Football lifts' }))).toBe('Football lifts');
+    expect(ledgerTitle(pairLedger({ name: 'School run' }))).toBe('School run');
     expect(ledgerTitle(pairLedger())).toBe('Brother');
   });
 });

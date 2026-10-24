@@ -14,6 +14,7 @@ import { authClient } from '@/lib/auth';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { TextField } from '@/ui/TextField';
+import { Ticket } from '@/ui/Ticket';
 import { Title } from '@/ui/Title';
 
 export default function SignIn() {
@@ -59,10 +60,18 @@ export default function SignIn() {
   return (
     <Screen scroll className="justify-between pt-16">
       <View className="gap-4">
-        <View className="h-12 w-9 -rotate-6 rounded-md bg-accent" />
-        <Title className="text-6xl leading-[60px]">Who’s been waiting on who?</Title>
+        <Ticket
+          tone="owed"
+          minutes={18}
+          offender="YOUR FRIEND"
+          waiter="YOU"
+          scale={0.62}
+          tilt={-5}
+          style={{ alignSelf: 'flex-start', width: 230 }}
+        />
+        <Title className="mt-4 text-[38px] leading-[42px]">Who’s been waiting on who?</Title>
         <Text className="text-lg text-muted">
-          Ur Late keeps score of who kept whom waiting, in minutes.
+          Ur Late keeps track of who kept whom waiting, in minutes.
         </Text>
       </View>
 

@@ -35,7 +35,7 @@ function Revisions({ entryId }: { entryId: string }) {
   const items = revisions.data?.items ?? [];
   if (items.length === 0) return null;
   return (
-    <View className="gap-3 rounded-2xl border-2 border-line p-4">
+    <View className="gap-3 rounded-2xl bg-surface p-4">
       <Text className="font-semibold text-ink">Before it was edited</Text>
       {/* Newest first, like the history above it. */}
       {[...items].reverse().map((revision) => (

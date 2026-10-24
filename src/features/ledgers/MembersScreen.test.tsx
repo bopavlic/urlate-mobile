@@ -18,7 +18,7 @@ const ana = { ...brother, id: 'm-ana', displayName: 'Ana', isPlaceholder: false,
 const group: LedgerDetail = {
   id: 'l-group',
   kind: 'GROUP',
-  name: 'Football',
+  name: 'Friday lunch',
   members: [me, ana, brother],
   myBalance: { direction: 'ALL_SQUARE', minutes: 0 },
   lastActivityAt: '2026-10-23T08:00:00.000Z',
@@ -103,13 +103,13 @@ describe('MembersScreen', () => {
     expect(screen.queryByRole('button', { name: 'Rename Ana' })).toBeNull();
   });
 
-  it('asks before leaving, saying the others keep the score', async () => {
+  it('asks before leaving, saying the others keep their entries', async () => {
     const { props, view } = setup();
     await view;
     await fireEvent.press(screen.getByRole('button', { name: 'Leave group' }));
     const [title, message, buttons] = jest.mocked(Alert.alert).mock.calls.at(-1)!;
-    expect(title).toBe('Leave Football?');
-    expect(message).toMatch(/keep the score/);
+    expect(title).toBe('Leave Friday lunch?');
+    expect(message).toMatch(/The others keep your entries/);
     expect(props.onLeave).not.toHaveBeenCalled();
     (buttons as { style?: string; onPress?: () => void }[])
       .find((button) => button.style === 'destructive')
@@ -117,14 +117,14 @@ describe('MembersScreen', () => {
     expect(props.onLeave).toHaveBeenCalled();
   });
 
-  it('warns that leaving deletes a tally nobody else can see', async () => {
+  it('warns that leaving deletes everything when nobody else can see it', async () => {
     const { view } = setup({
       detail: { ...group, kind: 'PAIR', name: null, members: [me, brother] },
     });
     await view;
-    await fireEvent.press(screen.getByRole('button', { name: 'Leave this tally' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Stop keeping track' }));
     const [title, message] = jest.mocked(Alert.alert).mock.calls.at(-1)!;
-    expect(title).toBe('Delete this tally?');
+    expect(title).toMatch(/^Delete everything with /);
     expect(message).toMatch(/Nobody else here is on Ur Late/);
   });
 

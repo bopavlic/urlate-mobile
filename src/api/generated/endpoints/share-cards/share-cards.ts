@@ -55,7 +55,7 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * @summary Snapshot the score as a public card at urlate.app/s/{id} (same card if unchanged)
+ * @summary Snapshot who owes what as a public card at urlate.app/s/{id} (same card if unchanged)
  */
 export const createShareCard = (
     id: string,
@@ -110,7 +110,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateShareCardMutationVariables = {id: string;data?: BodyType<CreateShareCardBody>}
 
     /**
- * @summary Snapshot the score as a public card at urlate.app/s/{id} (same card if unchanged)
+ * @summary Snapshot who owes what as a public card at urlate.app/s/{id} (same card if unchanged)
  */
 export const useCreateShareCard = <TError = ErrorType<Error>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createShareCard>>, TError,CreateShareCardMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}

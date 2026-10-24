@@ -3,13 +3,14 @@ import { Text, View } from 'react-native';
 
 import type { ShareCard } from '@/api/generated/model';
 import { fonts } from '@/theme/tokens';
+import { Ticket } from '@/ui/Ticket';
 
-import { cardScore } from './copy';
-import { cardLook, type Look } from './look';
+import { cardTicket } from './copy';
+import { cardLook, ticketColors, type Look } from './look';
 
-// The image people post: a 9:16 Story frame in the card's look (the night pitch unless the
-// sharer picked another), the same in light and dark mode. Laid out on a 360-point grid and
-// scaled to `width`; captured at 1080 × 1920.
+// The image people post: a 9:16 Story frame with the late ticket, in the card's look (a pink
+// ticket on lavender unless the sharer picked another), the same in light and dark mode. Laid
+// out on a 360-point grid and scaled to `width`; captured at 1080 × 1920.
 
 export const CARD_ASPECT = 16 / 9;
 
@@ -25,16 +26,9 @@ export function ShareCardView({
   look?: Look;
   ref?: Ref<ComponentRef<typeof View>>;
 }) {
-  const {
-    background: pitch,
-    text: chalk,
-    muted,
-    line,
-    card: accent,
-    onCard: onAccent,
-  } = cardLook(look);
+  const { background, text, muted, line, card: accent } = cardLook(look);
   const u = width / 360;
-  const score = cardScore(card);
+  const ticket = cardTicket(card);
   const rows = card.kind === 'GROUP' && card.rows.length > 1 ? card.rows : [];
 
   return (
@@ -46,7 +40,7 @@ export function ShareCardView({
       style={{
         width,
         height: width * CARD_ASPECT,
-        backgroundColor: pitch,
+        backgroundColor: background,
         padding: 28 * u,
         justifyContent: 'space-between',
       }}
@@ -54,62 +48,32 @@ export function ShareCardView({
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 * u }}>
         <View
           style={{
-            width: 14 * u,
-            height: 19 * u,
+            width: 22 * u,
+            height: 15 * u,
             borderRadius: 3 * u,
             backgroundColor: accent,
-            transform: [{ rotate: '6deg' }],
+            transform: [{ rotate: '-8deg' }],
           }}
         />
-        <Text style={{ fontFamily: fonts.display, fontSize: 22 * u, color: chalk }}>UR LATE</Text>
+        <Text style={{ fontFamily: fonts.display, fontSize: 20 * u, color: text }}>Ur Late</Text>
       </View>
 
-      <View style={{ gap: 24 * u }}>
+      <View style={{ gap: 26 * u }}>
         <Text
-          style={{
-            fontFamily: fonts.display,
-            fontSize: 46 * u,
-            lineHeight: 44 * u,
-            color: chalk,
-            textTransform: 'uppercase',
-          }}
+          style={{ fontFamily: fonts.display, fontSize: 34 * u, lineHeight: 38 * u, color: text }}
         >
           {card.headline}
         </Text>
 
-        {score ? (
-          <View
-            style={{
-              alignSelf: 'flex-start',
-              backgroundColor: accent,
-              borderRadius: 22 * u,
-              paddingHorizontal: 26 * u,
-              paddingTop: 16 * u,
-              paddingBottom: 12 * u,
-              transform: [{ rotate: '-4deg' }],
-            }}
-          >
-            <Text style={{ fontSize: 16 * u, fontWeight: '600', color: onAccent }}>
-              {score.label}
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 * u }}>
-              <Text
-                style={{
-                  fontFamily: fonts.display,
-                  fontSize: 120 * u,
-                  lineHeight: 118 * u,
-                  color: onAccent,
-                  fontVariant: ['tabular-nums'],
-                }}
-              >
-                {score.minutes}
-              </Text>
-              <Text style={{ fontFamily: fonts.displayBold, fontSize: 34 * u, color: onAccent }}>
-                MIN
-              </Text>
-            </View>
-          </View>
-        ) : null}
+        <Ticket
+          tone={ticket ? 'owed' : 'clear'}
+          minutes={ticket?.minutes ?? 0}
+          offender={(ticket?.offender ?? 'Nobody').toUpperCase()}
+          waiter={(ticket?.waiter ?? 'Nobody').toUpperCase()}
+          scale={u}
+          tilt={ticket ? -3 : 0}
+          colors={ticketColors(look)}
+        />
 
         {rows.length > 0 ? (
           <View style={{ borderTopWidth: 1, borderColor: line }}>
@@ -133,14 +97,14 @@ export function ShareCardView({
                     flexShrink: 1,
                   }}
                 >
-                  <Text style={{ fontFamily: fonts.display, fontSize: 16 * u, color: muted }}>
+                  <Text style={{ fontFamily: fonts.monoBold, fontSize: 14 * u, color: muted }}>
                     {index + 1}
                   </Text>
-                  <Text style={{ fontSize: 16 * u, color: chalk, flexShrink: 1 }} numberOfLines={1}>
+                  <Text style={{ fontSize: 16 * u, color: text, flexShrink: 1 }} numberOfLines={1}>
                     {row.name}
                   </Text>
                 </View>
-                <Text style={{ fontFamily: fonts.display, fontSize: 22 * u, color: chalk }}>
+                <Text style={{ fontFamily: fonts.display, fontSize: 18 * u, color: text }}>
                   {`${row.minutes} min`}
                 </Text>
               </View>
@@ -151,9 +115,7 @@ export function ShareCardView({
 
       <View style={{ gap: 2 * u }}>
         <Text style={{ fontSize: 14 * u, color: muted }}>Who&apos;s been waiting on who?</Text>
-        <Text style={{ fontFamily: fonts.displayBold, fontSize: 24 * u, color: chalk }}>
-          urlate.app
-        </Text>
+        <Text style={{ fontFamily: fonts.display, fontSize: 20 * u, color: text }}>urlate.app</Text>
       </View>
     </View>
   );

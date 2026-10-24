@@ -7,7 +7,7 @@ import { QrCode } from '@/ui/QrCode';
 import { formatInviteCode } from './invite-code';
 
 /**
- * The QR on the profile, for in person: whoever scans it starts a tally with you. It
+ * The QR on the profile, for in person: whoever scans it is added with you. It
  * works until you make a new one, so it can be screenshotted and reused.
  */
 export function MyInviteCode({
@@ -25,9 +25,9 @@ export function MyInviteCode({
 }) {
   return (
     <View className="gap-4">
-      <Text className="font-display-bold text-2xl text-ink">Keep score with me</Text>
+      <Text className="font-display text-lg text-ink">Add me on Ur Late</Text>
       <Text className="text-base text-muted">
-        Anyone who scans this starts a tally with you.
+        Anyone who scans this can start counting your minutes with you.
         {username ? ` Or they can find you as @${username}.` : ''}
       </Text>
       {invite ? (
@@ -35,9 +35,9 @@ export function MyInviteCode({
           <QrCode
             value={invite.url}
             size={200}
-            accessibilityLabel="QR code to start keeping score with you"
+            accessibilityLabel="QR code to add you on Ur Late"
           />
-          <Text selectable className="font-display text-4xl tracking-widest text-ink">
+          <Text selectable className="font-display text-3xl tracking-wider text-ink">
             {formatInviteCode(invite.code)}
           </Text>
           <Button
@@ -53,7 +53,7 @@ export function MyInviteCode({
             onPress={() =>
               Alert.alert(
                 'Make a new code?',
-                'Your current QR code and link stop working. Tallies you already started stay.',
+                'Your current QR code and link stop working. People you already added stay.',
                 [
                   { text: 'Cancel', style: 'cancel' },
                   { text: 'Make a new one', style: 'destructive', onPress: onReset },

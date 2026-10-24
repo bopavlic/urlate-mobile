@@ -27,7 +27,7 @@ export function settleOptions(
   return { canSettle: owed > 0, owedMinutes: owed, counterpartId: counterpart?.id ?? null };
 }
 
-/** My score with each person in a group, people who owe me first, then by size. */
+/** My balance with each person in a group, people who owe me first, then by size. */
 export function myScores(detail: Scored): { member: Member; view: BalanceView }[] {
   const me = detail.members.find((member) => member.isMe);
   if (!me) return [];

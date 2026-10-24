@@ -54,9 +54,9 @@ function StepButton({
       accessibilityRole="button"
       accessibilityLabel={label}
       {...hold}
-      className="h-14 w-14 items-center justify-center rounded-full border-2 border-ink active:bg-surface"
+      className="h-14 w-14 items-center justify-center rounded-full bg-surface active:opacity-70"
     >
-      <Text className="font-display text-3xl text-ink">{symbol}</Text>
+      <Text className="font-display text-2xl text-ink">{symbol}</Text>
     </Pressable>
   );
 }
@@ -82,7 +82,13 @@ function MinutesInput({ value, onChange }: { value: number; onChange: (minutes: 
       selectTextOnFocus
       maxLength={4}
       className="min-w-32 text-center font-display text-ink"
-      style={{ fontSize: 88, lineHeight: 96, fontVariant: ['tabular-nums'], padding: 0 }}
+      style={{
+        fontSize: 80,
+        lineHeight: 92,
+        letterSpacing: -2,
+        fontVariant: ['tabular-nums'],
+        padding: 0,
+      }}
     />
   );
 }
@@ -105,7 +111,7 @@ export function MinutePicker({
           <View className="border-b-2 border-dashed border-line px-2">
             <MinutesInput value={value} onChange={onChange} />
           </View>
-          <Text className="mt-1 font-display-semi text-xl text-muted">min</Text>
+          <Text className="mt-1 font-display-semi text-lg text-muted">min</Text>
         </View>
         <StepButton label="One minute more" symbol="+" onStep={() => onStep(1)} />
       </View>
@@ -119,13 +125,11 @@ export function MinutePicker({
               accessibilityLabel={`${chip} min`}
               accessibilityState={{ selected }}
               onPress={() => onChange(chip)}
-              className={`h-12 flex-1 items-center justify-center rounded-xl border-2 ${
-                selected ? 'border-ink bg-ink' : 'border-line'
+              className={`h-12 flex-1 items-center justify-center rounded-full ${
+                selected ? 'bg-ink' : 'bg-surface'
               }`}
             >
-              <Text
-                className={`font-display-bold text-2xl ${selected ? 'text-paper' : 'text-ink'}`}
-              >
+              <Text className={`font-display-bold text-xl ${selected ? 'text-paper' : 'text-ink'}`}>
                 {chip}
               </Text>
             </Pressable>

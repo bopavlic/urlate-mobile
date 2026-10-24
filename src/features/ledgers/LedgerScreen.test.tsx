@@ -114,7 +114,7 @@ describe('LedgerScreen invites', () => {
     );
   }
 
-  it('nudges you to invite a placeholder person so they see the score too', async () => {
+  it('nudges you to invite a placeholder person so they can see it too', async () => {
     await renderLedger(fresh);
     expect(screen.getByText('Brother isn’t on Ur Late yet.')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Invite Brother' }));
@@ -133,7 +133,7 @@ describe('LedgerScreen invites', () => {
     await renderLedger({
       ...fresh,
       kind: 'GROUP',
-      name: 'Football',
+      name: 'Friday lunch',
       members: [me, { ...brother, isPlaceholder: false }],
     });
     await fireEvent.press(screen.getByRole('button', { name: 'Invite' }));
@@ -186,10 +186,10 @@ describe('LedgerScreen trust settings', () => {
 
 describe('LedgerScreen groups', () => {
   const ana = { ...brother, id: 'm-ana', displayName: 'Ana' };
-  const football: LedgerDetail = {
+  const lunch: LedgerDetail = {
     ...fresh,
     kind: 'GROUP',
-    name: 'Football',
+    name: 'Friday lunch',
     members: [me, brother, ana],
     myBalance: { direction: 'THEY_OWE_YOU', minutes: 7 },
     balances: [
@@ -206,7 +206,7 @@ describe('LedgerScreen groups', () => {
   function renderGroup(onSettle = jest.fn()) {
     return render(
       <LedgerScreen
-        detail={football}
+        detail={lunch}
         history={[]}
         onSettle={onSettle}
         onLoadMore={jest.fn()}
@@ -247,11 +247,11 @@ describe('LedgerScreen groups', () => {
     });
   });
 
-  it('opens the share card for the score', async () => {
+  it('opens the share card', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { router } = require('expo-router') as { router: { push: jest.Mock } };
     await renderGroup();
-    await fireEvent.press(screen.getByRole('button', { name: 'Share the score' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Share' }));
     expect(router.push).toHaveBeenCalledWith({
       pathname: '/ledgers/[id]/share',
       params: { id: 'l-new' },

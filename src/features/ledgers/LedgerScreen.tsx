@@ -35,24 +35,29 @@ function Stepper({
         accessibilityRole="button"
         accessibilityLabel="One minute less"
         onPress={() => step(-1)}
-        className="h-12 w-12 items-center justify-center rounded-full border-2 border-ink"
+        className="h-12 w-12 items-center justify-center rounded-full bg-surface"
       >
-        <Text className="font-display text-3xl text-ink">−</Text>
+        <Text className="font-display text-2xl text-ink">−</Text>
       </Pressable>
-      <Text className="min-w-20 text-center font-display text-5xl text-ink">{value}</Text>
+      <Text
+        className="min-w-20 text-center font-display text-5xl text-ink"
+        style={{ letterSpacing: -1, fontVariant: ['tabular-nums'] }}
+      >
+        {value}
+      </Text>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="One minute more"
         onPress={() => step(1)}
-        className="h-12 w-12 items-center justify-center rounded-full border-2 border-ink"
+        className="h-12 w-12 items-center justify-center rounded-full bg-surface"
       >
-        <Text className="font-display text-3xl text-ink">+</Text>
+        <Text className="font-display text-2xl text-ink">+</Text>
       </Pressable>
     </View>
   );
 }
 
-/** Placeholders can't see the score; inviting them is how a tally becomes shared. */
+/** Placeholders can't see any of this; inviting them is how it becomes shared. */
 function InviteNudge({ detail }: { detail: LedgerDetail }) {
   const openInvite = () => router.push({ pathname: '/invite', params: { ledgerId: detail.id } });
   if (detail.kind === 'GROUP') {
@@ -61,9 +66,9 @@ function InviteNudge({ detail }: { detail: LedgerDetail }) {
   const other = detail.members.find((member) => !member.isMe);
   if (!other?.isPlaceholder) return null;
   return (
-    <View className="gap-3 rounded-2xl border-2 border-line p-4">
+    <View className="gap-3 rounded-2xl bg-surface p-4">
       <Text className="text-base text-ink">{other.displayName} isn’t on Ur Late yet.</Text>
-      <Text className="text-base text-muted">Invite them so they see the score too.</Text>
+      <Text className="text-base text-muted">Invite them so they can see it too.</Text>
       <Button title={`Invite ${other.displayName}`} variant="secondary" onPress={openInvite} />
     </View>
   );
@@ -80,7 +85,7 @@ function ConfirmModeSetting({
   onChange: (on: boolean) => void;
 }) {
   return (
-    <View className="flex-row items-center gap-4 rounded-2xl border-2 border-line p-4">
+    <View className="flex-row items-center gap-4 rounded-2xl bg-surface p-4">
       <View className="flex-1 gap-1">
         <Text className="text-base font-semibold text-ink">Confirm mode</Text>
         <Text className="text-sm text-muted">
@@ -104,7 +109,7 @@ function Leaderboard({ detail }: { detail: LedgerDetail }) {
   const rows = [...detail.leaderboard].sort((a, b) => a.netMinutes - b.netMinutes);
   return (
     <View className="gap-3">
-      <Text className="font-display-bold text-2xl text-ink">Leaderboard</Text>
+      <Text className="font-display text-lg text-ink">Leaderboard</Text>
       {rows.every((row) => row.netMinutes === 0) ? (
         <Text className="text-base text-muted">No one&apos;s late yet. Give it time.</Text>
       ) : (
@@ -129,12 +134,10 @@ function Leaderboard({ detail }: { detail: LedgerDetail }) {
               <Text className="flex-1 text-base text-ink" numberOfLines={1}>
                 {name}
               </Text>
-              {/* The worst offender gets the card. */}
+              {/* The worst offender is picked out in the accent. */}
               <Text
-                className={`font-semibold ${
-                  index === 0 && owes
-                    ? '-rotate-3 rounded-md bg-accent px-2 py-1 text-on-accent'
-                    : 'rotate-0 text-ink'
+                className={`overflow-hidden rounded-full px-3 py-1 font-semibold ${
+                  index === 0 && owes ? 'bg-accent text-on-accent' : 'text-ink'
                 }`}
               >
                 {standing}
@@ -192,7 +195,7 @@ function SettleControls({
   }
 
   return (
-    <View className="gap-4 rounded-2xl border-2 border-line p-4">
+    <View className="gap-4 rounded-2xl bg-surface p-4">
       <Text className="text-center text-base text-muted">How many minutes to let go?</Text>
       <Stepper value={chosen} min={1} max={owedMinutes} onChange={setMinutes} />
       <View className="flex-row gap-3">
@@ -216,7 +219,7 @@ function SettleControls({
   );
 }
 
-/** Groups stay pairwise: my score with each person, and settling one person at a time. */
+/** Groups stay pairwise: my balance with each person, and settling one person at a time. */
 function GroupScores({
   detail,
   settling,
@@ -231,7 +234,7 @@ function GroupScores({
   if (scores.length === 0) return null;
   return (
     <View className="gap-3">
-      <Text className="font-display-bold text-2xl text-ink">You and each of them</Text>
+      <Text className="font-display text-lg text-ink">You and each of them</Text>
       {scores.map(({ member, view }) => {
         const sentence = balanceSentence(view, member.displayName);
         const owed = view.direction === 'THEY_OWE_YOU';
@@ -339,7 +342,7 @@ export function LedgerScreen({
       {settleError ? <Text className="text-base text-danger">{settleError}</Text> : null}
 
       <Button
-        title="Share the score"
+        title="Share"
         variant="secondary"
         onPress={() => router.push({ pathname: '/ledgers/[id]/share', params: { id: detail.id } })}
       />
@@ -379,7 +382,7 @@ export function LedgerScreen({
         />
       ) : null}
 
-      <Text className="font-display-bold text-2xl text-ink">History</Text>
+      <Text className="font-display text-lg text-ink">History</Text>
     </View>
   );
 

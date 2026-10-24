@@ -19,7 +19,7 @@ describe('themes', () => {
   });
 
   it('keeps the classic look as it was', () => {
-    expect(themes.classic.dark.accent).toBe('#FFCC1A');
-    expect(themes.classic.light.paper).toBe('#FFFFFF');
+    expect(themes.classic.light.accent).toBe('#D63A1F');
+    expect(themes.classic.light.paper).toBe('#EEF0F4');
   });
 });

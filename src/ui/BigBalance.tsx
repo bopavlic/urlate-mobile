@@ -2,11 +2,18 @@ import { Text, View } from 'react-native';
 
 import type { BalanceView } from '@/api/generated/model';
 import { balanceSentence, groupBalanceSentence } from '@/features/balance/copy';
-import { type } from '@/theme/tokens';
+
+import { Ticket, ticketTone } from './Ticket';
+
+const SUBLINE = {
+  owed: 'Pay up in minutes, not money.',
+  owing: 'Maybe set an alarm.',
+  clear: 'Enjoy it while it lasts.',
+} as const;
 
 /**
- * The balance as a referee's card: a tilted yellow card when they owe you,
- * an outlined card when you owe them, an empty card when you're square.
+ * The balance as a late ticket: issued to them in the accent when they owe you, to you in ink
+ * when you owe them, and a plain "all clear" stub when you're square.
  */
 export function BigBalance({
   view,
@@ -18,38 +25,19 @@ export function BigBalance({
   kind: 'PAIR' | 'GROUP';
 }) {
   const sentence = kind === 'PAIR' ? balanceSentence(view, otherName) : groupBalanceSentence(view);
-  const owedToMe = view.direction === 'THEY_OWE_YOU';
-  const square = view.direction === 'ALL_SQUARE';
-
-  // Every variant sets rotate and shadow so the card never gains CSS variables after its
-  // first render (NativeWind would remount it when the balance changes).
-  const card = owedToMe
-    ? 'bg-accent -rotate-[4deg] shadow-lg shadow-black/25'
-    : square
-      ? 'rotate-0 shadow-none border-[3px] border-dashed border-line'
-      : 'rotate-0 shadow-none border-[3px] border-ink';
-  const digits = owedToMe ? 'text-on-accent' : square ? 'text-muted' : 'text-ink';
+  const tone = ticketTone(view.direction);
+  const them = (kind === 'PAIR' ? otherName : 'The group').toUpperCase();
+  const [offender, waiter] =
+    tone === 'owed' ? [them, 'YOU'] : tone === 'owing' ? ['YOU', them] : ['NOBODY', 'NOBODY'];
 
   return (
-    <View className="items-center gap-6" accessible accessibilityLabel={sentence}>
-      <View
-        className={`h-[232px] w-[176px] items-center justify-center rounded-[20px] ${card}`}
-        importantForAccessibility="no-hide-descendants"
-      >
-        <Text
-          className={digits}
-          style={type.balance}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.4}
-        >
-          {view.minutes}
-        </Text>
-        <Text className={`font-display-semi text-2xl ${digits}`}>min</Text>
+    <View className="gap-6" accessible accessibilityLabel={sentence}>
+      <View importantForAccessibility="no-hide-descendants" className="px-1">
+        <Ticket tone={tone} minutes={view.minutes} offender={offender} waiter={waiter} />
       </View>
       <View className="items-center gap-1">
-        <Text className="text-center font-display-bold text-3xl text-ink">{sentence}</Text>
-        {square ? <Text className="text-base text-muted">Enjoy it while it lasts.</Text> : null}
+        <Text className="text-center font-display text-2xl text-ink">{sentence}</Text>
+        <Text className="text-base text-muted">{SUBLINE[tone]}</Text>
       </View>
     </View>
   );

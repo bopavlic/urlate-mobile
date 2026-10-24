@@ -140,18 +140,22 @@ function MemberRow({
 function leaveCopy(detail: LedgerDetail): { title: string; message: string; action: string } {
   const isGroup = detail.kind === 'GROUP';
   const othersOnApp = detail.members.some((member) => !member.isMe && !member.isPlaceholder);
+  const other = detail.members.find((member) => !member.isMe)?.displayName ?? 'them';
   if (!othersOnApp) {
     return {
-      title: isGroup ? `Delete ${detail.name ?? 'this group'}?` : 'Delete this tally?',
+      title: isGroup
+        ? `Delete ${detail.name ?? 'this group'}?`
+        : `Delete everything with ${other}?`,
       message:
         'Nobody else here is on Ur Late, so leaving deletes it with all its history. This can’t be undone.',
       action: 'Leave and delete',
     };
   }
   return {
-    title: isGroup ? `Leave ${detail.name ?? 'this group'}?` : 'Leave this tally?',
-    message:
-      'The others keep the score and your entries, under your name. They can invite you back later.',
+    title: isGroup ? `Leave ${detail.name ?? 'this group'}?` : `Stop keeping track with ${other}?`,
+    message: `${isGroup ? 'The others keep' : `${other} keeps`} your entries, under your name. ${
+      isGroup ? 'They' : `${other}`
+    } can invite you back later.`,
     action: 'Leave',
   };
 }
@@ -303,7 +307,7 @@ export function MembersScreen({
         ) : null}
 
         <Button
-          title={isGroup ? 'Leave group' : 'Leave this tally'}
+          title={isGroup ? 'Leave group' : 'Stop keeping track'}
           variant="danger"
           loading={leaving}
           onPress={leave}

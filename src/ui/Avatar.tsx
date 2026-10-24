@@ -27,7 +27,7 @@ export function Avatar({
   return (
     <View
       style={dimensions}
-      className="items-center justify-center border-2 border-line bg-surface"
+      className="items-center justify-center bg-surface"
       accessibilityLabel={name}
     >
       <Text className="font-display-bold text-ink" style={{ fontSize: size * 0.42 }}>

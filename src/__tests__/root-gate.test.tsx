@@ -13,11 +13,12 @@ function setSession(next: S) {
 }
 
 jest.mock('../../global.css', () => ({}), { virtual: true });
-jest.mock('@expo-google-fonts/big-shoulders', () => ({
-  useFonts: () => [true],
-  BigShoulders_600SemiBold: 1,
-  BigShoulders_800ExtraBold: 2,
-  BigShoulders_900Black: 3,
+jest.mock('expo-font', () => ({ useFonts: () => [true] }));
+jest.mock('@expo-google-fonts/archivo', () => ({ Archivo_700Bold: 1, Archivo_800ExtraBold: 2 }));
+jest.mock('@expo-google-fonts/archivo-black', () => ({ ArchivoBlack_400Regular: 3 }));
+jest.mock('@expo-google-fonts/space-mono', () => ({
+  SpaceMono_400Regular: 4,
+  SpaceMono_700Bold: 5,
 }));
 jest.mock('expo-splash-screen', () => ({
   preventAutoHideAsync: jest.fn(() => Promise.resolve()),

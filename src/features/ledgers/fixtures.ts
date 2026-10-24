@@ -36,7 +36,7 @@ export function groupLedger(overrides: Partial<LedgerSummary> = {}): LedgerSumma
   return {
     id: 'l-group',
     kind: 'GROUP',
-    name: 'Football',
+    name: 'Friday lunch',
     members: [me, brother, { ...brother, id: 'm-ana', displayName: 'Ana' }],
     myBalance: { direction: 'YOU_OWE_THEM', minutes: 2 },
     lastActivityAt: '2026-10-22T18:00:00.000Z',
@@ -51,7 +51,7 @@ export function entryFixture(overrides: Partial<Entry> = {}): Entry {
     lateMemberId: brother.id,
     waiterMemberIds: [me.id],
     minutes: 5,
-    note: 'football',
+    note: 'dinner',
     occurredAt: '2026-10-20T16:05:00.000Z',
     status: 'ACTIVE',
     createdByUserId: 'u-me',

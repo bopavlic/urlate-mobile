@@ -24,8 +24,8 @@ export function TextField({
         ref={ref}
         accessibilityLabel={label}
         placeholderTextColor={colors.muted}
-        className={`min-h-14 rounded-2xl border-2 bg-surface px-4 text-lg text-ink ${
-          error ? 'border-danger' : 'border-line focus:border-ink'
+        className={`min-h-14 rounded-2xl border-[1.5px] bg-surface px-4 text-lg text-ink ${
+          error ? 'border-danger' : 'border-surface focus:border-accent'
         } ${className}`}
         {...props}
       />

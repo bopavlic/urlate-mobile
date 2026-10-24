@@ -1,11 +1,9 @@
 import '../../global.css';
 
-import {
-  BigShoulders_600SemiBold,
-  BigShoulders_800ExtraBold,
-  BigShoulders_900Black,
-  useFonts,
-} from '@expo-google-fonts/big-shoulders';
+import { Archivo_700Bold, Archivo_800ExtraBold } from '@expo-google-fonts/archivo';
+import { ArchivoBlack_400Regular } from '@expo-google-fonts/archivo-black';
+import { SpaceMono_400Regular, SpaceMono_700Bold } from '@expo-google-fonts/space-mono';
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -31,9 +29,11 @@ export default function RootLayout() {
 function Root() {
   const { scheme, theme, colors } = useAppearance();
   const [fontsLoaded] = useFonts({
-    BigShoulders_600SemiBold,
-    BigShoulders_800ExtraBold,
-    BigShoulders_900Black,
+    ArchivoBlack_400Regular,
+    Archivo_700Bold,
+    Archivo_800ExtraBold,
+    SpaceMono_400Regular,
+    SpaceMono_700Bold,
   });
   const { data: session, isPending } = authClient.useSession();
   // Better Auth flips isPending on every refetch (each app focus). Only the first answer

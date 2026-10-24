@@ -27,20 +27,20 @@ const pair: InvitePreview = {
 const openGroup: InvitePreview = {
   ...pair,
   ledgerKind: 'GROUP',
-  ledgerName: 'Football',
+  ledgerName: 'Friday lunch',
   placeholderName: null,
   balance: null,
 };
 
 describe('inviteTitle', () => {
   it('names who is inviting you, and to which group', () => {
-    expect(inviteTitle(pair)).toBe('Borna wants to keep score with you');
-    expect(inviteTitle(openGroup)).toBe('Borna invited you to Football');
+    expect(inviteTitle(pair)).toBe('Borna wants to add you on Ur Late');
+    expect(inviteTitle(openGroup)).toBe('Borna invited you to Friday lunch');
   });
 });
 
 describe('inviteBalanceLine', () => {
-  it('shows the score you join with, from your side', () => {
+  it('shows the balance you join with, from your side', () => {
     expect(inviteBalanceLine(pair)).toBe('You owe Borna 18 min');
     expect(inviteBalanceLine({ ...pair, balance: { direction: 'THEY_OWE_YOU', minutes: 4 } })).toBe(
       'Borna owes you 4 min',
@@ -82,10 +82,10 @@ describe('shareMessage', () => {
 
   it('carries the link and the code to type after installing', () => {
     expect(shareMessage(invite, { kind: 'PAIR', name: null })).toBe(
-      'I’m keeping score of who’s late on Ur Late. Join me: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
+      'I’m keeping track of who’s late on Ur Late. Join me: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
     );
-    expect(shareMessage(invite, { kind: 'GROUP', name: 'Football' })).toBe(
-      'Join Football on Ur Late, the scoreboard for who’s late: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
+    expect(shareMessage(invite, { kind: 'GROUP', name: 'Friday lunch' })).toBe(
+      'Join Friday lunch on Ur Late to keep track of who’s late: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
     );
   });
 });
@@ -99,10 +99,10 @@ const profileCode: InvitePreview = {
 };
 
 describe('profile codes', () => {
-  it('offer to start a tally rather than join one', () => {
-    expect(inviteTitle(profileCode)).toBe('Borna wants to keep score with you');
+  it('offer to accept rather than join', () => {
+    expect(inviteTitle(profileCode)).toBe('Borna wants to add you on Ur Late');
     expect(inviteBalanceLine(profileCode)).toBeNull();
-    expect(joinButtonTitle(profileCode)).toBe('Start keeping score');
+    expect(joinButtonTitle(profileCode)).toBe('Accept');
     expect(joinButtonTitle(pair)).toBe('Join');
   });
 
@@ -145,7 +145,7 @@ describe('activityTarget', () => {
 describe('personalShareMessage', () => {
   it('links to the profile code', () => {
     expect(personalShareMessage({ code: 'ABCDEFGH', url: 'https://urlate.app/i/ABCDEFGH' })).toBe(
-      'Let’s keep score of who’s late on Ur Late: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
+      'Let’s keep track of who’s late on Ur Late: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
     );
   });
 });

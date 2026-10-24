@@ -38,10 +38,10 @@ function renderJoin(props: Partial<Parameters<typeof JoinScreen>[0]> = {}) {
   );
 }
 
-it('shows who invited you, the score you join with and the name they used for you', async () => {
+it('shows who invited you, the balance you join with and the name they used for you', async () => {
   const onJoin = jest.fn();
   await renderJoin({ onJoin });
-  expect(screen.getByRole('header', { name: 'Borna wants to keep score with you' })).toBeTruthy();
+  expect(screen.getByRole('header', { name: 'Borna wants to add you on Ur Late' })).toBeTruthy();
   expect(screen.getByText('You owe Borna 18 min')).toBeTruthy();
   expect(screen.getByText('They’ve been calling you “Brother”.')).toBeTruthy();
   await fireEvent.press(screen.getByRole('button', { name: 'Join' }));

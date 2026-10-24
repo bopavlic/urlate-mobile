@@ -34,7 +34,7 @@ describe('HistoryItem', () => {
   it('says who was late, with the note', async () => {
     await render(<HistoryItem item={entry()} members={members} />);
     expect(screen.getByText('Brother was 5 min late')).toBeTruthy();
-    expect(screen.getByText('football')).toBeTruthy();
+    expect(screen.getByText('dinner')).toBeTruthy();
   });
 
   it('owns up when I was late', async () => {

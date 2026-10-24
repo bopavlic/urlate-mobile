@@ -69,6 +69,17 @@ describe('PremiumScreen', () => {
     expect(props.onBuy).toHaveBeenCalledWith(plans[1]);
   });
 
+  it('still names each plan when the store sends no price', async () => {
+    const { props, view } = setup({
+      plans: plans.map((plan) => ({ ...plan, price: '', amount: null })),
+    });
+    await view;
+    expect(screen.getAllByText('Price in the store')).toHaveLength(2);
+    expect(screen.getByText('Billed once a year')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Monthly' }));
+    expect(props.onBuy).toHaveBeenCalledWith(expect.objectContaining({ period: 'month' }));
+  });
+
   it('shows the renewal terms and links the store rules ask for', async () => {
     const { props, view } = setup();
     await view;

@@ -51,15 +51,13 @@ describe('toCreateEntryBody', () => {
 
   it('includes the note and a chosen date', () => {
     const when = new Date('2026-10-20T16:05:00.000Z');
-    expect(toCreateEntryBody({ ...picked, note: ' football ', occurredAt: when }, 'req-1')).toEqual(
-      {
-        lateMemberId: 'm-bro',
-        minutes: 5,
-        note: 'football',
-        occurredAt: '2026-10-20T16:05:00.000Z',
-        clientRequestId: 'req-1',
-      },
-    );
+    expect(toCreateEntryBody({ ...picked, note: ' dinner ', occurredAt: when }, 'req-1')).toEqual({
+      lateMemberId: 'm-bro',
+      minutes: 5,
+      note: 'dinner',
+      occurredAt: '2026-10-20T16:05:00.000Z',
+      clientRequestId: 'req-1',
+    });
   });
 });
 

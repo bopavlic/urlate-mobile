@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert } from 'react-native';
 
-import { Button } from '@/ui/Button';
+import { MenuRow } from '@/ui/MenuList';
 
 // Both app stores require deleting the account from inside the app. Same rules as the
 // website's /delete-account page (see urlate-backend/src/domain/account-deletion.ts).
 const EXPLAINER =
-  'Your profile and every tally only you can see are deleted. In tallies shared with people who have an account, you become a placeholder again so their score stays. This can’t be undone.';
+  'Your profile and everything only you can see are deleted. Where people with an account are involved, you become a placeholder again so their entries and history stay. This can’t be undone.';
 
 export function DeleteAccount({
   onDelete,
@@ -34,19 +34,17 @@ export function DeleteAccount({
   }
 
   return (
-    <View className="gap-2">
-      <Button
-        title="Delete account"
-        variant="danger"
-        loading={deleting}
-        onPress={() =>
-          Alert.alert('Delete your account?', explainer, [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => void remove() },
-          ])
-        }
-      />
-      {error ? <Text className="text-base text-danger">{error}</Text> : null}
-    </View>
+    <MenuRow
+      title="Delete account"
+      tone="danger"
+      loading={deleting}
+      error={error}
+      onPress={() =>
+        Alert.alert('Delete your account?', explainer, [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Delete', style: 'destructive', onPress: () => void remove() },
+        ])
+      }
+    />
   );
 }

@@ -10,7 +10,7 @@ import type { IconId } from './switcher';
 
 const FREE_ICON: IconId = 'classic';
 
-/** A thumbnail of the theme in today's light or dark: its paper, a row and its card. */
+/** A thumbnail of the theme in today's light or dark: its page, a row and a ticket. */
 function ThemeTile({
   id,
   scheme,
@@ -36,13 +36,15 @@ function ThemeTile({
     >
       <View
         style={{ backgroundColor: colors.paper, borderColor: selected ? colors.ink : colors.line }}
-        className="h-28 justify-between overflow-hidden rounded-2xl border-[3px] p-3"
+        className="h-28 justify-between overflow-hidden rounded-2xl border-2 p-3"
       >
         <View style={{ backgroundColor: colors.surface }} className="h-4 w-4/5 rounded-full" />
         <View
-          style={{ backgroundColor: colors.accent }}
-          className="h-12 w-9 -rotate-6 self-end rounded-md"
-        />
+          style={{ backgroundColor: colors.surface, transform: [{ rotate: '-6deg' }] }}
+          className="h-10 w-14 self-end overflow-hidden rounded-md"
+        >
+          <View style={{ backgroundColor: colors.accent }} className="h-3" />
+        </View>
       </View>
       <View>
         <Text className="text-center text-sm font-semibold text-ink">{label}</Text>
@@ -88,8 +90,11 @@ export function AppearanceScreen({
         )}
 
         <View className="gap-3">
-          <Text className="font-display-bold text-2xl text-ink">Theme</Text>
-          <View accessibilityRole="radiogroup" className="flex-row flex-wrap gap-3">
+          <Text className="font-display text-lg text-ink">Theme</Text>
+          <View
+            accessibilityRole="radiogroup"
+            className="flex-row flex-wrap justify-between gap-y-4"
+          >
             {THEME_IDS.map((id) => {
               const locked = !unlocked && id !== 'classic';
               return (
@@ -108,8 +113,11 @@ export function AppearanceScreen({
 
         {iconsSupported ? (
           <View className="gap-3">
-            <Text className="font-display-bold text-2xl text-ink">App icon</Text>
-            <View accessibilityRole="radiogroup" className="flex-row flex-wrap gap-4">
+            <Text className="font-display text-lg text-ink">App icon</Text>
+            <View
+              accessibilityRole="radiogroup"
+              className="flex-row flex-wrap justify-between gap-y-4"
+            >
               {ICONS.map((item) => {
                 const locked = !unlocked && item.id !== FREE_ICON;
                 const selected = icon === item.id;
@@ -120,14 +128,21 @@ export function AppearanceScreen({
                     accessibilityLabel={`${item.label} icon${locked ? ', Premium' : ''}`}
                     accessibilityState={{ selected }}
                     onPress={() => (locked ? onGetPremium() : onIconChange(item.id))}
-                    className="items-center gap-2"
+                    className="w-[30%] items-center gap-2"
                   >
                     <View
-                      className={`rounded-[22px] border-[3px] p-0.5 ${selected ? 'border-ink' : 'border-transparent'}`}
+                      className={`rounded-[24px] border-2 p-0.5 ${selected ? 'border-ink' : 'border-transparent'}`}
                     >
-                      <Image source={item.preview} className="h-16 w-16 rounded-2xl" />
+                      <Image source={item.preview} className="h-[72px] w-[72px] rounded-[18px]" />
                     </View>
-                    <Text className="text-sm font-semibold text-ink">{item.label}</Text>
+                    <View>
+                      <Text className="text-center text-sm font-semibold text-ink">
+                        {item.label}
+                      </Text>
+                      {locked ? (
+                        <Text className="text-center text-xs text-muted">Premium</Text>
+                      ) : null}
+                    </View>
                   </Pressable>
                 );
               })}

@@ -10,7 +10,7 @@ import { Title } from '@/ui/Title';
 import { inviteBalanceLine, inviteTitle, joinButtonTitle } from './copy';
 import { formatInviteCode } from './invite-code';
 
-/** Before joining: who invited you and the score you'd take over. */
+/** Before joining: who invited you and the balance you'd take over. */
 export function JoinScreen({
   code,
   preview,
@@ -33,7 +33,7 @@ export function JoinScreen({
       <Screen scroll>
         <View className="gap-6">
           <ScreenHeader title="Invite" />
-          <Text className="font-display text-4xl tracking-widest text-muted">
+          <Text className="font-display text-3xl tracking-wider text-muted">
             {formatInviteCode(code)}
           </Text>
           {errorMessage ? (
@@ -54,13 +54,13 @@ export function JoinScreen({
           <Avatar name={preview.inviterName} url={preview.inviterAvatarUrl} size={72} />
           <Title>{inviteTitle(preview)}</Title>
           {balance ? (
-            <View className="-rotate-2 self-start rounded-2xl bg-accent px-5 py-3">
-              <Text className="font-display text-3xl text-on-accent">{balance}</Text>
+            <View className="self-start rounded-full bg-accent px-5 py-2.5">
+              <Text className="font-display-bold text-xl text-on-accent">{balance}</Text>
             </View>
           ) : null}
           {preview.kind === 'PERSON' ? (
             <Text className="text-lg text-muted">
-              Every minute either of you keeps the other waiting goes on the tab.
+              Every minute either of you keeps the other waiting counts.
             </Text>
           ) : null}
           {preview.placeholderName ? (
