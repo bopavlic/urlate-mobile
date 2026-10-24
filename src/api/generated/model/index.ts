@@ -89,6 +89,7 @@ export * from './personalInvite';
 export * from './registerPushTokenBody';
 export * from './registerPushTokenBodyPlatform';
 export * from './removePushTokenBody';
+export * from './renameMemberBody';
 export * from './requestAccountDeletionBody';
 export * from './settlement';
 export * from './settlementKind';

@@ -359,7 +359,16 @@ export function LedgerScreen({
           </View>
         </View>
       ) : (
-        <InviteNudge detail={detail} />
+        <>
+          <InviteNudge detail={detail} />
+          <Button
+            title="People"
+            variant="ghost"
+            onPress={() =>
+              router.push({ pathname: '/ledgers/[id]/members', params: { id: detail.id } })
+            }
+          />
+        </>
       )}
 
       {onConfirmModeChange ? (

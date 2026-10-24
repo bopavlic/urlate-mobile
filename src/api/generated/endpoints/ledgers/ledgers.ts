@@ -38,6 +38,7 @@ import type {
   LedgerDetail,
   LedgerPage,
   ListLedgersParams,
+  RenameMemberBody,
   UpdateLedgerBody
 } from '../../model';
 
@@ -769,4 +770,138 @@ export const useRemoveMember = <TError = ErrorType<Error>,
         TContext
       > => {
       return useMutation(getRemoveMemberMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Rename someone who is not on the app yet (any member can)
+ */
+export const renameMember = (
+    id: string,
+    memberId: string,
+    renameMemberBody?: BodyType<RenameMemberBody>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<LedgerDetail>(
+      {url: `/ledgers/${id}/members/${memberId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: renameMemberBody, signal
+    },
+      options);
+    }
+
+
+
+
+export const getRenameMemberMutationKey = () => ['renameMember'] as const;
+
+export const getRenameMemberMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameMember>>, TError,RenameMemberMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof renameMember>>, TError,RenameMemberMutationVariables, TContext> => {
+
+const mutationKey = getRenameMemberMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof renameMember>>, RenameMemberMutationVariables> = (props) => {
+          const {id,memberId,data} = props ?? {};
+
+          return  renameMember(id,memberId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RenameMemberMutationResult = NonNullable<Awaited<ReturnType<typeof renameMember>>>
+    export type RenameMemberMutationBody = BodyType<RenameMemberBody> | undefined
+    export type RenameMemberMutationError = ErrorType<Error>
+    export type RenameMemberMutationVariables = {id: string;memberId: string;data?: BodyType<RenameMemberBody>}
+
+    /**
+ * @summary Rename someone who is not on the app yet (any member can)
+ */
+export const useRenameMember = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof renameMember>>, TError,RenameMemberMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof renameMember>>,
+        TError,
+        RenameMemberMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRenameMemberMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Leave a ledger: I become a placeholder under my name, so the others keep the history (deleted if nobody else has an account)
+ */
+export const leaveLedger = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<void>(
+      {url: `/ledgers/${id}/leave`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getLeaveLedgerMutationKey = () => ['leaveLedger'] as const;
+
+export const getLeaveLedgerMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof leaveLedger>>, TError,LeaveLedgerMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof leaveLedger>>, TError,LeaveLedgerMutationVariables, TContext> => {
+
+const mutationKey = getLeaveLedgerMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof leaveLedger>>, LeaveLedgerMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  leaveLedger(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LeaveLedgerMutationResult = NonNullable<Awaited<ReturnType<typeof leaveLedger>>>
+
+    export type LeaveLedgerMutationError = ErrorType<Error>
+    export type LeaveLedgerMutationVariables = {id: string}
+
+    /**
+ * @summary Leave a ledger: I become a placeholder under my name, so the others keep the history (deleted if nobody else has an account)
+ */
+export const useLeaveLedger = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof leaveLedger>>, TError,LeaveLedgerMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof leaveLedger>>,
+        TError,
+        LeaveLedgerMutationVariables,
+        TContext
+      > => {
+      return useMutation(getLeaveLedgerMutationOptions(options), queryClient);
     }
