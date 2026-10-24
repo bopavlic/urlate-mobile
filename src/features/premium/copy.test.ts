@@ -7,7 +7,7 @@ const premium: Entitlements = {
   premiumUntil: '2026-11-24T12:00:00.000Z',
   premiumStore: 'APPLE',
   premiumRenews: true,
-  features: { shareStyles: true, unlimitedGroups: true },
+  features: { shareStyles: true, unlimitedGroups: true, fullStats: true },
   rewards: [],
   adsLeftToday: 0,
   groupsCreated: 3,

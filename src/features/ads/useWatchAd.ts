@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { getEntitlements } from '@/api/generated/endpoints/premium/premium';
+import type { EntitlementsRewardsItemPerk } from '@/api/generated/model';
 import { refreshEntitlements, setEntitlements, useEntitlements } from '@/features/premium/queries';
 import { authClient } from '@/lib/auth';
 
@@ -10,7 +11,7 @@ import { waitForReward } from './wait-for-reward';
 import type { WatchAdState } from './WatchAdButton';
 
 /** Watch one rewarded ad for a perk, then wait for the API to unlock it. */
-export function useWatchAd(perk: 'SHARE_STYLES') {
+export function useWatchAd(perk: EntitlementsRewardsItemPerk) {
   const entitlements = useEntitlements();
   const { data: session } = authClient.useSession();
   const [state, setState] = useState<WatchAdState>('idle');

@@ -9,4 +9,5 @@
 export type EntitlementsFeatures = {
   shareStyles: boolean;
   unlimitedGroups: boolean;
+  fullStats: boolean;
 };

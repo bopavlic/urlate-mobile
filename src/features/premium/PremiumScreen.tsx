@@ -11,6 +11,10 @@ import { yearlySaving, type Plan } from './plans';
 const FEATURES = [
   { title: 'Unlimited groups', detail: 'Free accounts can start two. Joining is always free.' },
   { title: 'Every share-card look', detail: 'Three backgrounds and six card colours.' },
+  {
+    title: 'Full stats',
+    detail: 'Your averages, worst weekday, on-time streaks and who keeps you waiting.',
+  },
   { title: 'No ads, ever', detail: 'Not even the ones you choose to watch.' },
 ];
 

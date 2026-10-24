@@ -29,7 +29,9 @@ import type {
   CreateAvatarUploadBody,
   DataExport,
   Error,
+  GetMyStatsParams,
   Me,
+  Stats,
   UpdateMeBody
 } from '../../model';
 
@@ -428,6 +430,99 @@ export function useExportMyData<TData = Awaited<ReturnType<typeof exportMyData>>
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getExportMyDataQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary My lateness across every ledger: totals for everyone, the rest with Premium
+ */
+export const getMyStats = (
+    params?: GetMyStatsParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<Stats>(
+      {url: `/me/stats`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetMyStatsQueryKey = (params?: GetMyStatsParams,) => {
+    return [
+    `/me/stats`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetMyStatsQueryOptions = <TData = Awaited<ReturnType<typeof getMyStats>>, TError = ErrorType<Error>>(params?: GetMyStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyStats>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMyStatsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyStats>>> = ({ signal }) => getMyStats(params, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetMyStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getMyStats>>>
+export type GetMyStatsQueryError = ErrorType<Error>
+
+
+export function useGetMyStats<TData = Awaited<ReturnType<typeof getMyStats>>, TError = ErrorType<Error>>(
+ params: undefined |  GetMyStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyStats>>,
+          TError,
+          Awaited<ReturnType<typeof getMyStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMyStats<TData = Awaited<ReturnType<typeof getMyStats>>, TError = ErrorType<Error>>(
+ params?: GetMyStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyStats>>,
+          TError,
+          Awaited<ReturnType<typeof getMyStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMyStats<TData = Awaited<ReturnType<typeof getMyStats>>, TError = ErrorType<Error>>(
+ params?: GetMyStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyStats>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary My lateness across every ledger: totals for everyone, the rest with Premium
+ */
+
+export function useGetMyStats<TData = Awaited<ReturnType<typeof getMyStats>>, TError = ErrorType<Error>>(
+ params?: GetMyStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyStats>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetMyStatsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

@@ -11,4 +11,5 @@ export type EntitlementsRewardsItemPerk = typeof EntitlementsRewardsItemPerk[key
 
 export const EntitlementsRewardsItemPerk = {
   SHARE_STYLES: 'SHARE_STYLES',
+  FULL_STATS: 'FULL_STATS',
 } as const;

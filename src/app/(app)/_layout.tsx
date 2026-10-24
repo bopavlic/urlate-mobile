@@ -26,6 +26,7 @@ export default function AppLayout() {
       <Stack.Screen name="log" />
       <Stack.Screen name="invite" />
       <Stack.Screen name="premium" />
+      <Stack.Screen name="stats" />
       <Stack.Screen name="join" />
       <Stack.Screen name="entries/[id]/edit" />
     </Stack>

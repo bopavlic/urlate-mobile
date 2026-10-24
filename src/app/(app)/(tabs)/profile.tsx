@@ -107,6 +107,8 @@ export default function Profile() {
         <PremiumRow entitlements={entitlements.data} onOpen={() => router.push('/premium')} />
       ) : null}
 
+      <Button title="Your stats" variant="secondary" onPress={() => router.push('/stats')} />
+
       <ProfileForm key={me.data.id} me={me.data} />
 
       <MyInviteCode

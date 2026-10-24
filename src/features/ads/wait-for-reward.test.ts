@@ -7,7 +7,7 @@ const base: Entitlements = {
   premiumUntil: null,
   premiumStore: null,
   premiumRenews: null,
-  features: { shareStyles: false, unlimitedGroups: false },
+  features: { shareStyles: false, unlimitedGroups: false, fullStats: false },
   rewards: [],
   adsLeftToday: 3,
   groupsCreated: 0,
@@ -15,7 +15,7 @@ const base: Entitlements = {
 };
 const rewarded: Entitlements = {
   ...base,
-  features: { shareStyles: true, unlimitedGroups: false },
+  features: { shareStyles: true, unlimitedGroups: false, fullStats: false },
   rewards: [{ perk: 'SHARE_STYLES', expiresAt: '2026-10-25T12:00:00.000Z' }],
   adsLeftToday: 2,
 };
