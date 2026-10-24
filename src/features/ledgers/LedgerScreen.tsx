@@ -1,9 +1,12 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useState, type ReactNode } from 'react';
-import { Alert, FlatList, Pressable, Switch, Text, View } from 'react-native';
+import { Alert, FlatList, Platform, Pressable, Switch, Text, View } from 'react-native';
 
 import type { Entry, HistoryItem as Item, LedgerDetail } from '@/api/generated/model';
 import { BigBalance } from '@/ui/BigBalance';
+import { useColors } from '@/theme/appearance';
 import { Button } from '@/ui/Button';
 import { LateButton } from '@/ui/LateButton';
 import { Screen } from '@/ui/Screen';
@@ -71,6 +74,49 @@ function InviteNudge({ detail }: { detail: LedgerDetail }) {
       <Text className="text-base text-muted">Invite them so they can see it too.</Text>
       <Button title={`Invite ${other.displayName}`} variant="secondary" onPress={openInvite} />
     </View>
+  );
+}
+
+/** Who's in it, as a card: their avatars, who they are, and the way to manage them. */
+function PeopleCard({ detail }: { detail: LedgerDetail }) {
+  const colors = useColors();
+  const isGroup = detail.kind === 'GROUP';
+  const others = detail.members.filter((member) => !member.isMe);
+  const shown = [...detail.members].sort((a, b) => Number(a.isMe) - Number(b.isMe)).slice(0, 4);
+  const subline = isGroup
+    ? `${detail.members.length} people`
+    : `You and ${others[0]?.displayName ?? 'them'}`;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={isGroup ? `People (${detail.members.length})` : 'People'}
+      accessibilityHint="Invite, rename or remove people"
+      onPress={() => router.push({ pathname: '/ledgers/[id]/members', params: { id: detail.id } })}
+      className="flex-row items-center gap-4 rounded-2xl bg-surface p-4 active:opacity-80"
+    >
+      <View className="flex-row">
+        {shown.map((member, index) => (
+          <View
+            key={member.id}
+            style={{ marginLeft: index === 0 ? 0 : -12, borderColor: colors.surface }}
+            className="rounded-full border-2"
+          >
+            <Avatar name={member.displayName} url={member.avatarUrl} size={36} onCard />
+          </View>
+        ))}
+      </View>
+      <View className="flex-1 gap-0.5">
+        <Text className="font-display text-base text-ink">People</Text>
+        <Text className="text-sm text-muted" numberOfLines={1}>
+          {subline}
+        </Text>
+      </View>
+      {Platform.OS === 'ios' ? (
+        <SymbolView name="chevron.right" size={13} weight="semibold" tintColor={colors.muted} />
+      ) : (
+        <MaterialCommunityIcons name="chevron-right" size={20} color={colors.muted} />
+      )}
+    </Pressable>
   );
 }
 
@@ -347,32 +393,8 @@ export function LedgerScreen({
         onPress={() => router.push({ pathname: '/ledgers/[id]/share', params: { id: detail.id } })}
       />
 
-      {isGroup ? (
-        <View className="flex-row gap-3">
-          <Button
-            title={`People (${detail.members.length})`}
-            variant="secondary"
-            className="flex-1"
-            onPress={() =>
-              router.push({ pathname: '/ledgers/[id]/members', params: { id: detail.id } })
-            }
-          />
-          <View className="flex-1">
-            <InviteNudge detail={detail} />
-          </View>
-        </View>
-      ) : (
-        <>
-          <InviteNudge detail={detail} />
-          <Button
-            title="People"
-            variant="ghost"
-            onPress={() =>
-              router.push({ pathname: '/ledgers/[id]/members', params: { id: detail.id } })
-            }
-          />
-        </>
-      )}
+      <PeopleCard detail={detail} />
+      <InviteNudge detail={detail} />
 
       {onConfirmModeChange ? (
         <ConfirmModeSetting

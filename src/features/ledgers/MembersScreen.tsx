@@ -1,9 +1,10 @@
 import { useState, type ReactNode } from 'react';
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
 import type { LedgerDetail, Member } from '@/api/generated/model';
 import { Avatar } from '@/ui/Avatar';
 import { Button } from '@/ui/Button';
+import { MenuList, MenuRow } from '@/ui/MenuList';
 import { Screen } from '@/ui/Screen';
 import { ScreenHeader } from '@/ui/ScreenHeader';
 import { TextField } from '@/ui/TextField';
@@ -89,74 +90,100 @@ function MemberRow({
   renameField: ReactNode;
 }) {
   const name = member.isMe ? 'You' : member.displayName;
+  const subline = member.isMe
+    ? 'That’s you'
+    : member.isPlaceholder
+      ? 'Not on Ur Late yet'
+      : member.username
+        ? `@${member.username}`
+        : 'On Ur Late';
   return (
-    <View className="gap-3 py-4">
-      <View className="flex-row items-center gap-4">
-        <Avatar name={member.displayName} url={member.avatarUrl} size={44} />
+    <View className="gap-3 px-4 py-3.5">
+      <View className="flex-row items-center gap-3">
+        <Avatar name={member.displayName} url={member.avatarUrl} size={44} onCard />
         <View className="flex-1 gap-0.5">
-          <Text className="text-lg font-semibold text-ink" numberOfLines={1}>
+          <Text className="text-base font-semibold text-ink" numberOfLines={1}>
             {name}
           </Text>
-          {member.isPlaceholder ? (
-            <Text className="text-sm text-muted">Not on Ur Late yet</Text>
-          ) : member.username && !member.isMe ? (
-            <Text className="text-sm text-muted">@{member.username}</Text>
+          <Text className="text-sm text-muted" numberOfLines={1}>
+            {subline}
+          </Text>
+          {member.isPlaceholder && !renaming ? (
+            <View className="flex-row gap-4 pt-1">
+              <Text
+                accessibilityRole="button"
+                accessibilityLabel={`Rename ${member.displayName}`}
+                onPress={onStartRename}
+                className="text-sm font-semibold text-ink underline"
+              >
+                Rename
+              </Text>
+              {canRemove ? (
+                <Text
+                  accessibilityRole="button"
+                  accessibilityLabel={`Remove ${member.displayName}`}
+                  onPress={onRemove}
+                  className="text-sm font-semibold text-danger underline"
+                >
+                  Remove
+                </Text>
+              ) : null}
+            </View>
           ) : null}
         </View>
+        {member.isPlaceholder && !renaming ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Invite ${member.displayName}`}
+            onPress={onInvite}
+            className="h-9 justify-center rounded-full bg-accent px-4 active:opacity-80"
+          >
+            <Text className="text-sm font-semibold text-on-accent">Invite</Text>
+          </Pressable>
+        ) : null}
       </View>
       {member.isPlaceholder && renaming ? renameField : null}
-      {member.isPlaceholder && !renaming ? (
-        <View className="flex-row gap-3">
-          <Button
-            title="Invite"
-            variant="secondary"
-            className="flex-1"
-            onPress={onInvite}
-            accessibilityLabel={`Invite ${member.displayName}`}
-          />
-          <Button
-            title="Rename"
-            variant="ghost"
-            className="flex-1"
-            onPress={onStartRename}
-            accessibilityLabel={`Rename ${member.displayName}`}
-          />
-          {canRemove ? (
-            <Button
-              title="Remove"
-              variant="ghost"
-              className="flex-1"
-              onPress={onRemove}
-              accessibilityLabel={`Remove ${member.displayName}`}
-            />
-          ) : null}
-        </View>
-      ) : null}
     </View>
   );
 }
 
-/** What leaving does, worded for the confirmation. */
-function leaveCopy(detail: LedgerDetail): { title: string; message: string; action: string } {
+/** What leaving does, worded for the confirmation (also used by a long press on Home). */
+export function leaveCopy(detail: Pick<LedgerDetail, 'kind' | 'members' | 'name'>): {
+  title: string;
+  message: string;
+  action: string;
+  /** The button that starts it. */
+  label: string;
+  /** Under that button: what happens, before anyone taps it. */
+  hint: string;
+} {
   const isGroup = detail.kind === 'GROUP';
   const othersOnApp = detail.members.some((member) => !member.isMe && !member.isPlaceholder);
   const other = detail.members.find((member) => !member.isMe)?.displayName ?? 'them';
+  const groupName = detail.name ?? 'this group';
+  const label = isGroup ? 'Leave group' : `Remove ${other} from your list`;
   if (!othersOnApp) {
     return {
-      title: isGroup
-        ? `Delete ${detail.name ?? 'this group'}?`
-        : `Delete everything with ${other}?`,
+      title: isGroup ? `Delete ${groupName}?` : `Delete everything with ${other}?`,
       message:
         'Nobody else here is on Ur Late, so leaving deletes it with all its history. This can’t be undone.',
       action: 'Leave and delete',
+      label,
+      hint: isGroup
+        ? 'Nobody else here is on Ur Late, so leaving deletes the group and its history.'
+        : `${other} isn’t on Ur Late, so this deletes every minute between you.`,
     };
   }
   return {
-    title: isGroup ? `Leave ${detail.name ?? 'this group'}?` : `Stop keeping track with ${other}?`,
+    title: isGroup ? `Leave ${groupName}?` : `Stop keeping track with ${other}?`,
     message: `${isGroup ? 'The others keep' : `${other} keeps`} your entries, under your name. ${
       isGroup ? 'They' : `${other}`
     } can invite you back later.`,
     action: 'Leave',
+    label,
+    hint: isGroup
+      ? 'The others keep your entries and can invite you back.'
+      : `${other} keeps the history and can add you back later.`,
   };
 }
 
@@ -181,6 +208,7 @@ export function MembersScreen({
   onLeave: () => Promise<void>;
 }) {
   const isGroup = detail.kind === 'GROUP';
+  const copy = leaveCopy(detail);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [leaving, setLeaving] = useState(false);
   const [name, setName] = useState('');
@@ -229,7 +257,6 @@ export function MembersScreen({
   }
 
   function leave() {
-    const copy = leaveCopy(detail);
     Alert.alert(copy.title, copy.message, [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -247,35 +274,43 @@ export function MembersScreen({
     ]);
   }
 
+  const other = detail.members.find((member) => !member.isMe);
+  const title = isGroup ? (detail.name ?? 'People') : `You & ${other?.displayName ?? 'them'}`;
+
   return (
     <Screen padded={false}>
       <ScrollView contentContainerClassName="gap-6 px-6 pb-12" keyboardShouldPersistTaps="handled">
-        <ScreenHeader title={detail.name ?? 'People'} />
+        <ScreenHeader title={title} />
         {isGroup ? (
           <Button title="Share the group's invite link" onPress={() => onInvite(null)} />
         ) : null}
 
-        <View>
-          {detail.members.map((member, index) => (
-            <View key={member.id}>
-              {index > 0 ? <View className="h-px bg-line" /> : null}
-              <MemberRow
-                member={member}
-                canRemove={isGroup}
-                renaming={renamingId === member.id}
-                onInvite={() => onInvite(member.id)}
-                onRemove={() => remove(member)}
-                onStartRename={() => setRenamingId(member.id)}
-                renameField={
-                  <RenameField
-                    member={member}
-                    onSave={(newName) => rename(member, newName)}
-                    onCancel={() => setRenamingId(null)}
-                  />
-                }
-              />
-            </View>
-          ))}
+        <View className="gap-2">
+          {isGroup ? (
+            <Text className="font-display text-lg text-ink">{detail.members.length} people</Text>
+          ) : null}
+          <View className="overflow-hidden rounded-2xl bg-surface">
+            {detail.members.map((member, index) => (
+              <View key={member.id}>
+                {index > 0 ? <View className="ml-[72px] h-px bg-line" /> : null}
+                <MemberRow
+                  member={member}
+                  canRemove={isGroup}
+                  renaming={renamingId === member.id}
+                  onInvite={() => onInvite(member.id)}
+                  onRemove={() => remove(member)}
+                  onStartRename={() => setRenamingId(member.id)}
+                  renameField={
+                    <RenameField
+                      member={member}
+                      onSave={(newName) => rename(member, newName)}
+                      onCancel={() => setRenamingId(null)}
+                    />
+                  }
+                />
+              </View>
+            ))}
+          </View>
         </View>
 
         {isGroup ? (
@@ -293,25 +328,18 @@ export function MembersScreen({
               For someone who isn&apos;t on the app yet. Invite them later and they take over their
               spot, history included.
             </Text>
-            {error ? <Text className="text-base text-danger">{error}</Text> : null}
-            <Button
-              title="Add"
-              variant="secondary"
-              onPress={add}
-              disabled={!trimmed}
-              loading={adding}
-            />
+            <Button title="Add" onPress={add} disabled={!trimmed} loading={adding} />
           </View>
-        ) : error ? (
-          <Text className="text-base text-danger">{error}</Text>
         ) : null}
 
-        <Button
-          title={isGroup ? 'Leave group' : 'Stop keeping track'}
-          variant="danger"
-          loading={leaving}
-          onPress={leave}
-        />
+        {error ? <Text className="text-base text-danger">{error}</Text> : null}
+
+        <View className="gap-2">
+          <MenuList>
+            <MenuRow title={copy.label} tone="danger" loading={leaving} onPress={leave} />
+          </MenuList>
+          <Text className="px-1 text-sm text-muted">{copy.hint}</Text>
+        </View>
       </ScrollView>
     </Screen>
   );

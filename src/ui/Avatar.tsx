@@ -7,10 +7,13 @@ export function Avatar({
   name,
   url,
   size = 44,
+  onCard = false,
 }: {
   name: string;
   url?: string | null;
   size?: number;
+  /** Sitting on a white card: use the page colour so the circle still shows. */
+  onCard?: boolean;
 }) {
   const dimensions = { width: size, height: size, borderRadius: size / 2 };
   if (url) {
@@ -27,7 +30,7 @@ export function Avatar({
   return (
     <View
       style={dimensions}
-      className="items-center justify-center bg-surface"
+      className={`items-center justify-center ${onCard ? 'bg-paper' : 'bg-surface'}`}
       accessibilityLabel={name}
     >
       <Text className="font-display-bold text-ink" style={{ fontSize: size * 0.42 }}>

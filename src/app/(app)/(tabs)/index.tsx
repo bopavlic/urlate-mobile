@@ -1,8 +1,20 @@
 import { router } from 'expo-router';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  Text,
+  View,
+} from 'react-native';
 
+import { getGetLedgerQueryKey, leaveLedger } from '@/api/generated/endpoints/ledgers/ledgers';
+import type { LedgerSummary } from '@/api/generated/model';
 import { LedgerRow } from '@/features/ledgers/LedgerRow';
-import { useLedgers } from '@/features/ledgers/queries';
+import { leaveCopy } from '@/features/ledgers/MembersScreen';
+import { refreshLedgers, useLedgers } from '@/features/ledgers/queries';
+import { queryClient } from '@/providers/query';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { Ticket } from '@/ui/Ticket';
@@ -11,6 +23,26 @@ import { Title } from '@/ui/Title';
 /** Someone who installed from an invite page types the code shown there. */
 function EnterInviteCode() {
   return <Button title="Enter invite code" variant="ghost" onPress={() => router.push('/join')} />;
+}
+
+/** A long press on a row: the same confirmation as leaving from its People screen. */
+function confirmRemove(ledger: LedgerSummary) {
+  const copy = leaveCopy(ledger);
+  Alert.alert(copy.title, copy.message, [
+    { text: 'Cancel', style: 'cancel' },
+    {
+      text: copy.action,
+      style: 'destructive',
+      onPress: () => {
+        leaveLedger(ledger.id)
+          .then(async () => {
+            queryClient.removeQueries({ queryKey: getGetLedgerQueryKey(ledger.id) });
+            await refreshLedgers();
+          })
+          .catch(() => Alert.alert('Couldn’t remove them', 'Check your connection and try again.'));
+      },
+    },
+  ]);
 }
 
 export default function Home() {
@@ -47,7 +79,11 @@ export default function Home() {
           contentContainerClassName="grow px-6"
           ItemSeparatorComponent={() => <View className="h-px bg-line" />}
           renderItem={({ item }) => (
-            <LedgerRow ledger={item} onPress={() => router.push(`/ledgers/${item.id}`)} />
+            <LedgerRow
+              ledger={item}
+              onPress={() => router.push(`/ledgers/${item.id}`)}
+              onLongPress={() => confirmRemove(item)}
+            />
           )}
           onEndReached={() => {
             if (ledgers.hasNextPage && !ledgers.isFetchingNextPage) void ledgers.fetchNextPage();
@@ -76,7 +112,14 @@ export default function Home() {
               <EnterInviteCode />
             </View>
           }
-          ListFooterComponent={items.length > 0 ? <EnterInviteCode /> : undefined}
+          ListFooterComponent={
+            items.length > 0 ? (
+              <View className="items-center gap-1 pt-2">
+                <EnterInviteCode />
+                <Text className="text-sm text-muted">Long-press someone to remove them.</Text>
+              </View>
+            ) : undefined
+          }
         />
       )}
     </Screen>

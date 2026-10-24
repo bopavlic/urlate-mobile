@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { pairLedger } from '@/features/ledgers/fixtures';
@@ -40,4 +41,17 @@ it('keeps the invite code entry under the list', async () => {
   await render(<Home />);
   expect(screen.getByText('Brother')).toBeTruthy();
   expect(screen.getByRole('button', { name: 'Enter invite code' })).toBeTruthy();
+});
+
+it('asks before removing someone on a long press', async () => {
+  const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
+  mockItems = [pairLedger()];
+  await render(<Home />);
+  await fireEvent(screen.getByText('Brother'), 'longPress');
+  expect(alert).toHaveBeenCalledWith(
+    expect.stringMatching(/Brother/),
+    expect.any(String),
+    expect.any(Array),
+  );
+  expect(screen.getByText('Long-press someone to remove them.')).toBeTruthy();
 });

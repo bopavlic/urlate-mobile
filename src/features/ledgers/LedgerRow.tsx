@@ -43,7 +43,16 @@ function MiniBalance({ ledger }: { ledger: LedgerSummary }) {
   );
 }
 
-export function LedgerRow({ ledger, onPress }: { ledger: LedgerSummary; onPress: () => void }) {
+export function LedgerRow({
+  ledger,
+  onPress,
+  onLongPress,
+}: {
+  ledger: LedgerSummary;
+  onPress: () => void;
+  /** Home: remove them from your list. */
+  onLongPress?: () => void;
+}) {
   const title = ledgerTitle(ledger);
   const sentence = ledgerSentence(ledger);
   const other = ledger.kind === 'PAIR' ? otherMember(ledger) : undefined;
@@ -51,7 +60,14 @@ export function LedgerRow({ ledger, onPress }: { ledger: LedgerSummary; onPress:
     <Pressable
       accessibilityRole="button"
       accessibilityHint={sentence}
+      accessibilityActions={
+        onLongPress ? [{ name: 'longpress', label: 'Remove from your list' }] : undefined
+      }
+      onAccessibilityAction={(event) => {
+        if (event.nativeEvent.actionName === 'longpress') onLongPress?.();
+      }}
       onPress={onPress}
+      onLongPress={onLongPress}
       className="flex-row items-center gap-4 py-4 active:opacity-70"
     >
       <Avatar name={title} url={other?.avatarUrl} size={48} />

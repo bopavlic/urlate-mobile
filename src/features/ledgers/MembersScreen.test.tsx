@@ -122,7 +122,7 @@ describe('MembersScreen', () => {
       detail: { ...group, kind: 'PAIR', name: null, members: [me, brother] },
     });
     await view;
-    await fireEvent.press(screen.getByRole('button', { name: 'Stop keeping track' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Remove Brother from your list' }));
     const [title, message] = jest.mocked(Alert.alert).mock.calls.at(-1)!;
     expect(title).toMatch(/^Delete everything with /);
     expect(message).toMatch(/Nobody else here is on Ur Late/);
