@@ -11,6 +11,7 @@ export * from './activityItem';
 export * from './activityItemActor';
 export * from './activityItemKind';
 export * from './activityPage';
+export * from './addMemberBody';
 export * from './avatarUpload';
 export * from './balanceView';
 export * from './balanceViewDirection';

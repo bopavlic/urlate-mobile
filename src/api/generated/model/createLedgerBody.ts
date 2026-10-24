@@ -27,10 +27,7 @@ export type CreateLedgerBody = {
      * @maxLength 40
      */
   name: string;
-  /**
-     * @minItems 1
-     * @maxItems 49
-     */
+  /** @maxItems 49 */
   members: {
   /**
      * @minLength 1

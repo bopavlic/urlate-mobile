@@ -27,8 +27,11 @@ export function Button({
   loading = false,
   icon,
   className = '',
+  accessibilityLabel,
 }: {
   title: string;
+  /** When the visible title needs context, e.g. "Invite Ana" for a row's "Invite". */
+  accessibilityLabel?: string;
   onPress: () => void;
   variant?: Variant;
   disabled?: boolean;
@@ -40,6 +43,7 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled: inactive, busy: loading }}
       onPress={onPress}
       disabled={inactive}

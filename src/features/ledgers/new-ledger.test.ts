@@ -20,9 +20,11 @@ describe('buildCreateLedgerBody', () => {
     });
   });
 
-  it('needs at least one person in a group', () => {
+  it('can start a group with just you, to fill through the invite link', () => {
     expect(buildCreateLedgerBody({ kind: 'GROUP', name: 'Football', people: ['', ' '] })).toEqual({
-      error: 'Add at least one person',
+      kind: 'GROUP',
+      name: 'Football',
+      members: [],
     });
   });
 

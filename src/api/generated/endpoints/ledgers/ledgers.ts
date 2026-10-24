@@ -30,6 +30,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AddMemberBody,
   CreateLedgerBody,
   Error,
   GetLedgerHistoryParams,
@@ -635,3 +636,137 @@ export function useGetLedgerHistory<TData = Awaited<ReturnType<typeof getLedgerH
 
 
 
+/**
+ * @summary Add someone who is not on the app yet to a group (any member can)
+ */
+export const addMember = (
+    id: string,
+    addMemberBody?: BodyType<AddMemberBody>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<LedgerDetail>(
+      {url: `/ledgers/${id}/members`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: addMemberBody, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAddMemberMutationKey = () => ['addMember'] as const;
+
+export const getAddMemberMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addMember>>, TError,AddMemberMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof addMember>>, TError,AddMemberMutationVariables, TContext> => {
+
+const mutationKey = getAddMemberMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addMember>>, AddMemberMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  addMember(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddMemberMutationResult = NonNullable<Awaited<ReturnType<typeof addMember>>>
+    export type AddMemberMutationBody = BodyType<AddMemberBody> | undefined
+    export type AddMemberMutationError = ErrorType<Error>
+    export type AddMemberMutationVariables = {id: string;data?: BodyType<AddMemberBody>}
+
+    /**
+ * @summary Add someone who is not on the app yet to a group (any member can)
+ */
+export const useAddMember = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addMember>>, TError,AddMemberMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof addMember>>,
+        TError,
+        AddMemberMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAddMemberMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Remove a placeholder added by mistake (only before they appear in any entry or settlement)
+ */
+export const removeMember = (
+    id: string,
+    memberId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<void>(
+      {url: `/ledgers/${id}/members/${memberId}`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getRemoveMemberMutationKey = () => ['removeMember'] as const;
+
+export const getRemoveMemberMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeMember>>, TError,RemoveMemberMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeMember>>, TError,RemoveMemberMutationVariables, TContext> => {
+
+const mutationKey = getRemoveMemberMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeMember>>, RemoveMemberMutationVariables> = (props) => {
+          const {id,memberId} = props ?? {};
+
+          return  removeMember(id,memberId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveMemberMutationResult = NonNullable<Awaited<ReturnType<typeof removeMember>>>
+
+    export type RemoveMemberMutationError = ErrorType<Error>
+    export type RemoveMemberMutationVariables = {id: string;memberId: string}
+
+    /**
+ * @summary Remove a placeholder added by mistake (only before they appear in any entry or settlement)
+ */
+export const useRemoveMember = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeMember>>, TError,RemoveMemberMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeMember>>,
+        TError,
+        RemoveMemberMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRemoveMemberMutationOptions(options), queryClient);
+    }

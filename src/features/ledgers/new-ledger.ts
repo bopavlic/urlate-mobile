@@ -28,7 +28,6 @@ export function buildCreateLedgerBody(form: NewLedgerForm): CreateLedgerBody | {
   }
 
   if (!name) return { error: 'Give the group a name' };
-  if (people.length === 0) return { error: 'Add at least one person' };
   if (people.length > MAX_GROUP_PEOPLE) return { error: 'A group holds up to 50 people' };
   return {
     kind: 'GROUP',

@@ -80,7 +80,7 @@ export default function NewLedger() {
           {people.map((person, index) => (
             <TextField
               key={index}
-              label={index === 0 ? 'People' : `Person ${index + 1}`}
+              label={index === 0 ? 'People (optional)' : `Person ${index + 1}`}
               value={person}
               onChangeText={(value) => setPerson(index, value)}
               placeholder="Name"
@@ -95,8 +95,9 @@ export default function NewLedger() {
       )}
 
       <Text className="text-base text-muted">
-        They don&apos;t need the app yet. You can invite them later and they&apos;ll see the whole
-        history.
+        {kind === 'PAIR'
+          ? "They don't need the app yet. You can invite them later and they'll see the whole history."
+          : "Add people now even if they're not on the app, or leave it empty and share the group's invite link."}
       </Text>
       {error ? <Text className="text-base text-danger">{error}</Text> : null}
       <Button title="Save" onPress={save} loading={create.isPending} />

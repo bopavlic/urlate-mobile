@@ -9,8 +9,11 @@ import { LateButton } from '@/ui/LateButton';
 import { Screen } from '@/ui/Screen';
 import { ScreenHeader } from '@/ui/ScreenHeader';
 
+import { balanceSentence } from '@/features/balance/copy';
+import { Avatar } from '@/ui/Avatar';
+
 import { HistoryItem } from './HistoryItem';
-import { settleOptions, type SettleRequest } from './settle';
+import { myScores, settleOptions, type SettleRequest } from './settle';
 
 export type { SettleRequest };
 
@@ -53,7 +56,7 @@ function Stepper({
 function InviteNudge({ detail }: { detail: LedgerDetail }) {
   const openInvite = () => router.push({ pathname: '/invite', params: { ledgerId: detail.id } });
   if (detail.kind === 'GROUP') {
-    return <Button title="Invite people" variant="secondary" onPress={openInvite} />;
+    return <Button title="Invite" variant="secondary" onPress={openInvite} />;
   }
   const other = detail.members.find((member) => !member.isMe);
   if (!other?.isPlaceholder) return null;
@@ -96,23 +99,171 @@ function ConfirmModeSetting({
   );
 }
 
+/** Most minutes owed first: the top of the board is whoever keeps everyone waiting. */
 function Leaderboard({ detail }: { detail: LedgerDetail }) {
+  const rows = [...detail.leaderboard].sort((a, b) => a.netMinutes - b.netMinutes);
   return (
-    <View className="gap-2 rounded-2xl border-2 border-line p-4">
+    <View className="gap-3">
       <Text className="font-display-bold text-2xl text-ink">Leaderboard</Text>
-      {detail.leaderboard.map((row) => {
-        const member = detail.members.find((m) => m.id === row.memberId);
-        const name = member?.isMe ? 'You' : (member?.displayName ?? 'Someone');
-        const standing =
-          row.netMinutes > 0
-            ? `owed ${row.netMinutes} min`
-            : row.netMinutes < 0
-              ? `owes ${-row.netMinutes} min`
+      {rows.every((row) => row.netMinutes === 0) ? (
+        <Text className="text-base text-muted">No one&apos;s late yet. Give it time.</Text>
+      ) : (
+        rows.map((row, index) => {
+          const member = detail.members.find((m) => m.id === row.memberId);
+          const name = member?.isMe ? 'You' : (member?.displayName ?? 'Someone');
+          const owes = row.netMinutes < 0;
+          const standing = owes
+            ? `owes ${-row.netMinutes} min`
+            : row.netMinutes > 0
+              ? `owed ${row.netMinutes} min`
               : 'square';
+          return (
+            <View
+              key={row.memberId}
+              className="flex-row items-center gap-3"
+              accessible
+              accessibilityLabel={`${index + 1}. ${name}, ${standing}`}
+            >
+              <Text className="w-6 font-display-bold text-xl text-muted">{index + 1}</Text>
+              <Avatar name={name} url={member?.avatarUrl} size={36} />
+              <Text className="flex-1 text-base text-ink" numberOfLines={1}>
+                {name}
+              </Text>
+              {/* The worst offender gets the card. */}
+              <Text
+                className={`font-semibold ${
+                  index === 0 && owes
+                    ? '-rotate-3 rounded-md bg-accent px-2 py-1 text-on-accent'
+                    : 'rotate-0 text-ink'
+                }`}
+              >
+                {standing}
+              </Text>
+            </View>
+          );
+        })
+      )}
+    </View>
+  );
+}
+
+/** Forgive some minutes or reset to zero: only ever by the person who is owed. */
+function SettleControls({
+  owedMinutes,
+  counterpartMemberId,
+  settling,
+  onSettle,
+}: {
+  owedMinutes: number;
+  counterpartMemberId: string;
+  settling: boolean;
+  onSettle: (request: SettleRequest) => Promise<boolean>;
+}) {
+  const [forgiving, setForgiving] = useState(false);
+  const [minutes, setMinutes] = useState(owedMinutes);
+  const chosen = Math.min(minutes, owedMinutes);
+
+  function confirmReset() {
+    Alert.alert('Wipe the slate?', "This can't be undone, but it stays in history.", [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Reset',
+        style: 'destructive',
+        onPress: () => void onSettle({ kind: 'RESET', counterpartMemberId }),
+      },
+    ]);
+  }
+
+  if (!forgiving) {
+    return (
+      <View className="flex-row gap-3">
+        <Button
+          title="Forgive"
+          variant="secondary"
+          className="flex-1"
+          onPress={() => {
+            setMinutes(owedMinutes);
+            setForgiving(true);
+          }}
+        />
+        <Button title="Reset" variant="secondary" className="flex-1" onPress={confirmReset} />
+      </View>
+    );
+  }
+
+  return (
+    <View className="gap-4 rounded-2xl border-2 border-line p-4">
+      <Text className="text-center text-base text-muted">How many minutes to let go?</Text>
+      <Stepper value={chosen} min={1} max={owedMinutes} onChange={setMinutes} />
+      <View className="flex-row gap-3">
+        <Button
+          title="Cancel"
+          variant="ghost"
+          className="flex-1"
+          onPress={() => setForgiving(false)}
+        />
+        <Button
+          title={`Forgive ${chosen} min`}
+          className="flex-1"
+          loading={settling}
+          onPress={async () => {
+            const saved = await onSettle({ kind: 'FORGIVE', minutes: chosen, counterpartMemberId });
+            if (saved) setForgiving(false);
+          }}
+        />
+      </View>
+    </View>
+  );
+}
+
+/** Groups stay pairwise: my score with each person, and settling one person at a time. */
+function GroupScores({
+  detail,
+  settling,
+  onSettle,
+}: {
+  detail: LedgerDetail;
+  settling: boolean;
+  onSettle: (request: SettleRequest) => Promise<boolean>;
+}) {
+  const [open, setOpen] = useState<string | null>(null);
+  const scores = myScores(detail);
+  if (scores.length === 0) return null;
+  return (
+    <View className="gap-3">
+      <Text className="font-display-bold text-2xl text-ink">You and each of them</Text>
+      {scores.map(({ member, view }) => {
+        const sentence = balanceSentence(view, member.displayName);
+        const owed = view.direction === 'THEY_OWE_YOU';
+        const expanded = open === member.id;
         return (
-          <View key={row.memberId} className="flex-row justify-between">
-            <Text className="text-base text-ink">{name}</Text>
-            <Text className="text-base font-semibold text-ink">{standing}</Text>
+          <View key={member.id} className="gap-3">
+            {owed ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded }}
+                accessibilityHint="Forgive or reset"
+                onPress={() => setOpen(expanded ? null : member.id)}
+                className="flex-row items-center justify-between py-1 active:opacity-70"
+              >
+                <Text className="text-base font-semibold text-ink">{sentence}</Text>
+                <Text className="text-base text-muted underline">Settle</Text>
+              </Pressable>
+            ) : (
+              <Text className="py-1 text-base text-ink">{sentence}</Text>
+            )}
+            {owed && expanded ? (
+              <SettleControls
+                owedMinutes={view.minutes}
+                counterpartMemberId={member.id}
+                settling={settling}
+                onSettle={async (request) => {
+                  const saved = await onSettle(request);
+                  if (saved) setOpen(null);
+                  return saved;
+                }}
+              />
+            ) : null}
           </View>
         );
       })}
@@ -148,9 +299,8 @@ export function LedgerScreen({
   const other = detail.members.find((member) => !member.isMe);
   const title = detail.name ?? other?.displayName ?? 'Someone';
   const settle = settleOptions(detail);
-  const [forgiving, setForgiving] = useState(false);
-  const [forgiveMinutes, setForgiveMinutes] = useState(settle.owedMinutes);
   const [settleError, setSettleError] = useState<string | null>(null);
+  const isGroup = detail.kind === 'GROUP';
 
   async function trySettle(request: SettleRequest): Promise<boolean> {
     setSettleError(null);
@@ -163,13 +313,6 @@ export function LedgerScreen({
     }
   }
 
-  function confirmReset() {
-    Alert.alert('Wipe the slate?', "This can't be undone, but it stays in history.", [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Reset', style: 'destructive', onPress: () => void trySettle({ kind: 'RESET' }) },
-    ]);
-  }
-
   const header = (
     <View className="gap-8 pb-6">
       <ScreenHeader title={title} />
@@ -180,58 +323,38 @@ export function LedgerScreen({
         <LateButton ledgerId={detail.id} />
       </View>
 
-      {settle.canSettle && !forgiving ? (
-        <View className="flex-row gap-3">
-          <Button
-            title="Forgive"
-            variant="secondary"
-            className="flex-1"
-            onPress={() => {
-              setForgiveMinutes(settle.owedMinutes);
-              setForgiving(true);
-            }}
-          />
-          <Button title="Reset" variant="secondary" className="flex-1" onPress={confirmReset} />
-        </View>
+      {!isGroup && settle.canSettle && settle.counterpartId ? (
+        <SettleControls
+          key={settle.owedMinutes}
+          owedMinutes={settle.owedMinutes}
+          counterpartMemberId={settle.counterpartId}
+          settling={settling}
+          onSettle={trySettle}
+        />
       ) : null}
 
-      {settle.canSettle && forgiving ? (
-        <View className="gap-4 rounded-2xl border-2 border-line p-4">
-          <Text className="text-center text-base text-muted">How many minutes to let go?</Text>
-          <Stepper
-            value={Math.min(forgiveMinutes, settle.owedMinutes)}
-            min={1}
-            max={settle.owedMinutes}
-            onChange={setForgiveMinutes}
-          />
-          <View className="flex-row gap-3">
-            <Button
-              title="Cancel"
-              variant="ghost"
-              className="flex-1"
-              onPress={() => setForgiving(false)}
-            />
-            <Button
-              title={`Forgive ${Math.min(forgiveMinutes, settle.owedMinutes)} min`}
-              className="flex-1"
-              loading={settling}
-              onPress={async () => {
-                const saved = await trySettle({
-                  kind: 'FORGIVE',
-                  minutes: Math.min(forgiveMinutes, settle.owedMinutes),
-                });
-                if (saved) setForgiving(false);
-              }}
-            />
-          </View>
-        </View>
-      ) : null}
+      {isGroup ? <Leaderboard detail={detail} /> : null}
+      {isGroup ? <GroupScores detail={detail} settling={settling} onSettle={trySettle} /> : null}
 
       {settleError ? <Text className="text-base text-danger">{settleError}</Text> : null}
 
-      <InviteNudge detail={detail} />
-
-      {detail.kind === 'GROUP' ? <Leaderboard detail={detail} /> : null}
+      {isGroup ? (
+        <View className="flex-row gap-3">
+          <Button
+            title={`People (${detail.members.length})`}
+            variant="secondary"
+            className="flex-1"
+            onPress={() =>
+              router.push({ pathname: '/ledgers/[id]/members', params: { id: detail.id } })
+            }
+          />
+          <View className="flex-1">
+            <InviteNudge detail={detail} />
+          </View>
+        </View>
+      ) : (
+        <InviteNudge detail={detail} />
+      )}
 
       {onConfirmModeChange ? (
         <ConfirmModeSetting

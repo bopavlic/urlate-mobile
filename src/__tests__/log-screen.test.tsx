@@ -5,6 +5,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { brother } from '@/features/ledgers/fixtures';
 
 const mockMutateAsync = jest.fn();
+let mockKind: 'PAIR' | 'GROUP' = 'PAIR';
 let mockIds = 0;
 
 jest.mock('expo-crypto', () => ({ randomUUID: () => `req-${++mockIds}` }));
@@ -33,7 +34,10 @@ jest.mock('@/api/generated/endpoints/ledgers/ledgers', () => ({
   useGetLedger: () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fixtures = require('@/features/ledgers/fixtures');
-    return { data: { kind: 'PAIR', members: [fixtures.me, fixtures.brother] } };
+    const ana = { ...fixtures.brother, id: 'm-ana', displayName: 'Ana' };
+    return mockKind === 'PAIR'
+      ? { data: { kind: 'PAIR', members: [fixtures.me, fixtures.brother] } }
+      : { data: { kind: 'GROUP', members: [fixtures.me, fixtures.brother, ana] } };
   },
 }));
 jest.mock('@/features/ledgers/queries', () => ({
@@ -67,5 +71,32 @@ it('retries a failed save with the same request id', async () => {
   expect(mockMutateAsync.mock.calls[0][0]).toMatchObject({
     id: 'l-pair',
     data: { lateMemberId: brother.id, minutes: 5 },
+  });
+});
+
+describe('in a group', () => {
+  beforeEach(() => {
+    mockKind = 'GROUP';
+    mockMutateAsync.mockReset().mockResolvedValue({});
+  });
+  afterEach(() => {
+    mockKind = 'PAIR';
+  });
+
+  it('logs only the people who were there as waiters', async () => {
+    await render(<Log />);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Ana' }));
+    // I can't leave myself out: only people who were there can log it.
+    expect(screen.getByRole('checkbox', { name: 'Me' }).props.accessibilityState).toMatchObject({
+      checked: true,
+      disabled: true,
+    });
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Brother' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Save' }));
+    await waitFor(() => expect(mockMutateAsync).toHaveBeenCalled());
+    expect(mockMutateAsync.mock.calls[0][0].data).toMatchObject({
+      lateMemberId: 'm-ana',
+      waiterMemberIds: ['m-me'],
+    });
   });
 });

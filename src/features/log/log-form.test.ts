@@ -10,6 +10,7 @@ describe('logReducer', () => {
       minutes: 5,
       note: '',
       occurredAt: null,
+      absent: [],
     });
   });
 
@@ -59,5 +60,40 @@ describe('toCreateEntryBody', () => {
         clientRequestId: 'req-1',
       },
     );
+  });
+});
+
+describe('who waited (groups)', () => {
+  const members = ['m-me', 'm-bro', 'm-ana', 'm-ivo'];
+
+  it('leaves the waiters to the API when everyone else was there', () => {
+    expect(toCreateEntryBody(picked, 'req-1', members)).not.toHaveProperty('waiterMemberIds');
+  });
+
+  it('sends only the people who were there', () => {
+    const state = logReducer(picked, { type: 'toggleAbsent', memberId: 'm-ivo' });
+    expect(toCreateEntryBody(state, 'req-1', members)?.waiterMemberIds).toEqual(['m-me', 'm-ana']);
+    expect(logReducer(state, { type: 'toggleAbsent', memberId: 'm-ivo' }).absent).toEqual([]);
+  });
+
+  it('cannot save when nobody waited', () => {
+    let state = picked;
+    for (const id of ['m-me', 'm-ana', 'm-ivo']) {
+      state = logReducer(state, { type: 'toggleAbsent', memberId: id });
+    }
+    expect(toCreateEntryBody(state, 'req-1', members)).toBeNull();
+  });
+
+  it('ignores the late person being marked absent', () => {
+    const state = logReducer(logReducer(picked, { type: 'toggleAbsent', memberId: 'm-ana' }), {
+      type: 'pickLate',
+      memberId: 'm-ana',
+    });
+    expect(toCreateEntryBody(state, 'req-1', members)).not.toHaveProperty('waiterMemberIds');
+  });
+
+  it('starts over when the group changes', () => {
+    const state = logReducer(picked, { type: 'toggleAbsent', memberId: 'm-ivo' });
+    expect(logReducer(state, { type: 'pickLedger', ledgerId: 'l2' }).absent).toEqual([]);
   });
 });

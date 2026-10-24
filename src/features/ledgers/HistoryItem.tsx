@@ -11,6 +11,24 @@ function nameOf(members: Member[], memberId: string): { name: string; isMe: bool
   return { name: member?.displayName || 'Someone', isMe: !!member?.isMe };
 }
 
+/** "Ivo and you waited": only when some of the group weren't there. */
+function waitedLine(waiterIds: string[], lateId: string, members: Member[]): string | null {
+  const others = members.filter((member) => member.id !== lateId);
+  if (waiterIds.length >= others.length) return null;
+  const waiters = others.filter((member) => waiterIds.includes(member.id));
+  // You last, as people say it.
+  const names = [
+    ...waiters.filter((member) => !member.isMe).map((member) => member.displayName),
+    ...(waiters.some((member) => member.isMe) ? ['you'] : []),
+  ];
+  if (names.length === 0) return null;
+  const list =
+    names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+  return `${list} waited`;
+}
+
 function describe(item: Item, members: Member[]): string {
   if (item.type === 'entry') {
     const late = nameOf(members, item.entry.lateMemberId);
@@ -48,6 +66,7 @@ export function HistoryItem({
   const status = entry ? entryStatusLabel(entry, members) : null;
   const needsMe = !!entry && (entry.actions.confirm || entry.actions.reject);
   const late = entry ? nameOf(members, entry.lateMemberId) : null;
+  const waited = entry ? waitedLine(entry.waiterMemberIds, entry.lateMemberId, members) : null;
   // A yellow tab for entries against them, ink for my own, none for settlements.
   const marker = item.type === 'settlement' ? 'bg-line' : late?.isMe ? 'bg-ink' : 'bg-accent';
 
@@ -61,6 +80,7 @@ export function HistoryItem({
           {describe(item, members)}
         </Text>
         {entry?.note ? <Text className="text-base text-ink">{entry.note}</Text> : null}
+        {waited ? <Text className="text-sm text-muted">{waited}</Text> : null}
         <View className="flex-row flex-wrap gap-x-3">
           <Text className="text-sm text-muted">{formatWhen(new Date(item.at))}</Text>
           {edited ? <Text className="text-sm text-muted">edited</Text> : null}

@@ -109,3 +109,29 @@ describe('HistoryItem status', () => {
     expect(screen.getByText('panel')).toBeTruthy();
   });
 });
+
+describe('HistoryItem in a group', () => {
+  const ana = { ...brother, id: 'm-ana', displayName: 'Ana' };
+  const ivo = { ...brother, id: 'm-ivo', displayName: 'Ivo' };
+  const group = [me, brother, ana, ivo];
+
+  it('names who waited when not everyone was there', async () => {
+    await render(
+      <HistoryItem
+        item={entry({ lateMemberId: ana.id, waiterMemberIds: [me.id, ivo.id] })}
+        members={group}
+      />,
+    );
+    expect(screen.getByText('Ivo and you waited')).toBeTruthy();
+  });
+
+  it('stays quiet when everyone else waited', async () => {
+    await render(
+      <HistoryItem
+        item={entry({ lateMemberId: ana.id, waiterMemberIds: [me.id, brother.id, ivo.id] })}
+        members={group}
+      />,
+    );
+    expect(screen.queryByText(/waited/)).toBeNull();
+  });
+});

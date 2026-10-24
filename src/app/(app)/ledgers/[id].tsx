@@ -8,7 +8,7 @@ import { useCreateSettlement } from '@/api/generated/endpoints/settlements/settl
 import { EntryPanel } from '@/features/entries/EntryPanel';
 import { LedgerScreen, type SettleRequest } from '@/features/ledgers/LedgerScreen';
 import { refreshLedgers, useLedgerHistory } from '@/features/ledgers/queries';
-import { settleOptions, settlementRequestId, type RequestId } from '@/features/ledgers/settle';
+import { settlementRequestId, type RequestId } from '@/features/ledgers/settle';
 import { Screen } from '@/ui/Screen';
 
 export default function LedgerRoute() {
@@ -35,12 +35,10 @@ export default function LedgerRoute() {
   }
 
   async function settle(request: SettleRequest) {
-    const counterpartMemberId = settleOptions(detail.data!).counterpartId;
-    if (!counterpartMemberId) return;
     requestId.current = settlementRequestId(requestId.current, request, randomUUID);
     await createSettlement.mutateAsync({
       id,
-      data: { ...request, counterpartMemberId, clientRequestId: requestId.current.id },
+      data: { ...request, clientRequestId: requestId.current.id },
     });
     requestId.current = null;
     await refreshLedgers();

@@ -11,11 +11,12 @@ import { InviteScreen } from '@/features/invites/InviteScreen';
 import { Screen } from '@/ui/Screen';
 
 export default function InviteRoute() {
-  const { ledgerId } = useLocalSearchParams<{ ledgerId: string }>();
+  const { ledgerId, memberId } = useLocalSearchParams<{ ledgerId: string; memberId?: string }>();
   const detail = useGetLedger(ledgerId);
   const ledger = detail.data;
   // undefined until picked: a pair invites its placeholder, a group defaults to an open link.
-  const [picked, setPicked] = useState<string | null | undefined>(undefined);
+  // A group's members screen can open this for one person.
+  const [picked, setPicked] = useState<string | null | undefined>(memberId);
   const target =
     picked !== undefined
       ? picked

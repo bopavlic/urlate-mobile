@@ -63,6 +63,55 @@ function WhoWasLate({
   );
 }
 
+/**
+ * Groups: everyone else waited unless tapped off. You stay on when someone else was late,
+ * because only people who were there can log it.
+ */
+function WhoWaited({
+  members,
+  lateMemberId,
+  absent,
+  onToggle,
+}: {
+  members: Member[];
+  lateMemberId: string;
+  absent: string[];
+  onToggle: (memberId: string) => void;
+}) {
+  const others = members.filter((member) => member.id !== lateMemberId);
+  return (
+    <View className="gap-3">
+      <View className="gap-1">
+        <Text className="text-lg font-semibold text-ink">Who waited?</Text>
+        <Text className="text-base text-muted">Tap anyone who wasn&apos;t there.</Text>
+      </View>
+      <View className="flex-row flex-wrap gap-2">
+        {others.map((member) => {
+          const waited = !absent.includes(member.id);
+          const locked = member.isMe;
+          return (
+            <Pressable
+              key={member.id}
+              accessibilityRole="checkbox"
+              accessibilityLabel={member.isMe ? 'Me' : member.displayName}
+              accessibilityState={{ checked: waited, disabled: locked }}
+              disabled={locked}
+              onPress={() => onToggle(member.id)}
+              className={`rounded-full border-2 px-4 py-2 ${
+                waited ? 'border-ink bg-ink' : 'border-line'
+              }`}
+            >
+              <Text className={`text-base font-semibold ${waited ? 'text-paper' : 'text-muted'}`}>
+                {member.isMe ? 'Me' : member.displayName}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
 function PickLedger({ onPick }: { onPick: (ledgerId: string) => void }) {
   const ledgers = useLedgers();
   const items = ledgers.data?.pages.flatMap((page) => page.items) ?? [];
@@ -120,7 +169,11 @@ export default function Log() {
     return () => clearTimeout(timer);
   }, [done]);
 
-  const body = toCreateEntryBody(state, requestId);
+  const body = toCreateEntryBody(
+    state,
+    requestId,
+    members?.map((member) => member.id),
+  );
 
   async function save() {
     if (!body || !state.ledgerId) return;
@@ -159,6 +212,14 @@ export default function Log() {
               selected={state.lateMemberId}
               onPick={(memberId) => dispatch({ type: 'pickLate', memberId })}
             />
+            {ledger.data?.kind === 'GROUP' && state.lateMemberId ? (
+              <WhoWaited
+                members={members}
+                lateMemberId={state.lateMemberId}
+                absent={state.absent}
+                onToggle={(memberId) => dispatch({ type: 'toggleAbsent', memberId })}
+              />
+            ) : null}
             <View className="gap-4">
               <Text className="text-lg font-semibold text-ink">How late?</Text>
               <MinutePicker

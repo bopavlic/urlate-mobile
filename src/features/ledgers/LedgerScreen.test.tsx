@@ -31,6 +31,12 @@ const fresh: LedgerDetail = {
   ],
 };
 
+const owed18: LedgerDetail = {
+  ...fresh,
+  myBalance: { direction: 'THEY_OWE_YOU', minutes: 18 },
+  balances: [{ creditorMemberId: me.id, debtorMemberId: brother.id, minutes: 18 }],
+};
+
 describe('LedgerScreen', () => {
   it('shows a brand-new score as all square with an inviting empty history', async () => {
     await render(
@@ -53,7 +59,7 @@ describe('LedgerScreen', () => {
   it('offers Forgive and Reset to the owed person', async () => {
     await render(
       <LedgerScreen
-        detail={{ ...fresh, myBalance: { direction: 'THEY_OWE_YOU', minutes: 18 } }}
+        detail={owed18}
         history={[]}
         onSettle={jest.fn()}
         onLoadMore={jest.fn()}
@@ -71,7 +77,7 @@ describe('LedgerScreen settling errors', () => {
     const onSettle = jest.fn().mockRejectedValue(new Error('offline'));
     await render(
       <LedgerScreen
-        detail={{ ...fresh, myBalance: { direction: 'THEY_OWE_YOU', minutes: 18 } }}
+        detail={owed18}
         history={[]}
         onSettle={onSettle}
         onLoadMore={jest.fn()}
@@ -80,7 +86,11 @@ describe('LedgerScreen settling errors', () => {
     );
     await fireEvent.press(screen.getByText('Forgive'));
     await fireEvent.press(screen.getByText('Forgive 18 min'));
-    expect(onSettle).toHaveBeenCalledWith({ kind: 'FORGIVE', minutes: 18 });
+    expect(onSettle).toHaveBeenCalledWith({
+      kind: 'FORGIVE',
+      minutes: 18,
+      counterpartMemberId: brother.id,
+    });
     expect(
       await screen.findByText("Couldn't save that. Check your connection and try again."),
     ).toBeTruthy();
@@ -126,7 +136,7 @@ describe('LedgerScreen invites', () => {
       name: 'Football',
       members: [me, { ...brother, isPlaceholder: false }],
     });
-    await fireEvent.press(screen.getByRole('button', { name: 'Invite people' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Invite' }));
     expect(router.push).toHaveBeenCalledWith({
       pathname: '/invite',
       params: { ledgerId: 'l-new' },
@@ -171,5 +181,69 @@ describe('LedgerScreen trust settings', () => {
     expect(screen.getByText('panel for e1')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: /Brother was 5 min late/ }));
     expect(screen.queryByText('panel for e1')).toBeNull();
+  });
+});
+
+describe('LedgerScreen groups', () => {
+  const ana = { ...brother, id: 'm-ana', displayName: 'Ana' };
+  const football: LedgerDetail = {
+    ...fresh,
+    kind: 'GROUP',
+    name: 'Football',
+    members: [me, brother, ana],
+    myBalance: { direction: 'THEY_OWE_YOU', minutes: 7 },
+    balances: [
+      { creditorMemberId: me.id, debtorMemberId: ana.id, minutes: 10 },
+      { creditorMemberId: brother.id, debtorMemberId: me.id, minutes: 3 },
+    ],
+    leaderboard: [
+      { memberId: me.id, netMinutes: 7 },
+      { memberId: brother.id, netMinutes: 3 },
+      { memberId: ana.id, netMinutes: -10 },
+    ],
+  };
+
+  function renderGroup(onSettle = jest.fn()) {
+    return render(
+      <LedgerScreen
+        detail={football}
+        history={[]}
+        onSettle={onSettle}
+        onLoadMore={jest.fn()}
+        settling={false}
+      />,
+    );
+  }
+
+  it('ranks whoever owes the most first', async () => {
+    await renderGroup();
+    expect(screen.getByLabelText('1. Ana, owes 10 min')).toBeTruthy();
+    expect(screen.getByLabelText('3. You, owed 7 min')).toBeTruthy();
+  });
+
+  it('settles with one person at a time', async () => {
+    const onSettle = jest.fn().mockResolvedValue(undefined);
+    await renderGroup(onSettle);
+    expect(screen.getByText('You owe Brother 3 min')).toBeTruthy();
+    expect(screen.queryByText('Forgive')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: /Ana owes you 10 min/ }));
+    await fireEvent.press(screen.getByText('Forgive'));
+    await fireEvent.press(screen.getByText('Forgive 10 min'));
+    expect(onSettle).toHaveBeenCalledWith({
+      kind: 'FORGIVE',
+      minutes: 10,
+      counterpartMemberId: ana.id,
+    });
+  });
+
+  it('opens the people in the group', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { router } = require('expo-router') as { router: { push: jest.Mock } };
+    await renderGroup();
+    await fireEvent.press(screen.getByRole('button', { name: 'People (3)' }));
+    expect(router.push).toHaveBeenCalledWith({
+      pathname: '/ledgers/[id]/members',
+      params: { id: 'l-new' },
+    });
   });
 });
