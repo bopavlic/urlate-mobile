@@ -107,7 +107,20 @@ export default function Profile() {
         <PremiumRow entitlements={entitlements.data} onOpen={() => router.push('/premium')} />
       ) : null}
 
-      <Button title="Your stats" variant="secondary" onPress={() => router.push('/stats')} />
+      <View className="flex-row gap-3">
+        <Button
+          title="Your stats"
+          variant="secondary"
+          className="flex-1"
+          onPress={() => router.push('/stats')}
+        />
+        <Button
+          title="Theme and icon"
+          variant="secondary"
+          className="flex-1"
+          onPress={() => router.push('/appearance')}
+        />
+      </View>
 
       <ProfileForm key={me.data.id} me={me.data} />
 

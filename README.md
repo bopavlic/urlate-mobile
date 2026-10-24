@@ -55,6 +55,8 @@ Copy `.env.example` to `.env`; Expo loads it automatically.
 | `src/features/`       | Feature logic and components (auth, balance copy, ledgers, quick log, profile, invites), each with tests.                                                                                                                                            |
 | `src/ui/`             | Shared building blocks: Button, TextField, Screen, Title, Avatar, BigBalance (the yellow card), LateButton.                                                                                                                                          |
 | `src/theme/tokens.ts` | The palette (light/dark) and type. Change the look here.                                                                                                                                                                                             |
+| `src/theme/`          | `tokens.ts`: the five themes (Classic is free, the rest Premium), each light and dark, and type; `appearance.tsx`: the chosen theme, kept on the phone. A test keeps every theme's text at WCAG AA contrast.                                         |
+| `assets/icons/`       | The app icon and its Premium alternates, drawn by `node scripts/icons/generate.mjs` (needs `brew install librsvg`) from `icons.json`; the PNGs are committed. `app.config.ts` registers them natively, so a change needs a new dev build.            |
 
 ## Checks
 
@@ -64,3 +66,5 @@ pnpm typecheck
 pnpm lint
 pnpm api:generate  # regenerate the API client from ../urlate-backend/openapi.json
 ```
+
+Themes and icons are Premium only (`features.themes` from the API, no ad reward): when Premium ends, the app goes back to Classic and the default icon. Android switches icons when the app goes to the background, because swapping the launcher entry can close a running app.

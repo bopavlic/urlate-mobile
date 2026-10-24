@@ -1,15 +1,15 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, Text, useColorScheme, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 
-import { palette } from '@/theme/tokens';
+import { useColors } from '@/theme/appearance';
 
 import { Title } from './Title';
 
 /** The one back control: a pill with a chevron and the word Back, top left. */
 export function BackButton({ onPress }: { onPress: () => void }) {
-  const color = palette[useColorScheme() === 'dark' ? 'dark' : 'light'].ink;
+  const color = useColors().ink;
   return (
     <Pressable
       accessibilityRole="button"

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-import { palette } from '@/theme/tokens';
+import { useColors } from '@/theme/appearance';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
@@ -40,6 +40,7 @@ export function Button({
   className?: string;
 }) {
   const inactive = disabled || loading;
+  const colors = useColors();
   return (
     <Pressable
       accessibilityRole="button"
@@ -52,7 +53,7 @@ export function Button({
       } ${inactive ? 'opacity-50' : ''} ${className}`}
     >
       {loading ? (
-        <ActivityIndicator color={palette.light.ink} />
+        <ActivityIndicator color={variant === 'primary' ? colors.onAccent : colors.ink} />
       ) : (
         <View className="flex-row items-center gap-2">
           {icon}

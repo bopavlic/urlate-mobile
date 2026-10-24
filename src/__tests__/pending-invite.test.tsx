@@ -11,9 +11,10 @@ jest.mock('@/features/invites/pending', () => ({
   }),
 }));
 
-// Push and store purchases need a device; this test is only about the waiting invite.
+// Push, store purchases and app icons need a device; this test is only about the waiting invite.
 jest.mock('@/features/notifications/push', () => ({ usePushNotifications: jest.fn() }));
 jest.mock('@/features/premium/store', () => ({ usePurchaseUpdates: jest.fn() }));
+jest.mock('@/features/appearance/upkeep', () => ({ useAppearanceUpkeep: jest.fn() }));
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const AppLayout = require('../app/(app)/_layout').default;

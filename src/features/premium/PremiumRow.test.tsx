@@ -9,7 +9,7 @@ const free: Entitlements = {
   premiumUntil: null,
   premiumStore: null,
   premiumRenews: null,
-  features: { shareStyles: false, unlimitedGroups: false, fullStats: false },
+  features: { shareStyles: false, unlimitedGroups: false, fullStats: false, themes: false },
   rewards: [],
   adsLeftToday: 3,
   groupsCreated: 0,

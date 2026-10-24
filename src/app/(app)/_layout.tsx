@@ -1,6 +1,7 @@
 import { router, Stack } from 'expo-router';
 import { useEffect } from 'react';
 
+import { useAppearanceUpkeep } from '@/features/appearance/upkeep';
 import { takePendingInvite } from '@/features/invites/pending';
 import { usePushNotifications } from '@/features/notifications/push';
 import { usePurchaseUpdates } from '@/features/premium/store';
@@ -8,6 +9,7 @@ import { usePurchaseUpdates } from '@/features/premium/store';
 export default function AppLayout() {
   usePushNotifications();
   usePurchaseUpdates();
+  useAppearanceUpkeep();
 
   // An invite link opened while signed out waited through sign-in; open it now.
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function AppLayout() {
       <Stack.Screen name="invite" />
       <Stack.Screen name="premium" />
       <Stack.Screen name="stats" />
+      <Stack.Screen name="appearance" />
       <Stack.Screen name="join" />
       <Stack.Screen name="entries/[id]/edit" />
     </Stack>

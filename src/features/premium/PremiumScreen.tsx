@@ -15,6 +15,7 @@ const FEATURES = [
     title: 'Full stats',
     detail: 'Your averages, worst weekday, on-time streaks and who keeps you waiting.',
   },
+  { title: 'Themes and app icons', detail: 'Four more looks for the app and its icon.' },
   { title: 'No ads, ever', detail: 'Not even the ones you choose to watch.' },
 ];
 

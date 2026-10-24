@@ -10,9 +10,7 @@ import { TextField } from '@/ui/TextField';
 import { normalizeUsername, usernameErrorMessage } from './copy';
 
 type State =
-  | { step: 'typing' }
-  | { step: 'found'; user: UserPreview }
-  | { step: 'sent'; user: UserPreview };
+  { step: 'typing' } | { step: 'found'; user: UserPreview } | { step: 'sent'; user: UserPreview };
 
 /** Someone already on Ur Late: look them up by username, then send them the invite. */
 export function SendToUsername({

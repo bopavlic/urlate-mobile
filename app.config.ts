@@ -1,5 +1,14 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
+import icons from './assets/icons/icons.json';
+
+// The app icon and the Premium alternates (drawn by scripts/icons/generate.mjs).
+const [classicIcon] = icons;
+const PITCH_NIGHT = classicIcon!.bottom;
+/** Native names are PascalCase: "red-card" → "RedCard" (see src/features/appearance/icons.ts). */
+const nativeIconName = (id: string) =>
+  id.replace(/(^|-)(\w)/g, (_match, _dash, letter: string) => letter.toUpperCase());
+
 // Set GOOGLE_IOS_URL_SCHEME (the reversed iOS client ID) to enable Google sign-in in native
 // builds; it is baked into the iOS app, so rebuild the dev client after changing it.
 const googleIosUrlScheme = process.env.GOOGLE_IOS_URL_SCHEME;
@@ -20,12 +29,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'urlate',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/images/icon.png',
+  icon: './assets/icons/classic.png',
   userInterfaceStyle: 'automatic',
   platforms: ['ios', 'android'],
   ios: {
     bundleIdentifier: 'app.urlate',
-    icon: './assets/expo.icon',
     supportsTablet: false,
     usesAppleSignIn: true,
     // Universal links: urlate.app/i/… and /s/… open the app (the site serves the AASA file).
@@ -34,10 +42,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: 'app.urlate',
     adaptiveIcon: {
-      backgroundColor: '#FFCC1A',
-      foregroundImage: './assets/images/android-icon-foreground.png',
-      backgroundImage: './assets/images/android-icon-background.png',
-      monochromeImage: './assets/images/android-icon-monochrome.png',
+      backgroundColor: PITCH_NIGHT,
+      foregroundImage: './assets/icons/classic-foreground.png',
+      monochromeImage: './assets/icons/monochrome.png',
     },
     predictiveBackGestureEnabled: false,
     ...(googleServicesFile ? { googleServicesFile } : {}),
@@ -60,7 +67,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     'expo-apple-authentication',
     // Push notifications (activity). The Android icon tint matches the accent.
-    ['expo-notifications', { color: '#FFCC1A' }],
+    ['expo-notifications', { color: '#FFCC1A', icon: './assets/icons/monochrome.png' }],
     [
       'expo-image-picker',
       {
@@ -72,10 +79,22 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: '#FFCC1A',
-        image: './assets/images/splash-icon.png',
-        imageWidth: 76,
+        backgroundColor: PITCH_NIGHT,
+        image: './assets/icons/splash.png',
+        imageWidth: 120,
       },
+    ],
+    // Premium app icons (the default one is `icon` above).
+    [
+      'expo-alternate-app-icons',
+      icons.slice(1).map((icon) => ({
+        name: nativeIconName(icon.id),
+        ios: `./assets/icons/${icon.id}.png`,
+        android: {
+          foregroundImage: `./assets/icons/${icon.id}-foreground.png`,
+          backgroundColor: icon.bottom,
+        },
+      })),
     ],
     // Premium subscriptions through StoreKit 2 and Play Billing.
     'expo-iap',

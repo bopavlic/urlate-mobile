@@ -1,6 +1,8 @@
 import type { ComponentRef, Ref } from 'react';
 import { Text, TextInput, View, type TextInputProps } from 'react-native';
 
+import { useColors } from '@/theme/appearance';
+
 export function TextField({
   label,
   hint,
@@ -14,13 +16,14 @@ export function TextField({
   error?: string | null;
   ref?: Ref<ComponentRef<typeof TextInput>>;
 }) {
+  const colors = useColors();
   return (
     <View className="gap-1.5">
       <Text className="text-sm font-semibold text-ink">{label}</Text>
       <TextInput
         ref={ref}
         accessibilityLabel={label}
-        placeholderTextColor="#8FA39A"
+        placeholderTextColor={colors.muted}
         className={`min-h-14 rounded-2xl border-2 bg-surface px-4 text-lg text-ink ${
           error ? 'border-danger' : 'border-line focus:border-ink'
         } ${className}`}

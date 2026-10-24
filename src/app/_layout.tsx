@@ -10,18 +10,26 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { authClient } from '@/lib/auth';
 import { QueryProvider } from '@/providers/query';
-import { palette, themeVars } from '@/theme/tokens';
+import { AppearanceProvider, useAppearance } from '@/theme/appearance';
+import { themeVars } from '@/theme/tokens';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-  const colors = palette[scheme];
+  return (
+    <AppearanceProvider>
+      <Root />
+    </AppearanceProvider>
+  );
+}
+
+function Root() {
+  const { scheme, theme, colors } = useAppearance();
   const [fontsLoaded] = useFonts({
     BigShoulders_600SemiBold,
     BigShoulders_800ExtraBold,
@@ -60,7 +68,7 @@ export default function RootLayout() {
             },
           }}
         >
-          <View style={[{ flex: 1 }, themeVars(scheme)]}>
+          <View style={[{ flex: 1 }, themeVars(scheme, theme)]}>
             <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
             {/* Order matters: a denied route falls back to the first screen that is allowed. */}
             <Stack screenOptions={{ headerShown: false }}>
