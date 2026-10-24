@@ -56,7 +56,7 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * @summary Invite someone to a ledger (reuses a live invite for the same person)
+ * @summary Invite someone to a ledger (reuses a live invite for the same person), optionally sending it to a username
  */
 export const createInvite = (
     id: string,
@@ -111,7 +111,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateInviteMutationVariables = {id: string;data?: BodyType<CreateInviteBody>}
 
     /**
- * @summary Invite someone to a ledger (reuses a live invite for the same person)
+ * @summary Invite someone to a ledger (reuses a live invite for the same person), optionally sending it to a username
  */
 export const useCreateInvite = <TError = ErrorType<Error>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createInvite>>, TError,CreateInviteMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
@@ -216,7 +216,7 @@ export function useGetInvitePreview<TData = Awaited<ReturnType<typeof getInviteP
 
 
 /**
- * @summary Join a ledger with an invite, taking over the placeholder it was made for
+ * @summary Join a ledger with an invite, taking over the placeholder it was made for; a profile code starts a pair
  */
 export const claimInvite = (
     code: string,
@@ -268,7 +268,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ClaimInviteMutationVariables = {code: string}
 
     /**
- * @summary Join a ledger with an invite, taking over the placeholder it was made for
+ * @summary Join a ledger with an invite, taking over the placeholder it was made for; a profile code starts a pair
  */
 export const useClaimInvite = <TError = ErrorType<Error>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof claimInvite>>, TError,ClaimInviteMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}

@@ -1,9 +1,20 @@
 import type { InvitePreview } from '@/api/generated/model';
 
-import { inviteBalanceLine, inviteErrorMessage, inviteTitle, shareMessage } from './copy';
+import {
+  activityTarget,
+  inviteBalanceLine,
+  inviteErrorMessage,
+  inviteTitle,
+  joinButtonTitle,
+  normalizeUsername,
+  personalShareMessage,
+  shareMessage,
+  usernameErrorMessage,
+} from './copy';
 
 const pair: InvitePreview = {
   code: 'ABCDEFGH',
+  kind: 'LEDGER',
   ledgerKind: 'PAIR',
   ledgerName: null,
   inviterName: 'Borna',
@@ -75,6 +86,66 @@ describe('shareMessage', () => {
     );
     expect(shareMessage(invite, { kind: 'GROUP', name: 'Football' })).toBe(
       'Join Football on Ur Late, the scoreboard for who’s late: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
+    );
+  });
+});
+
+const profileCode: InvitePreview = {
+  ...pair,
+  kind: 'PERSON',
+  placeholderName: null,
+  balance: null,
+  expiresAt: null,
+};
+
+describe('profile codes', () => {
+  it('offer to start a tally rather than join one', () => {
+    expect(inviteTitle(profileCode)).toBe('Borna wants to keep score with you');
+    expect(inviteBalanceLine(profileCode)).toBeNull();
+    expect(joinButtonTitle(profileCode)).toBe('Start keeping score');
+    expect(joinButtonTitle(pair)).toBe('Join');
+  });
+
+  it('explain scanning your own code', () => {
+    expect(inviteErrorMessage('OWN_INVITE')).toBe('That’s your own code. Show it to someone else.');
+  });
+});
+
+describe('normalizeUsername', () => {
+  it('takes what people type, with or without the @', () => {
+    expect(normalizeUsername(' @Ana_K ')).toBe('ana_k');
+    expect(normalizeUsername('ana k')).toBeNull();
+    expect(normalizeUsername('@a')).toBeNull();
+  });
+});
+
+describe('usernameErrorMessage', () => {
+  it('names the username that didn’t work', () => {
+    expect(usernameErrorMessage('USER_NOT_FOUND', 'ana_k')).toBe(
+      'Nobody on Ur Late is called @ana_k. Check the spelling.',
+    );
+    expect(usernameErrorMessage('ALREADY_MEMBER', 'ana_k')).toBe('@ana_k is already in here.');
+    expect(usernameErrorMessage(undefined, 'ana_k')).toMatch(/connection/);
+  });
+});
+
+describe('activityTarget', () => {
+  it('opens the invite for invites sent to you, the ledger otherwise', () => {
+    expect(activityTarget({ ledgerId: 'l1', inviteCode: 'ABCDEFGH' })).toEqual({
+      pathname: '/i/[code]',
+      params: { code: 'ABCDEFGH' },
+    });
+    expect(activityTarget({ ledgerId: 'l1', inviteCode: null })).toEqual({
+      pathname: '/ledgers/[id]',
+      params: { id: 'l1' },
+    });
+  });
+});
+
+describe('personalShareMessage', () => {
+  it('links to the profile code', () => {
+    expect(personalShareMessage({ code: 'ABCDEFGH', url: 'https://urlate.app/i/ABCDEFGH' })).toBe(
+      'Let’s keep score of who’s late on Ur Late: https://urlate.app/i/ABCDEFGH (code ABCD-EFGH)',
     );
   });
 });

@@ -17,6 +17,7 @@ function item(overrides: Partial<ActivityItem> = {}): ActivityItem {
     message: 'Ana says you were 5 min late. Not true? You have 48 hours to dispute it.',
     ledgerId: 'l-pair',
     entryId: 'e1',
+    inviteCode: null,
     actor: { displayName: 'Ana', avatarUrl: null },
     read: false,
     createdAt: new Date().toISOString(),

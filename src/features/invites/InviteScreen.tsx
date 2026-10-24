@@ -1,12 +1,13 @@
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-import type { Invite, LedgerDetail } from '@/api/generated/model';
+import type { Invite, LedgerDetail, UserPreview } from '@/api/generated/model';
 import { Button } from '@/ui/Button';
 import { QrCode } from '@/ui/QrCode';
 import { Screen } from '@/ui/Screen';
 import { ScreenHeader } from '@/ui/ScreenHeader';
 
 import { formatInviteCode } from './invite-code';
+import { SendToUsername } from './SendToUsername';
 
 function TargetChip({
   label,
@@ -44,6 +45,8 @@ export function InviteScreen({
   errorMessage,
   onShare,
   onRetry,
+  onFindUser,
+  onSendToUser,
 }: {
   ledger: LedgerDetail;
   /** The placeholder being handed over; null = anyone with the link (groups only). */
@@ -53,6 +56,9 @@ export function InviteScreen({
   errorMessage: string | null;
   onShare: () => void;
   onRetry: () => void;
+  onFindUser: (username: string) => Promise<UserPreview>;
+  /** Sends this invite (for the current target) to someone on Ur Late. */
+  onSendToUser: (username: string) => Promise<unknown>;
 }) {
   const placeholders = ledger.members.filter((member) => member.isPlaceholder);
   const targetName = placeholders.find((member) => member.id === target)?.displayName;
@@ -104,6 +110,9 @@ export function InviteScreen({
               </Text>
             </View>
             <Button title="Share invite link" onPress={onShare} className="self-stretch" />
+            <View className="self-stretch">
+              <SendToUsername key={target ?? 'open'} onFind={onFindUser} onSend={onSendToUser} />
+            </View>
           </View>
         ) : errorMessage ? (
           <View className="items-center gap-4 pt-8">

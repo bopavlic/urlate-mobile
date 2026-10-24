@@ -15,6 +15,8 @@ export interface ActivityItem {
   ledgerId: string;
   /** @nullable */
   entryId: string | null;
+  /** @nullable */
+  inviteCode: string | null;
   actor: ActivityItemActor;
   read: boolean;
   createdAt: string;

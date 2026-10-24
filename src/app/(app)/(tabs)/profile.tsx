@@ -1,10 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Share, Text, View } from 'react-native';
 
 import { deleteMe, getGetMeQueryKey, useGetMe } from '@/api/generated/endpoints/me/me';
+import {
+  getGetMyInviteQueryKey,
+  resetMyInvite,
+  useGetMyInvite,
+} from '@/api/generated/endpoints/people/people';
 import { privacyChoicesRequired, rewardedUnit, showPrivacyChoices } from '@/features/ads/rewarded';
+import { personalShareMessage } from '@/features/invites/copy';
+import { MyInviteCode } from '@/features/invites/MyInviteCode';
 import { refreshLedgers } from '@/features/ledgers/queries';
 import { storeName } from '@/features/premium/copy';
 import { PremiumRow } from '@/features/premium/PremiumRow';
@@ -33,6 +40,11 @@ export default function Profile() {
     queryFn: privacyChoicesRequired,
     enabled: !!rewardedUnit && entitlements.data?.premium === false,
     staleTime: Infinity,
+  });
+  const myInvite = useGetMyInvite({ query: { staleTime: Infinity } });
+  const resetInvite = useMutation({
+    mutationFn: () => resetMyInvite(),
+    onSuccess: (invite) => queryClient.setQueryData(getGetMyInviteQueryKey(), invite),
   });
   const [uploading, setUploading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
@@ -96,6 +108,16 @@ export default function Profile() {
       ) : null}
 
       <ProfileForm key={me.data.id} me={me.data} />
+
+      <MyInviteCode
+        invite={myInvite.data}
+        username={me.data.username}
+        resetting={resetInvite.isPending}
+        onReset={() => resetInvite.mutate()}
+        onShare={() => {
+          if (myInvite.data) void Share.share({ message: personalShareMessage(myInvite.data) });
+        }}
+      />
 
       {adPrivacy.data ? (
         <Button

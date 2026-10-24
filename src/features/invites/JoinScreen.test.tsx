@@ -13,6 +13,7 @@ jest.mock('expo-router', () => ({ router: { back: jest.fn(), push: jest.fn() } }
 
 const preview: InvitePreview = {
   code: 'ABCDEFGH',
+  kind: 'LEDGER',
   ledgerKind: 'PAIR',
   ledgerName: null,
   inviterName: 'Borna',

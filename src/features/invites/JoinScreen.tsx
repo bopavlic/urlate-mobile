@@ -7,7 +7,7 @@ import { Screen } from '@/ui/Screen';
 import { ScreenHeader } from '@/ui/ScreenHeader';
 import { Title } from '@/ui/Title';
 
-import { inviteBalanceLine, inviteTitle } from './copy';
+import { inviteBalanceLine, inviteTitle, joinButtonTitle } from './copy';
 import { formatInviteCode } from './invite-code';
 
 /** Before joining: who invited you and the score you'd take over. */
@@ -58,6 +58,11 @@ export function JoinScreen({
               <Text className="font-display text-3xl text-on-accent">{balance}</Text>
             </View>
           ) : null}
+          {preview.kind === 'PERSON' ? (
+            <Text className="text-lg text-muted">
+              Every minute either of you keeps the other waiting goes on the tab.
+            </Text>
+          ) : null}
           {preview.placeholderName ? (
             <Text className="text-lg text-muted">
               They’ve been calling you “{preview.placeholderName}”.
@@ -68,9 +73,12 @@ export function JoinScreen({
         <View className="mt-auto gap-3">
           {errorMessage ? <Text className="text-base text-danger">{errorMessage}</Text> : null}
           {signedIn ? (
-            <Button title="Join" onPress={onJoin} loading={joining} />
+            <Button title={joinButtonTitle(preview)} onPress={onJoin} loading={joining} />
           ) : (
-            <Button title="Sign in to join" onPress={onSignIn} />
+            <Button
+              title={preview.kind === 'PERSON' ? 'Sign in to start' : 'Sign in to join'}
+              onPress={onSignIn}
+            />
           )}
           <Text className="text-center text-sm text-muted">
             Code {formatInviteCode(preview.code)}

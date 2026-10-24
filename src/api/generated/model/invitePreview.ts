@@ -6,10 +6,12 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { BalanceView } from './balanceView';
+import type { InvitePreviewKind } from './invitePreviewKind';
 import type { InvitePreviewLedgerKind } from './invitePreviewLedgerKind';
 
 export interface InvitePreview {
   code: string;
+  kind: InvitePreviewKind;
   ledgerKind: InvitePreviewLedgerKind;
   /** @nullable */
   ledgerName: string | null;
@@ -19,5 +21,6 @@ export interface InvitePreview {
   /** @nullable */
   placeholderName: string | null;
   balance: BalanceView | null;
-  expiresAt: string;
+  /** @nullable */
+  expiresAt: string | null;
 }

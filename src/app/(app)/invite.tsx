@@ -5,6 +5,7 @@ import { ActivityIndicator, Share, Text } from 'react-native';
 
 import { apiErrorCode } from '@/api/client';
 import { createInvite } from '@/api/generated/endpoints/invites/invites';
+import { getUserByUsername } from '@/api/generated/endpoints/people/people';
 import { useGetLedger } from '@/api/generated/endpoints/ledgers/ledgers';
 import { inviteErrorMessage, shareMessage } from '@/features/invites/copy';
 import { InviteScreen } from '@/features/invites/InviteScreen';
@@ -54,6 +55,10 @@ export default function InviteRoute() {
       invite={invite.data}
       errorMessage={invite.isError ? inviteErrorMessage(apiErrorCode(invite.error)) : null}
       onRetry={() => void invite.refetch()}
+      onFindUser={(username) => getUserByUsername(username)}
+      onSendToUser={(username) =>
+        createInvite(ledgerId, { ...(target ? { memberId: target } : {}), username })
+      }
       onShare={() => {
         if (!invite.data) return;
         void Share.share({ message: shareMessage(invite.data, ledger) });

@@ -56,6 +56,8 @@ function renderInvite(props: Partial<Parameters<typeof InviteScreen>[0]> = {}) {
       errorMessage={null}
       onShare={jest.fn()}
       onRetry={jest.fn()}
+      onFindUser={jest.fn()}
+      onSendToUser={jest.fn()}
       {...props}
     />,
   );

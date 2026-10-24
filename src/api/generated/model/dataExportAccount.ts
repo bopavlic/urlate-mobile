@@ -13,6 +13,8 @@ export type DataExportAccount = {
   /** @nullable */
   username: string | null;
   /** @nullable */
+  inviteCode: string | null;
+  /** @nullable */
   avatarUrl: string | null;
   signInMethods: string[];
   createdAt: string;

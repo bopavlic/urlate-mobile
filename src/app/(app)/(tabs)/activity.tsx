@@ -8,6 +8,7 @@ import {
 } from '@/api/generated/endpoints/activity/activity';
 import { ActivityScreen } from '@/features/activity/ActivityScreen';
 import { refreshActivity, useActivityFeed } from '@/features/activity/queries';
+import { activityTarget } from '@/features/invites/copy';
 import { clearBadge, usePushPermission } from '@/features/notifications/push';
 import { queryClient } from '@/providers/query';
 
@@ -38,9 +39,7 @@ export default function Activity() {
       permission={permission}
       onEnableNotifications={() => void enable()}
       onOpenSettings={() => void Linking.openSettings()}
-      onPressItem={(item) =>
-        router.push({ pathname: '/ledgers/[id]', params: { id: item.ledgerId } })
-      }
+      onPressItem={(item) => router.push(activityTarget(item))}
       onLoadMore={() => {
         if (feed.hasNextPage && !feed.isFetchingNextPage) void feed.fetchNextPage();
       }}

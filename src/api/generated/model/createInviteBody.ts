@@ -8,4 +8,6 @@
 
 export interface CreateInviteBody {
   memberId?: string;
+  /** @maxLength 40 */
+  username?: string;
 }

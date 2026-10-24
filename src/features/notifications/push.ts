@@ -2,12 +2,13 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { AndroidImportance, IosAuthorizationStatus } from 'expo-notifications';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import { registerPushToken, removePushToken } from '@/api/generated/endpoints/activity/activity';
 import { refreshActivity } from '@/features/activity/queries';
+import { activityTarget } from '@/features/invites/copy';
 import { refreshLedgers } from '@/features/ledgers/queries';
 
 import { registerForPush, type Permission, type PushDeps, type RegisterResult } from './register';
@@ -75,12 +76,16 @@ export function usePushPermission(): {
   return { permission, enable };
 }
 
-function ledgerIdOf(notification: Notifications.Notification): string | null {
-  const ledgerId = notification.request.content.data?.ledgerId;
-  return typeof ledgerId === 'string' ? ledgerId : null;
+function targetOf(notification: Notifications.Notification): Href | null {
+  const { ledgerId, inviteCode } = notification.request.content.data ?? {};
+  if (typeof ledgerId !== 'string') return null;
+  return activityTarget({
+    ledgerId,
+    inviteCode: typeof inviteCode === 'string' ? inviteCode : null,
+  });
 }
 
-/** Signed-in only: keeps the token fresh, refreshes on arrival, opens the ledger on tap. */
+/** Signed-in only: keeps the token fresh, refreshes on arrival, opens the ledger (or invite) on tap. */
 export function usePushNotifications(): void {
   const response = Notifications.useLastNotificationResponse();
 
@@ -96,11 +101,11 @@ export function usePushNotifications(): void {
 
   useEffect(() => {
     if (!response || response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER) return;
-    const ledgerId = ledgerIdOf(response.notification);
+    const target = targetOf(response.notification);
     // Cleared so the same tap doesn't reopen the ledger on the next render or launch.
     void Notifications.clearLastNotificationResponseAsync();
     void refreshActivity();
-    if (ledgerId) router.push({ pathname: '/ledgers/[id]', params: { id: ledgerId } });
+    if (target) router.push(target);
   }, [response]);
 }
 
