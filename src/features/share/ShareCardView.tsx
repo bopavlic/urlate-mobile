@@ -2,25 +2,37 @@ import type { ComponentRef, Ref } from 'react';
 import { Text, View } from 'react-native';
 
 import type { ShareCard } from '@/api/generated/model';
-import { fonts, palette } from '@/theme/tokens';
+import { fonts } from '@/theme/tokens';
 
 import { cardScore } from './copy';
+import { cardLook, type Look } from './look';
 
-// The image people post: a 9:16 Story frame on the night pitch, the same in light and dark
-// mode. Laid out on a 360-point grid and scaled to `width`; captured at 1080 × 1920.
+// The image people post: a 9:16 Story frame in the card's look (the night pitch unless the
+// sharer picked another), the same in light and dark mode. Laid out on a 360-point grid and
+// scaled to `width`; captured at 1080 × 1920.
 
 export const CARD_ASPECT = 16 / 9;
-const { paper: pitch, ink: chalk, muted, line, accent, onAccent } = palette.dark;
 
 export function ShareCardView({
   card,
   width,
+  look = card,
   ref,
 }: {
   card: ShareCard;
   width: number;
+  /** Preview another look before the card is made with it; the card's own by default. */
+  look?: Look;
   ref?: Ref<ComponentRef<typeof View>>;
 }) {
+  const {
+    background: pitch,
+    text: chalk,
+    muted,
+    line,
+    card: accent,
+    onCard: onAccent,
+  } = cardLook(look);
   const u = width / 360;
   const score = cardScore(card);
   const rows = card.kind === 'GROUP' && card.rows.length > 1 ? card.rows : [];

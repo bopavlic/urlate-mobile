@@ -4,5 +4,6 @@ export * from './entries/entries';
 export * from './invites/invites';
 export * from './ledgers/ledgers';
 export * from './me/me';
+export * from './premium/premium';
 export * from './settlements/settlements';
 export * from './share-cards/share-cards';

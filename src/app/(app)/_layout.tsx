@@ -3,9 +3,11 @@ import { useEffect } from 'react';
 
 import { takePendingInvite } from '@/features/invites/pending';
 import { usePushNotifications } from '@/features/notifications/push';
+import { usePurchaseUpdates } from '@/features/premium/store';
 
 export default function AppLayout() {
   usePushNotifications();
+  usePurchaseUpdates();
 
   // An invite link opened while signed out waited through sign-in; open it now.
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function AppLayout() {
       <Stack.Screen name="ledgers/[id]/share" />
       <Stack.Screen name="log" />
       <Stack.Screen name="invite" />
+      <Stack.Screen name="premium" />
       <Stack.Screen name="join" />
       <Stack.Screen name="entries/[id]/edit" />
     </Stack>

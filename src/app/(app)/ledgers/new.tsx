@@ -2,9 +2,12 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { apiErrorCode } from '@/api/client';
 import { useCreateLedger } from '@/api/generated/endpoints/ledgers/ledgers';
 import { buildCreateLedgerBody } from '@/features/ledgers/new-ledger';
 import { refreshLedgers } from '@/features/ledgers/queries';
+import { groupLimitReached } from '@/features/premium/copy';
+import { refreshEntitlements, useEntitlements } from '@/features/premium/queries';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { ScreenHeader } from '@/ui/ScreenHeader';
@@ -17,6 +20,8 @@ export default function NewLedger() {
   const [people, setPeople] = useState<string[]>(['']);
   const [error, setError] = useState<string | null>(null);
   const create = useCreateLedger();
+  const entitlements = useEntitlements();
+  const atGroupLimit = kind === 'GROUP' && groupLimitReached(entitlements.data);
 
   function setPerson(index: number, value: string) {
     setPeople((current) => current.map((person, i) => (i === index ? value : person)));
@@ -36,8 +41,14 @@ export default function NewLedger() {
     try {
       const ledger = await create.mutateAsync({ data: body });
       void refreshLedgers();
+      if (kind === 'GROUP') void refreshEntitlements();
       router.replace(`/ledgers/${ledger.id}`);
-    } catch {
+    } catch (err) {
+      // The limit was reached since entitlements loaded (e.g. on another phone).
+      if (apiErrorCode(err) === 'PREMIUM_REQUIRED') {
+        void refreshEntitlements();
+        return;
+      }
       setError("Couldn't save. Check your connection and try again.");
     }
   }
@@ -100,7 +111,17 @@ export default function NewLedger() {
           : "Add people now even if they're not on the app, or leave it empty and share the group's invite link."}
       </Text>
       {error ? <Text className="text-base text-danger">{error}</Text> : null}
-      <Button title="Save" onPress={save} loading={create.isPending} />
+      {atGroupLimit ? (
+        <View className="gap-3 rounded-2xl bg-surface p-5">
+          <Text className="text-base text-ink">
+            You&apos;ve started two groups, the most a free account can. Premium has no limit, and
+            joining other people&apos;s groups is always free.
+          </Text>
+          <Button title="See Premium" onPress={() => router.push('/premium')} />
+        </View>
+      ) : (
+        <Button title="Save" onPress={save} loading={create.isPending} />
+      )}
     </Screen>
   );
 }

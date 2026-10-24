@@ -10,6 +10,8 @@ export const pairCard: ShareCard = {
   groupName: null,
   balance: { direction: 'THEY_OWE_YOU', minutes: 18 },
   rows: [],
+  style: 'PITCH',
+  cardColor: 'YELLOW',
   createdAt: '2026-10-24T09:30:00.000Z',
 };
 

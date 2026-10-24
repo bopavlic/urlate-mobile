@@ -1,8 +1,14 @@
+import { useQuery } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { deleteMe, getGetMeQueryKey, useGetMe } from '@/api/generated/endpoints/me/me';
+import { privacyChoicesRequired, rewardedUnit, showPrivacyChoices } from '@/features/ads/rewarded';
 import { refreshLedgers } from '@/features/ledgers/queries';
+import { storeName } from '@/features/premium/copy';
+import { PremiumRow } from '@/features/premium/PremiumRow';
+import { useEntitlements } from '@/features/premium/queries';
 import { DeleteAccount } from '@/features/profile/DeleteAccount';
 import { ProfileForm } from '@/features/profile/ProfileForm';
 import {
@@ -19,6 +25,14 @@ import { Title } from '@/ui/Title';
 
 export default function Profile() {
   const me = useGetMe();
+  const entitlements = useEntitlements();
+  // EU and UK users must be able to revisit their ad consent; Google says when that applies.
+  const adPrivacy = useQuery({
+    queryKey: ['ad-privacy-required'],
+    queryFn: privacyChoicesRequired,
+    enabled: !!rewardedUnit && entitlements.data?.premium === false,
+    staleTime: Infinity,
+  });
   const [uploading, setUploading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
 
@@ -76,12 +90,25 @@ export default function Profile() {
       </View>
       {avatarError ? <Text className="text-base text-danger">{avatarError}</Text> : null}
 
+      {entitlements.data ? (
+        <PremiumRow entitlements={entitlements.data} onOpen={() => router.push('/premium')} />
+      ) : null}
+
       <ProfileForm key={me.data.id} me={me.data} />
+
+      {adPrivacy.data ? (
+        <Button
+          title="Ad privacy choices"
+          variant="ghost"
+          onPress={() => void showPrivacyChoices().catch(() => undefined)}
+        />
+      ) : null}
 
       <Button title="Sign out" variant="ghost" onPress={() => void signOut()} />
 
       {/* The server ends every session; signing out locally takes the app back to sign-in. */}
       <DeleteAccount
+        subscribedIn={entitlements.data?.premium ? storeName(entitlements.data.premiumStore) : null}
         onDelete={async () => {
           await deleteMe();
           await signOut();

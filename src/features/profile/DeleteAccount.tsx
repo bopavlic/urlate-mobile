@@ -8,7 +8,17 @@ import { Button } from '@/ui/Button';
 const EXPLAINER =
   'Your profile and every tally only you can see are deleted. In tallies shared with people who have an account, you become a placeholder again so their score stays. This can’t be undone.';
 
-export function DeleteAccount({ onDelete }: { onDelete: () => Promise<unknown> }) {
+export function DeleteAccount({
+  onDelete,
+  subscribedIn,
+}: {
+  onDelete: () => Promise<unknown>;
+  /** The store a running Premium subscription is billed through, e.g. "the App Store". */
+  subscribedIn?: string | null;
+}) {
+  const explainer = subscribedIn
+    ? `${EXPLAINER}\n\nDeleting your account doesn’t cancel Premium: cancel it in ${subscribedIn}.`
+    : EXPLAINER;
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +40,7 @@ export function DeleteAccount({ onDelete }: { onDelete: () => Promise<unknown> }
         variant="danger"
         loading={deleting}
         onPress={() =>
-          Alert.alert('Delete your account?', EXPLAINER, [
+          Alert.alert('Delete your account?', explainer, [
             { text: 'Cancel', style: 'cancel' },
             { text: 'Delete', style: 'destructive', onPress: () => void remove() },
           ])

@@ -6,8 +6,10 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { BalanceView } from './balanceView';
+import type { ShareCardCardColor } from './shareCardCardColor';
 import type { ShareCardKind } from './shareCardKind';
 import type { ShareCardRowsItem } from './shareCardRowsItem';
+import type { ShareCardStyle } from './shareCardStyle';
 
 export interface ShareCard {
   id: string;
@@ -21,5 +23,7 @@ export interface ShareCard {
   groupName: string | null;
   balance: BalanceView | null;
   rows: ShareCardRowsItem[];
+  style: ShareCardStyle;
+  cardColor: ShareCardCardColor;
   createdAt: string;
 }

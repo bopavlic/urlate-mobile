@@ -45,3 +45,13 @@ it('says so when deleting fails', async () => {
     await screen.findByText("Couldn't delete your account. Check your connection and try again."),
   ).toBeTruthy();
 });
+
+it('reminds a subscriber that the store subscription carries on', async () => {
+  await render(<DeleteAccount onDelete={jest.fn()} subscribedIn="the App Store" />);
+  await fireEvent.press(screen.getByRole('button', { name: 'Delete account' }));
+  expect(Alert.alert).toHaveBeenCalledWith(
+    'Delete your account?',
+    expect.stringMatching(/doesn’t cancel Premium: cancel it in the App Store/),
+    expect.any(Array),
+  );
+});

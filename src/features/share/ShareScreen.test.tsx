@@ -17,6 +17,18 @@ function setup(overrides: Partial<Parameters<typeof ShareScreen>[0]> = {}) {
     onRetry: jest.fn(),
     onShareImage: jest.fn().mockResolvedValue(undefined),
     onShareLink: jest.fn(),
+    look: { style: 'PITCH' as const, cardColor: 'YELLOW' as const },
+    onLookChange: jest.fn(),
+    lookLocked: false,
+    onGetPremium: jest.fn(),
+    adOffer: {
+      show: true,
+      disabled: false,
+      label: 'Watch an ad: unlock for 24 hours',
+      note: '3 ads left today.',
+    },
+    adState: 'idle' as const,
+    onWatchAd: jest.fn(),
     ...overrides,
   };
   return { props, view: render(<ShareScreen {...props} />) };
@@ -66,5 +78,34 @@ describe('ShareScreen', () => {
     expect(screen.getByText('Offline.')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
     expect(props.onRetry).toHaveBeenCalled();
+  });
+
+  it('picks a background and a card colour', async () => {
+    const { props, view } = setup();
+    await view;
+    await fireEvent.press(screen.getByRole('radio', { name: 'Chalk' }));
+    expect(props.onLookChange).toHaveBeenCalledWith({ style: 'CHALK', cardColor: 'YELLOW' });
+    await fireEvent.press(screen.getByRole('radio', { name: 'Red card' }));
+    expect(props.onLookChange).toHaveBeenCalledWith({ style: 'PITCH', cardColor: 'RED' });
+  });
+
+  it('offers Premium or an ad instead of sharing a locked look', async () => {
+    const { props, view } = setup({
+      look: { style: 'CHALK', cardColor: 'RED' },
+      lookLocked: true,
+    });
+    await view;
+    expect(screen.queryByRole('button', { name: 'Share image' })).toBeNull();
+    expect(screen.getByText('This look comes with Premium.')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Get Premium' }));
+    expect(props.onGetPremium).toHaveBeenCalled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Watch an ad: unlock for 24 hours' }));
+    expect(props.onWatchAd).toHaveBeenCalled();
+  });
+
+  it('waits for the card in the new look before sharing it', async () => {
+    const { view } = setup({ look: { style: 'CHALK', cardColor: 'RED' } });
+    await view;
+    expect(screen.getByRole('button', { name: 'Share image' })).toBeDisabled();
   });
 });

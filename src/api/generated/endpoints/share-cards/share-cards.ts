@@ -25,12 +25,13 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CreateShareCardBody,
   Error,
   ShareCard
 } from '../../model';
 
 import { customInstance } from '../../../client';
-import type { ErrorType } from '../../../client';
+import type { ErrorType , BodyType } from '../../../client';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -57,12 +58,15 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
  */
 export const createShareCard = (
     id: string,
+    createShareCardBody?: BodyType<CreateShareCardBody>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
 
 
       return customInstance<ShareCard>(
-      {url: `/ledgers/${id}/share-cards`, method: 'POST', signal
+      {url: `/ledgers/${id}/share-cards`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createShareCardBody, signal
     },
       options);
     }
@@ -87,9 +91,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof createShareCard>>, CreateShareCardMutationVariables> = (props) => {
-          const {id} = props ?? {};
+          const {id,data} = props ?? {};
 
-          return  createShareCard(id,requestOptions)
+          return  createShareCard(id,data,requestOptions)
         }
 
 
@@ -100,9 +104,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type CreateShareCardMutationResult = NonNullable<Awaited<ReturnType<typeof createShareCard>>>
-
+    export type CreateShareCardMutationBody = BodyType<CreateShareCardBody> | undefined
     export type CreateShareCardMutationError = ErrorType<Error>
-    export type CreateShareCardMutationVariables = {id: string}
+    export type CreateShareCardMutationVariables = {id: string;data?: BodyType<CreateShareCardBody>}
 
     /**
  * @summary Snapshot the score as a public card at urlate.app/s/{id} (same card if unchanged)

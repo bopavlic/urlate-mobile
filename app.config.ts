@@ -7,6 +7,11 @@ const easProjectId = process.env.EAS_PROJECT_ID;
 // Android push goes through Firebase Cloud Messaging: path to the Firebase project's
 // google-services.json (kept out of git). iOS push needs no file: EAS holds the APNs key.
 const googleServicesFile = process.env.GOOGLE_SERVICES_JSON;
+// AdMob app ids (AdMob → Apps → App settings). Unset = Google's sample apps, which only ever
+// serve test ads, so development builds never touch the real account.
+const admobIosAppId = process.env.ADMOB_IOS_APP_ID ?? 'ca-app-pub-3940256099942544~1458002511';
+const admobAndroidAppId =
+  process.env.ADMOB_ANDROID_APP_ID ?? 'ca-app-pub-3940256099942544~3347511713';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -70,6 +75,25 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         backgroundColor: '#FFCC1A',
         image: './assets/images/splash-icon.png',
         imageWidth: 76,
+      },
+    ],
+    // Premium subscriptions through StoreKit 2 and Play Billing.
+    'expo-iap',
+    // Rewarded ads, only when someone taps "Watch an ad". The SDK starts after consent.
+    [
+      'react-native-google-mobile-ads',
+      {
+        iosAppId: admobIosAppId,
+        androidAppId: admobAndroidAppId,
+        delayAppMeasurementInit: true,
+        skAdNetworkItems: ['cstr6suwn9.skadnetwork'],
+      },
+    ],
+    [
+      'expo-tracking-transparency',
+      {
+        userTrackingPermission:
+          'Only for the ads you choose to watch: lets them be more relevant to you. Ur Late works the same either way.',
       },
     ],
     ...(googleIosUrlScheme

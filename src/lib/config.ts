@@ -26,3 +26,6 @@ export const apiUrl = resolveApiUrl({
   hostUri: Constants.expoConfig?.hostUri,
   platform: Platform.OS === 'android' ? 'android' : 'ios',
 });
+
+/** The website, for legal pages linked from the app. */
+export const webUrl = (process.env.EXPO_PUBLIC_WEB_URL || 'https://urlate.app').replace(/\/+$/, '');
