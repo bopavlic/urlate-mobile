@@ -10,6 +10,7 @@ import { storeName } from '@/features/premium/copy';
 import { PremiumRow } from '@/features/premium/PremiumRow';
 import { useEntitlements } from '@/features/premium/queries';
 import { DeleteAccount } from '@/features/profile/DeleteAccount';
+import { ExportData } from '@/features/profile/ExportData';
 import { ProfileForm } from '@/features/profile/ProfileForm';
 import {
   avatarErrorMessage,
@@ -103,6 +104,8 @@ export default function Profile() {
           onPress={() => void showPrivacyChoices().catch(() => undefined)}
         />
       ) : null}
+
+      <ExportData />
 
       <Button title="Sign out" variant="ghost" onPress={() => void signOut()} />
 
