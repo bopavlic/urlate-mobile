@@ -77,7 +77,8 @@
     "lint": "eslint .",
     "api:generate": "orval",
     "format": "prettier --write .",
-    "ios:simulator": "sh scripts/build-ios-simulator.sh"
+    "ios:simulator": "sh scripts/build-ios-simulator.sh",
+    "android:apk": "sh scripts/build-android-apk.sh"
   },
   "private": true,
   "packageManager": "pnpm@10.29.3"

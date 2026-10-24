@@ -28,6 +28,7 @@ Profile photos are off locally (no storage bucket); people show initials.
 ### On a real phone
 
 - **Android:** USB debugging on, cable in, `pnpm android` and pick the phone. Same Wi-Fi as the Mac.
+- **Android, no cable:** `pnpm android:apk` builds `dist/UrLate-dev.apk`. Send it to the phone (WeTransfer, Drive, …) and install it (allow installs from that app; Play Protect may ask once). Then `pnpm start` and scan the QR code with the phone's camera, or open Ur Late and pick the server. It's the same debug dev client, so Fast Refresh works over Wi-Fi; send a new APK only after native changes.
 - **iPhone:** open `ios/UrLate.xcworkspace` in Xcode, set your Team under Signing & Capabilities, pick the iPhone and press Run. Same Wi-Fi as the Mac.
 - Office or guest Wi-Fi often blocks devices from reaching each other; use home Wi-Fi or a phone hotspot.
 
