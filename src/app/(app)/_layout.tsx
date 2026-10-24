@@ -20,6 +20,7 @@ export default function AppLayout() {
       <Stack.Screen name="ledgers/new" />
       <Stack.Screen name="ledgers/[id]" />
       <Stack.Screen name="ledgers/[id]/members" />
+      <Stack.Screen name="ledgers/[id]/share" />
       <Stack.Screen name="log" />
       <Stack.Screen name="invite" />
       <Stack.Screen name="join" />

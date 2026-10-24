@@ -246,4 +246,15 @@ describe('LedgerScreen groups', () => {
       params: { id: 'l-new' },
     });
   });
+
+  it('opens the share card for the score', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { router } = require('expo-router') as { router: { push: jest.Mock } };
+    await renderGroup();
+    await fireEvent.press(screen.getByRole('button', { name: 'Share the score' }));
+    expect(router.push).toHaveBeenCalledWith({
+      pathname: '/ledgers/[id]/share',
+      params: { id: 'l-new' },
+    });
+  });
 });

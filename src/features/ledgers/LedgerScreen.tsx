@@ -338,6 +338,12 @@ export function LedgerScreen({
 
       {settleError ? <Text className="text-base text-danger">{settleError}</Text> : null}
 
+      <Button
+        title="Share the score"
+        variant="secondary"
+        onPress={() => router.push({ pathname: '/ledgers/[id]/share', params: { id: detail.id } })}
+      />
+
       {isGroup ? (
         <View className="flex-row gap-3">
           <Button
