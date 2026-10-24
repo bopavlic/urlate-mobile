@@ -1,10 +1,11 @@
 import { randomUUID } from 'expo-crypto';
 import { useLocalSearchParams } from 'expo-router';
 import { useRef } from 'react';
-import { ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator, Alert, Text } from 'react-native';
 
-import { useGetLedger } from '@/api/generated/endpoints/ledgers/ledgers';
+import { useGetLedger, useUpdateLedger } from '@/api/generated/endpoints/ledgers/ledgers';
 import { useCreateSettlement } from '@/api/generated/endpoints/settlements/settlements';
+import { EntryPanel } from '@/features/entries/EntryPanel';
 import { LedgerScreen, type SettleRequest } from '@/features/ledgers/LedgerScreen';
 import { refreshLedgers, useLedgerHistory } from '@/features/ledgers/queries';
 import { settleOptions, settlementRequestId, type RequestId } from '@/features/ledgers/settle';
@@ -15,6 +16,7 @@ export default function LedgerRoute() {
   const detail = useGetLedger(id);
   const history = useLedgerHistory(id);
   const createSettlement = useCreateSettlement();
+  const updateLedger = useUpdateLedger();
   // One id per distinct settle request, reused by its retries (see settlementRequestId).
   const requestId = useRef<RequestId | null>(null);
 
@@ -55,6 +57,16 @@ export default function LedgerRoute() {
       settling={createSettlement.isPending}
       refreshing={detail.isRefetching}
       onRefresh={() => void refreshLedgers()}
+      onConfirmModeChange={(confirmMode) => {
+        updateLedger
+          .mutateAsync({ id, data: { confirmMode } })
+          .then(() => refreshLedgers())
+          .catch(() =>
+            Alert.alert("Couldn't change confirm mode", 'Check your connection and try again.'),
+          );
+      }}
+      savingConfirmMode={updateLedger.isPending}
+      renderEntryPanel={(entry) => <EntryPanel entry={entry} />}
     />
   );
 }

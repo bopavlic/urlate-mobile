@@ -11,6 +11,9 @@ jest.mock('@/features/invites/pending', () => ({
   }),
 }));
 
+// Push needs a device; this test is only about the waiting invite.
+jest.mock('@/features/notifications/push', () => ({ usePushNotifications: jest.fn() }));
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const AppLayout = require('../app/(app)/_layout').default;
 
@@ -22,6 +25,7 @@ const routes = {
   '(app)/log': () => null,
   '(app)/invite': () => null,
   '(app)/join': () => null,
+  '(app)/entries/[id]/edit': () => null,
   'i/[code]': () => <Text>join screen</Text>,
 };
 

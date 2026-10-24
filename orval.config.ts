@@ -19,6 +19,7 @@ export default defineConfig({
         operations: {
           listLedgers: infinite,
           getLedgerHistory: infinite,
+          listActivity: infinite,
         },
       },
     },

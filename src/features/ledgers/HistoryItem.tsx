@@ -1,6 +1,8 @@
-import { Text, View } from 'react-native';
+import type { ReactNode } from 'react';
+import { Pressable, Text, View } from 'react-native';
 
 import type { HistoryItem as Item, Member } from '@/api/generated/model';
+import { entryStatusLabel } from '@/features/entries/status';
 
 import { formatWhen } from './when';
 
@@ -23,28 +25,74 @@ function describe(item: Item, members: Member[]): string {
     : `${who} forgave ${item.settlement.minutes} min`;
 }
 
-export function HistoryItem({ item, members }: { item: Item; members: Member[] }) {
-  const deleted = item.type === 'entry' && item.entry.deletedAt !== null;
-  const edited = item.type === 'entry' && item.entry.editedAt !== null;
-  const note = item.type === 'entry' ? item.entry.note : null;
-  const late = item.type === 'entry' ? nameOf(members, item.entry.lateMemberId) : null;
+export function HistoryItem({
+  item,
+  members,
+  onPress,
+  expanded = false,
+  children,
+}: {
+  item: Item;
+  members: Member[];
+  /** Entries open a panel of actions and earlier versions underneath. */
+  onPress?: () => void;
+  expanded?: boolean;
+  children?: ReactNode;
+}) {
+  const entry = item.type === 'entry' ? item.entry : null;
+  const deleted = !!entry?.deletedAt;
+  const edited = !!entry?.editedAt;
+  const struck = deleted || entry?.status === 'REJECTED';
+  // Pending, disputed and rejected entries don't count right now: show them faded.
+  const counts = !entry || (entry.status === 'ACTIVE' && !deleted);
+  const status = entry ? entryStatusLabel(entry, members) : null;
+  const needsMe = !!entry && (entry.actions.confirm || entry.actions.reject);
+  const late = entry ? nameOf(members, entry.lateMemberId) : null;
   // A yellow tab for entries against them, ink for my own, none for settlements.
   const marker = item.type === 'settlement' ? 'bg-line' : late?.isMe ? 'bg-ink' : 'bg-accent';
 
-  return (
-    <View className={`flex-row gap-4 py-4 ${deleted ? 'opacity-50' : ''}`}>
-      <View className={`mt-1 h-6 w-4 -rotate-6 rounded-sm ${marker}`} />
-      <View className="flex-1 gap-1">
-        <Text className={`text-lg font-semibold text-ink ${deleted ? 'line-through' : ''}`}>
+  const row = (
+    <View className="flex-row gap-4 py-4">
+      <View
+        className={`mt-1 h-6 w-4 -rotate-6 rounded-sm ${marker} ${counts ? '' : 'opacity-40'}`}
+      />
+      <View className={`flex-1 gap-1 ${counts ? '' : 'opacity-60'}`}>
+        <Text className={`text-lg font-semibold text-ink ${struck ? 'line-through' : ''}`}>
           {describe(item, members)}
         </Text>
-        {note ? <Text className="text-base text-ink">{note}</Text> : null}
+        {entry?.note ? <Text className="text-base text-ink">{entry.note}</Text> : null}
         <View className="flex-row flex-wrap gap-x-3">
           <Text className="text-sm text-muted">{formatWhen(new Date(item.at))}</Text>
           {edited ? <Text className="text-sm text-muted">edited</Text> : null}
           {deleted ? <Text className="text-sm text-danger">deleted</Text> : null}
         </View>
       </View>
+    </View>
+  );
+
+  return (
+    <View>
+      {onPress && entry ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded }}
+          accessibilityHint="Shows what you can do with this entry"
+          onPress={onPress}
+        >
+          {row}
+        </Pressable>
+      ) : (
+        row
+      )}
+      {status ? (
+        // Outside the faded block: the reason it doesn't count must stay readable.
+        <Text
+          className={`-mt-2 pb-3 pl-8 text-sm font-semibold ${needsMe ? 'text-ink' : 'text-muted'}`}
+        >
+          {status}
+        </Text>
+      ) : null}
+      {expanded ? <View className="pb-4 pl-8">{children}</View> : null}
     </View>
   );
 }

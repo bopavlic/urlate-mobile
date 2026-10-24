@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, FlatList, Pressable, Text, View } from 'react-native';
+import { useState, type ReactNode } from 'react';
+import { Alert, FlatList, Pressable, Switch, Text, View } from 'react-native';
 
-import type { HistoryItem as Item, LedgerDetail } from '@/api/generated/model';
+import type { Entry, HistoryItem as Item, LedgerDetail } from '@/api/generated/model';
 import { BigBalance } from '@/ui/BigBalance';
 import { Button } from '@/ui/Button';
 import { LateButton } from '@/ui/LateButton';
@@ -66,6 +66,36 @@ function InviteNudge({ detail }: { detail: LedgerDetail }) {
   );
 }
 
+/** Either person can switch it; the other is told (activity + push). */
+function ConfirmModeSetting({
+  on,
+  saving,
+  onChange,
+}: {
+  on: boolean;
+  saving: boolean;
+  onChange: (on: boolean) => void;
+}) {
+  return (
+    <View className="flex-row items-center gap-4 rounded-2xl border-2 border-line p-4">
+      <View className="flex-1 gap-1">
+        <Text className="text-base font-semibold text-ink">Confirm mode</Text>
+        <Text className="text-sm text-muted">
+          {on
+            ? 'On: new entries wait for a yes from whoever was late.'
+            : 'Off: entries count right away and can be disputed for 48 hours.'}
+        </Text>
+      </View>
+      <Switch
+        accessibilityLabel="Confirm mode"
+        value={on}
+        disabled={saving}
+        onValueChange={onChange}
+      />
+    </View>
+  );
+}
+
 function Leaderboard({ detail }: { detail: LedgerDetail }) {
   return (
     <View className="gap-2 rounded-2xl border-2 border-line p-4">
@@ -98,6 +128,9 @@ export function LedgerScreen({
   settling,
   refreshing = false,
   onRefresh,
+  onConfirmModeChange,
+  savingConfirmMode = false,
+  renderEntryPanel,
 }: {
   detail: LedgerDetail;
   history: Item[];
@@ -106,7 +139,12 @@ export function LedgerScreen({
   settling: boolean;
   refreshing?: boolean;
   onRefresh?: () => void;
+  onConfirmModeChange?: (on: boolean) => void;
+  savingConfirmMode?: boolean;
+  /** Actions and earlier versions under a tapped entry. */
+  renderEntryPanel?: (entry: Entry) => ReactNode;
 }) {
+  const [openEntryId, setOpenEntryId] = useState<string | null>(null);
   const other = detail.members.find((member) => !member.isMe);
   const title = detail.name ?? other?.displayName ?? 'Someone';
   const settle = settleOptions(detail);
@@ -195,6 +233,14 @@ export function LedgerScreen({
 
       {detail.kind === 'GROUP' ? <Leaderboard detail={detail} /> : null}
 
+      {onConfirmModeChange ? (
+        <ConfirmModeSetting
+          on={detail.confirmMode}
+          saving={savingConfirmMode}
+          onChange={onConfirmModeChange}
+        />
+      ) : null}
+
       <Text className="font-display-bold text-2xl text-ink">History</Text>
     </View>
   );
@@ -207,7 +253,23 @@ export function LedgerScreen({
         contentContainerClassName="px-6 pb-16"
         ListHeaderComponent={header}
         ItemSeparatorComponent={() => <View className="h-px bg-line" />}
-        renderItem={({ item }) => <HistoryItem item={item} members={detail.members} />}
+        renderItem={({ item }) => {
+          const entry = item.type === 'entry' ? item.entry : null;
+          const open = !!entry && entry.id === openEntryId;
+          return (
+            <HistoryItem
+              item={item}
+              members={detail.members}
+              expanded={open}
+              onPress={
+                entry && renderEntryPanel ? () => setOpenEntryId(open ? null : entry.id) : undefined
+              }
+            >
+              {open && entry ? renderEntryPanel?.(entry) : null}
+            </HistoryItem>
+          );
+        }}
+        extraData={openEntryId}
         onEndReached={onLoadMore}
         refreshing={refreshing}
         onRefresh={onRefresh}

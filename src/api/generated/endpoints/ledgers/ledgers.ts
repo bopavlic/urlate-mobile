@@ -389,7 +389,7 @@ export function useGetLedger<TData = Awaited<ReturnType<typeof getLedger>>, TErr
 
 
 /**
- * @summary Rename a ledger
+ * @summary Rename a ledger, or switch confirm mode (any member can; the others are told)
  */
 export const updateLedger = (
     id: string,
@@ -444,7 +444,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type UpdateLedgerMutationVariables = {id: string;data?: BodyType<UpdateLedgerBody>}
 
     /**
- * @summary Rename a ledger
+ * @summary Rename a ledger, or switch confirm mode (any member can; the others are told)
  */
 export const useUpdateLedger = <TError = ErrorType<Error>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateLedger>>, TError,UpdateLedgerMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}

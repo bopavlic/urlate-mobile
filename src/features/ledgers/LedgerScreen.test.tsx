@@ -1,8 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
+import { Text } from 'react-native';
+
 import type { LedgerDetail } from '@/api/generated/model';
 
-import { brother, me } from './fixtures';
+import { brother, entryFixture, me } from './fixtures';
 import { LedgerScreen } from './LedgerScreen';
 
 // jest.mock factories run before imports, so the mock module is required inline.
@@ -129,5 +131,45 @@ describe('LedgerScreen invites', () => {
       pathname: '/invite',
       params: { ledgerId: 'l-new' },
     });
+  });
+});
+
+describe('LedgerScreen trust settings', () => {
+  it('switches confirm mode and explains what it does', async () => {
+    const onConfirmModeChange = jest.fn();
+    await render(
+      <LedgerScreen
+        detail={fresh}
+        history={[]}
+        onSettle={jest.fn()}
+        onLoadMore={jest.fn()}
+        settling={false}
+        onConfirmModeChange={onConfirmModeChange}
+      />,
+    );
+    expect(
+      screen.getByText('Off: entries count right away and can be disputed for 48 hours.'),
+    ).toBeTruthy();
+    await fireEvent(screen.getByRole('switch', { name: 'Confirm mode' }), 'valueChange', true);
+    expect(onConfirmModeChange).toHaveBeenCalledWith(true);
+  });
+
+  it('opens an entry panel when an entry is tapped', async () => {
+    const item = { type: 'entry' as const, at: '2026-10-20T16:05:00.000Z', entry: entryFixture() };
+    await render(
+      <LedgerScreen
+        detail={fresh}
+        history={[item]}
+        onSettle={jest.fn()}
+        onLoadMore={jest.fn()}
+        settling={false}
+        renderEntryPanel={(entry) => <Text>{`panel for ${entry.id}`}</Text>}
+      />,
+    );
+    expect(screen.queryByText('panel for e1')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: /Brother was 5 min late/ }));
+    expect(screen.getByText('panel for e1')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: /Brother was 5 min late/ }));
+    expect(screen.queryByText('panel for e1')).toBeNull();
   });
 });

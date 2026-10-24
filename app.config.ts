@@ -4,6 +4,9 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 // builds; it is baked into the iOS app, so rebuild the dev client after changing it.
 const googleIosUrlScheme = process.env.GOOGLE_IOS_URL_SCHEME;
 const easProjectId = process.env.EAS_PROJECT_ID;
+// Android push goes through Firebase Cloud Messaging: path to the Firebase project's
+// google-services.json (kept out of git). iOS push needs no file: EAS holds the APNs key.
+const googleServicesFile = process.env.GOOGLE_SERVICES_JSON;
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -32,6 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: './assets/images/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
+    ...(googleServicesFile ? { googleServicesFile } : {}),
     // App links: verified against urlate.app/.well-known/assetlinks.json.
     intentFilters: [
       {
@@ -50,6 +54,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-dev-client',
     'expo-secure-store',
     'expo-apple-authentication',
+    // Push notifications (activity). The Android icon tint matches the accent.
+    ['expo-notifications', { color: '#FFCC1A' }],
     [
       'expo-image-picker',
       {

@@ -2,8 +2,11 @@ import { router, Stack } from 'expo-router';
 import { useEffect } from 'react';
 
 import { takePendingInvite } from '@/features/invites/pending';
+import { usePushNotifications } from '@/features/notifications/push';
 
 export default function AppLayout() {
+  usePushNotifications();
+
   // An invite link opened while signed out waited through sign-in; open it now.
   useEffect(() => {
     void takePendingInvite().then((code) => {
@@ -19,6 +22,7 @@ export default function AppLayout() {
       <Stack.Screen name="log" />
       <Stack.Screen name="invite" />
       <Stack.Screen name="join" />
+      <Stack.Screen name="entries/[id]/edit" />
     </Stack>
   );
 }

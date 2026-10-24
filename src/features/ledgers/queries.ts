@@ -18,10 +18,13 @@ export function useLedgerHistory(ledgerId: string) {
   return useGetLedgerHistoryInfinite(ledgerId, { limit: 30 }, { query: cursorPaging });
 }
 
-/** After logging, settling or editing: balances, lists and history all change. */
+/** After logging, settling or editing: balances, lists, history and entries all change. */
 export function refreshLedgers(): Promise<void> {
   return queryClient.invalidateQueries({
     predicate: (query) =>
-      query.queryKey.some((part) => typeof part === 'string' && part.startsWith('/ledgers')),
+      query.queryKey.some(
+        (part) =>
+          typeof part === 'string' && (part.startsWith('/ledgers') || part.startsWith('/entries')),
+      ),
   });
 }

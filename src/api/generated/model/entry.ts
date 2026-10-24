@@ -5,6 +5,7 @@
  * Who has kept whom waiting, in minutes.
  * OpenAPI spec version: 1.0.0
  */
+import type { EntryActions } from './entryActions';
 import type { EntryStatus } from './entryStatus';
 
 export interface Entry {
@@ -25,4 +26,7 @@ export interface Entry {
   /** @nullable */
   deletedAt: string | null;
   createdAt: string;
+  /** @nullable */
+  disputableUntil: string | null;
+  actions: EntryActions;
 }

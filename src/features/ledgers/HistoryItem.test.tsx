@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
+import { Text } from 'react-native';
 
 import type { Entry, HistoryItem as Item, Settlement } from '@/api/generated/model';
 
-import { brother, me } from './fixtures';
+import { brother, entryFixture, me } from './fixtures';
 import { HistoryItem } from './HistoryItem';
 
 const members = [me, brother];
@@ -10,21 +11,7 @@ const members = [me, brother];
 const entry = (overrides: Partial<Entry> = {}): Item => ({
   type: 'entry',
   at: '2026-10-20T16:05:00.000Z',
-  entry: {
-    id: 'e1',
-    ledgerId: 'l',
-    lateMemberId: brother.id,
-    waiterMemberIds: [me.id],
-    minutes: 5,
-    note: 'football',
-    occurredAt: '2026-10-20T16:05:00.000Z',
-    status: 'ACTIVE',
-    createdByUserId: 'u-me',
-    editedAt: null,
-    deletedAt: null,
-    createdAt: '2026-10-20T16:05:00.000Z',
-    ...overrides,
-  },
+  entry: entryFixture(overrides),
 });
 
 const settlement = (overrides: Partial<Settlement> = {}): Item => ({
@@ -81,5 +68,44 @@ describe('HistoryItem', () => {
       />,
     );
     expect(screen.getByText('Brother reset it to all square')).toBeTruthy();
+  });
+});
+
+describe('HistoryItem status', () => {
+  it('says why an entry is not counting', async () => {
+    await render(<HistoryItem item={entry({ status: 'DISPUTED' })} members={members} />);
+    expect(screen.getByText('Brother disputed this')).toBeTruthy();
+  });
+
+  it('flags entries waiting for my answer', async () => {
+    await render(
+      <HistoryItem
+        item={entry({
+          status: 'PENDING',
+          lateMemberId: me.id,
+          actions: { edit: false, delete: false, confirm: true, reject: true, dispute: false },
+        })}
+        members={members}
+      />,
+    );
+    expect(screen.getByText('Waiting for you')).toBeTruthy();
+  });
+
+  it('opens its panel when tapped', async () => {
+    const onPress = jest.fn();
+    const { rerender } = await render(
+      <HistoryItem item={entry()} members={members} onPress={onPress}>
+        <Text>panel</Text>
+      </HistoryItem>,
+    );
+    expect(screen.queryByText('panel')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: /Brother was 5 min late/ }));
+    expect(onPress).toHaveBeenCalled();
+    await rerender(
+      <HistoryItem item={entry()} members={members} onPress={onPress} expanded>
+        <Text>panel</Text>
+      </HistoryItem>,
+    );
+    expect(screen.getByText('panel')).toBeTruthy();
   });
 });

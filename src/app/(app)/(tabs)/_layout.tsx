@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router/js-tabs';
 import { useColorScheme, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useUnreadCount } from '@/features/activity/queries';
 import { palette } from '@/theme/tokens';
 import { LateButton } from '@/ui/LateButton';
 import { TabIcon } from '@/ui/TabIcon';
@@ -11,6 +12,7 @@ const TAB_BAR_HEIGHT = 60;
 export default function TabsLayout() {
   const colors = palette[useColorScheme() === 'dark' ? 'dark' : 'light'];
   const insets = useSafeAreaInsets();
+  const unread = useUnreadCount();
   return (
     <View className="flex-1">
       <Tabs
@@ -41,6 +43,8 @@ export default function TabsLayout() {
           options={{
             title: 'Activity',
             tabBarIcon: ({ color }) => <TabIcon name="activity" color={color} />,
+            tabBarBadge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined,
+            tabBarBadgeStyle: { backgroundColor: colors.accent, color: colors.onAccent },
           }}
         />
         <Tabs.Screen

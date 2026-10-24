@@ -124,7 +124,99 @@ export const useCreateEntry = <TError = ErrorType<Error>,
       return useMutation(getCreateEntryMutationOptions(options), queryClient);
     }
     /**
- * @summary Edit my entry (the previous values are kept as a revision)
+ * @summary One entry, with what I can do with it
+ */
+export const getEntry = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<Entry>(
+      {url: `/entries/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetEntryQueryKey = (id: string,) => {
+    return [
+    `/entries/${id}`
+    ] as const;
+    }
+
+
+export const getGetEntryQueryOptions = <TData = Awaited<ReturnType<typeof getEntry>>, TError = ErrorType<Error>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEntry>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetEntryQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEntry>>> = ({ signal }) => getEntry(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEntry>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetEntryQueryResult = NonNullable<Awaited<ReturnType<typeof getEntry>>>
+export type GetEntryQueryError = ErrorType<Error>
+
+
+export function useGetEntry<TData = Awaited<ReturnType<typeof getEntry>>, TError = ErrorType<Error>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEntry>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEntry>>,
+          TError,
+          Awaited<ReturnType<typeof getEntry>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEntry<TData = Awaited<ReturnType<typeof getEntry>>, TError = ErrorType<Error>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEntry>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEntry>>,
+          TError,
+          Awaited<ReturnType<typeof getEntry>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEntry<TData = Awaited<ReturnType<typeof getEntry>>, TError = ErrorType<Error>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEntry>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary One entry, with what I can do with it
+ */
+
+export function useGetEntry<TData = Awaited<ReturnType<typeof getEntry>>, TError = ErrorType<Error>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEntry>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetEntryQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Edit my entry (the previous values are kept as a revision). In confirm mode, or after a dispute or rejection, it waits for the late person again
  */
 export const updateEntry = (
     id: string,
@@ -179,7 +271,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type UpdateEntryMutationVariables = {id: string;data?: BodyType<UpdateEntryBody>}
 
     /**
- * @summary Edit my entry (the previous values are kept as a revision)
+ * @summary Edit my entry (the previous values are kept as a revision). In confirm mode, or after a dispute or rejection, it waits for the late person again
  */
 export const useUpdateEntry = <TError = ErrorType<Error>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEntry>>, TError,UpdateEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
@@ -348,3 +440,198 @@ export function useListEntryRevisions<TData = Awaited<ReturnType<typeof listEntr
 
 
 
+/**
+ * @summary Accept an entry against me: a pending one starts counting, a disputed one counts again
+ */
+export const confirmEntry = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<Entry>(
+      {url: `/entries/${id}/confirm`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getConfirmEntryMutationKey = () => ['confirmEntry'] as const;
+
+export const getConfirmEntryMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmEntry>>, TError,ConfirmEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof confirmEntry>>, TError,ConfirmEntryMutationVariables, TContext> => {
+
+const mutationKey = getConfirmEntryMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof confirmEntry>>, ConfirmEntryMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  confirmEntry(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ConfirmEntryMutationResult = NonNullable<Awaited<ReturnType<typeof confirmEntry>>>
+
+    export type ConfirmEntryMutationError = ErrorType<Error>
+    export type ConfirmEntryMutationVariables = {id: string}
+
+    /**
+ * @summary Accept an entry against me: a pending one starts counting, a disputed one counts again
+ */
+export const useConfirmEntry = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmEntry>>, TError,ConfirmEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof confirmEntry>>,
+        TError,
+        ConfirmEntryMutationVariables,
+        TContext
+      > => {
+      return useMutation(getConfirmEntryMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Reject a pending entry against me (confirm mode); it never counts
+ */
+export const rejectEntry = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<Entry>(
+      {url: `/entries/${id}/reject`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getRejectEntryMutationKey = () => ['rejectEntry'] as const;
+
+export const getRejectEntryMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rejectEntry>>, TError,RejectEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof rejectEntry>>, TError,RejectEntryMutationVariables, TContext> => {
+
+const mutationKey = getRejectEntryMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof rejectEntry>>, RejectEntryMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  rejectEntry(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RejectEntryMutationResult = NonNullable<Awaited<ReturnType<typeof rejectEntry>>>
+
+    export type RejectEntryMutationError = ErrorType<Error>
+    export type RejectEntryMutationVariables = {id: string}
+
+    /**
+ * @summary Reject a pending entry against me (confirm mode); it never counts
+ */
+export const useRejectEntry = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rejectEntry>>, TError,RejectEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof rejectEntry>>,
+        TError,
+        RejectEntryMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRejectEntryMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Dispute an entry against me within 48 hours; it stops counting until I accept it or it is changed
+ */
+export const disputeEntry = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<Entry>(
+      {url: `/entries/${id}/dispute`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getDisputeEntryMutationKey = () => ['disputeEntry'] as const;
+
+export const getDisputeEntryMutationOptions = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof disputeEntry>>, TError,DisputeEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof disputeEntry>>, TError,DisputeEntryMutationVariables, TContext> => {
+
+const mutationKey = getDisputeEntryMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof disputeEntry>>, DisputeEntryMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  disputeEntry(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DisputeEntryMutationResult = NonNullable<Awaited<ReturnType<typeof disputeEntry>>>
+
+    export type DisputeEntryMutationError = ErrorType<Error>
+    export type DisputeEntryMutationVariables = {id: string}
+
+    /**
+ * @summary Dispute an entry against me within 48 hours; it stops counting until I accept it or it is changed
+ */
+export const useDisputeEntry = <TError = ErrorType<Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof disputeEntry>>, TError,DisputeEntryMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof disputeEntry>>,
+        TError,
+        DisputeEntryMutationVariables,
+        TContext
+      > => {
+      return useMutation(getDisputeEntryMutationOptions(options), queryClient);
+    }

@@ -4,6 +4,8 @@ import { createAuthClient } from 'better-auth/react';
 import * as SecureStore from 'expo-secure-store';
 
 import { configureApiAuth } from '@/api/client';
+import { removePushToken } from '@/api/generated/endpoints/activity/activity';
+import { unregisterPush } from '@/features/notifications/register';
 import { queryClient } from '@/providers/query';
 
 import { apiUrl } from './config';
@@ -23,6 +25,8 @@ export const authClient = createAuthClient({
 
 /** Signs out locally and on the server; the root layout then shows the sign-in screen. */
 export async function signOut(): Promise<void> {
+  // While the session still works: this phone stops getting the old account's pushes.
+  await unregisterPush({ unregister: (token) => removePushToken({ token }) });
   await authClient.signOut().catch(() => undefined);
   queryClient.clear();
 }

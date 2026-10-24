@@ -46,3 +46,6 @@ example
 
 # local env
 .env
+
+# Firebase config for Android push (see SETUP.md)
+google-services.json
