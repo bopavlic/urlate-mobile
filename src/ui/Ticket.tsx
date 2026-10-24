@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import type { BalanceView } from '@/api/generated/model';
@@ -5,7 +6,7 @@ import { useColors } from '@/theme/appearance';
 import { fonts } from '@/theme/tokens';
 
 // Being late gets you a ticket, like a parking fine: a printed stub with the offender, who
-// was kept waiting and the minutes, perforated across the middle with a barcode at the foot.
+// was kept waiting and the minutes, with a tear-off line and a barcode at the foot.
 // Colours go through `style`, not classes, so a theme or share-card look can recolour it and
 // NativeWind never remounts it when they change.
 
@@ -18,8 +19,6 @@ export type TicketColors = {
   /** The header band when someone owes you. */
   accent: string;
   onAccent: string;
-  /** Behind the ticket: the notches are cut out in this colour. */
-  page: string;
 };
 
 export type TicketTone = 'owed' | 'owing' | 'clear';
@@ -34,7 +33,43 @@ export function ticketNumber(minutes: number): string {
 }
 
 // A fixed pattern, so the barcode never shifts between renders.
-const BARS = [3, 1, 4, 1, 2, 3, 1, 2, 1, 5, 2, 1, 3, 1, 2, 2, 4, 1, 2, 3, 1, 3, 1, 2, 4, 1, 2];
+// Bars and gaps alternate, starting with a bar; each digit is a width. A fixed pattern, so the
+// barcode never shifts between renders, stretched to the ticket's full width.
+export const BARS = Array.from(
+  '2112131121312211311212131123112113122131112131212311211312131121231121',
+  Number,
+);
+
+const BAR_UNITS = BARS.reduce((sum, weight) => sum + weight, 0);
+
+/** The bars, sized from the measured width so they spread evenly edge to edge. */
+function Barcode({
+  color,
+  height,
+  marginTop,
+}: {
+  color: string;
+  height: number;
+  marginTop: number;
+}) {
+  const [width, setWidth] = useState(0);
+  const unit = width / BAR_UNITS;
+  return (
+    <View
+      onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+      style={{ flexDirection: 'row', height, marginTop }}
+    >
+      {width > 0
+        ? BARS.map((weight, i) => (
+            <View
+              key={i}
+              style={{ width: weight * unit, backgroundColor: i % 2 === 0 ? color : 'transparent' }}
+            />
+          ))
+        : null}
+    </View>
+  );
+}
 
 export function Ticket({
   tone,
@@ -70,7 +105,6 @@ export function Ticket({
     line: theme.line,
     accent: theme.accent,
     onAccent: theme.onAccent,
-    page: theme.paper,
   };
   const s = (n: number) => n * scale;
   const band = tone === 'owed' ? c.accent : tone === 'owing' ? c.ink : c.line;
@@ -140,24 +174,15 @@ export function Ticket({
         {field('OFFENDER', offender)}
         {field('KEPT WAITING', waiter)}
 
-        {/* The perforation, with a notch cut into each edge. */}
-        <View style={{ marginTop: s(12), height: s(2) }}>
-          <View style={{ borderTopWidth: s(2), borderStyle: 'dashed', borderColor: c.line }} />
-          {[-1, 1].map((side) => (
-            <View
-              key={side}
-              style={{
-                position: 'absolute',
-                top: s(-11),
-                [side < 0 ? 'left' : 'right']: s(-29),
-                width: s(22),
-                height: s(22),
-                borderRadius: s(11),
-                backgroundColor: c.page,
-              }}
-            />
-          ))}
-        </View>
+        {/* The perforation: where the stub would tear off. */}
+        <View
+          style={{
+            marginTop: s(12),
+            borderTopWidth: s(2),
+            borderStyle: 'dashed',
+            borderColor: c.line,
+          }}
+        />
 
         <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: s(8), marginTop: s(10) }}>
           <Text
@@ -178,22 +203,7 @@ export function Ticket({
           <Text style={{ fontFamily: fonts.display, fontSize: s(20), color: c.ink }}>MIN</Text>
         </View>
 
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: s(2),
-            height: s(26),
-            marginTop: s(10),
-            opacity: 0.85,
-          }}
-        >
-          {BARS.map((width, i) => (
-            <View
-              key={i}
-              style={{ width: s(width * 2), backgroundColor: i % 2 === 0 ? c.ink : 'transparent' }}
-            />
-          ))}
-        </View>
+        <Barcode color={c.ink} height={s(30)} marginTop={s(12)} />
       </View>
     </View>
   );

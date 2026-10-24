@@ -6,7 +6,7 @@ import { balanceSentence, groupBalanceSentence } from '@/features/balance/copy';
 import { Ticket, ticketTone } from './Ticket';
 
 const SUBLINE = {
-  owed: 'Pay up in minutes, not money.',
+  owed: 'Not that you’re counting.',
   owing: 'Maybe set an alarm.',
   clear: 'Enjoy it while it lasts.',
 } as const;

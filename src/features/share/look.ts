@@ -59,9 +59,9 @@ export function cardLook(look: Look) {
   return { background, text, muted, line, card, onCard };
 }
 
-/** The ticket on the card: white paper, its band in the card colour, notches in the background. */
+/** The ticket on the card: white paper, its band in the card colour. */
 export function ticketColors(look: Look): TicketColors {
-  const { background, card, onCard } = cardLook(look);
+  const { card, onCard } = cardLook(look);
   return {
     paper: '#FFFFFF',
     ink: TICKET_INK,
@@ -69,7 +69,6 @@ export function ticketColors(look: Look): TicketColors {
     line: '#DDE0E8',
     accent: card,
     onAccent: onCard,
-    page: background,
   };
 }
 

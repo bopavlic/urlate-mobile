@@ -24,9 +24,8 @@ describe('card looks', () => {
     ]);
   });
 
-  it('cuts the ticket’s notches in the background colour', () => {
+  it('bands the ticket in the card colour', () => {
     expect(ticketColors({ style: 'PITCH', cardColor: 'BLUE' })).toMatchObject({
-      page: '#111318',
       accent: '#2B5FEA',
       paper: '#FFFFFF',
     });
