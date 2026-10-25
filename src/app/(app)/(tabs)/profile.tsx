@@ -142,6 +142,7 @@ export default function Profile() {
             onPress={() => void showPrivacyChoices().catch(() => undefined)}
           />
         ) : null}
+        <MenuRow title="Blocked people" onPress={() => router.push('/blocked')} />
         <ExportData />
         <MenuRow title="Sign out" onPress={() => void signOut()} />
         {/* The server ends every session; signing out locally takes the app back to sign-in. */}

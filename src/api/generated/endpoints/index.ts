@@ -6,5 +6,6 @@ export * from './ledgers/ledgers';
 export * from './me/me';
 export * from './people/people';
 export * from './premium/premium';
+export * from './safety/safety';
 export * from './settlements/settlements';
 export * from './share-cards/share-cards';

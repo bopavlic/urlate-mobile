@@ -10,6 +10,7 @@ import {
   useRemoveMember,
   useRenameMember,
 } from '@/api/generated/endpoints/ledgers/ledgers';
+import { blockPerson, getListBlocksQueryKey } from '@/api/generated/endpoints/safety/safety';
 import { MembersScreen } from '@/features/ledgers/MembersScreen';
 import { refreshLedgers } from '@/features/ledgers/queries';
 import { queryClient } from '@/providers/query';
@@ -61,6 +62,22 @@ export default function MembersRoute() {
         // Home first: the ledger screens under this one would 404 on their next refetch.
         router.dismissTo('/');
         queryClient.removeQueries({ queryKey: getGetLedgerQueryKey(id) });
+        await refreshLedgers();
+      }}
+      onReport={(member) =>
+        router.push({
+          pathname: '/report',
+          params: { memberId: member.id, name: member.displayName },
+        })
+      }
+      onBlock={async (member) => {
+        await blockPerson({ memberId: member.id });
+        void queryClient.invalidateQueries({ queryKey: getListBlocksQueryKey() });
+        if (detail.data.kind === 'PAIR') {
+          // Blocking ended this pair: same way out as leaving.
+          router.dismissTo('/');
+          queryClient.removeQueries({ queryKey: getGetLedgerQueryKey(id) });
+        }
         await refreshLedgers();
       }}
       onInvite={(memberId) =>

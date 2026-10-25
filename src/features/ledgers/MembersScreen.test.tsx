@@ -36,6 +36,8 @@ function setup(overrides: Partial<Parameters<typeof MembersScreen>[0]> = {}) {
     onInvite: jest.fn(),
     onRename: jest.fn().mockResolvedValue(undefined),
     onLeave: jest.fn().mockResolvedValue(undefined),
+    onReport: jest.fn(),
+    onBlock: jest.fn().mockResolvedValue(undefined),
     ...overrides,
   };
   return { props, view: render(<MembersScreen {...props} />) };
@@ -136,5 +138,39 @@ describe('MembersScreen', () => {
     expect(screen.queryByLabelText('Add someone')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Remove Brother' })).toBeNull();
     expect(screen.getByRole('button', { name: 'Rename Brother' })).toBeTruthy();
+  });
+
+  it('offers Report and Block for people on the app, not for me or placeholders', async () => {
+    const { props, view } = setup();
+    await view;
+    expect(screen.queryByRole('button', { name: 'Report Brother' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Block Brother' })).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Report Ana' }));
+    expect(props.onReport).toHaveBeenCalledWith(ana);
+  });
+
+  it('asks before blocking, saying they keep the group and won’t be told', async () => {
+    const { props, view } = setup();
+    await view;
+    await fireEvent.press(screen.getByRole('button', { name: 'Block Ana' }));
+    const [title, message, buttons] = jest.mocked(Alert.alert).mock.calls.at(-1)!;
+    expect(title).toBe('Block Ana?');
+    expect(message).toMatch(/You both stay in Friday lunch/);
+    expect(message).toMatch(/Ana won’t be told/);
+    expect(props.onBlock).not.toHaveBeenCalled();
+    (buttons as { style?: string; onPress?: () => void }[])
+      .find((button) => button.style === 'destructive')
+      ?.onPress?.();
+    expect(props.onBlock).toHaveBeenCalledWith(ana);
+  });
+
+  it('says blocking in a pair ends it, while they keep the history', async () => {
+    const { view } = setup({
+      detail: { ...group, kind: 'PAIR', name: null, members: [me, ana] },
+    });
+    await view;
+    await fireEvent.press(screen.getByRole('button', { name: 'Block Ana' }));
+    const [, message] = jest.mocked(Alert.alert).mock.calls.at(-1)!;
+    expect(message).toMatch(/You stop keeping track with Ana/);
   });
 });

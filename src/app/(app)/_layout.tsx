@@ -32,6 +32,8 @@ export default function AppLayout() {
       <Stack.Screen name="appearance" />
       <Stack.Screen name="join" />
       <Stack.Screen name="entries/[id]/edit" />
+      <Stack.Screen name="report" />
+      <Stack.Screen name="blocked" />
     </Stack>
   );
 }

@@ -79,6 +79,8 @@ function MemberRow({
   onInvite,
   onRemove,
   onStartRename,
+  onReport,
+  onBlock,
   renameField,
 }: {
   member: Member;
@@ -87,6 +89,8 @@ function MemberRow({
   onInvite: () => void;
   onRemove: () => void;
   onStartRename: () => void;
+  onReport: () => void;
+  onBlock: () => void;
   renameField: ReactNode;
 }) {
   const name = member.isMe ? 'You' : member.displayName;
@@ -128,6 +132,26 @@ function MemberRow({
                   Remove
                 </Text>
               ) : null}
+            </View>
+          ) : null}
+          {!member.isPlaceholder && !member.isMe ? (
+            <View className="flex-row gap-4 pt-1">
+              <Text
+                accessibilityRole="button"
+                accessibilityLabel={`Report ${member.displayName}`}
+                onPress={onReport}
+                className="text-sm font-semibold text-ink underline"
+              >
+                Report
+              </Text>
+              <Text
+                accessibilityRole="button"
+                accessibilityLabel={`Block ${member.displayName}`}
+                onPress={onBlock}
+                className="text-sm font-semibold text-danger underline"
+              >
+                Block
+              </Text>
             </View>
           ) : null}
         </View>
@@ -187,9 +211,18 @@ export function leaveCopy(detail: Pick<LedgerDetail, 'kind' | 'members' | 'name'
   };
 }
 
+/** What blocking does, worded for the confirmation. They are never told. */
+export function blockMessage(detail: Pick<LedgerDetail, 'kind' | 'name'>, name: string): string {
+  const where =
+    detail.kind === 'PAIR'
+      ? `You stop keeping track with ${name}; they keep the history.`
+      : `You both stay in ${detail.name ?? 'this group'}: leave it if you’d rather not see ${name} there.`;
+  return `${where} Neither of you can invite the other to anything new. ${name} won’t be told.`;
+}
+
 /**
  * Who is in a ledger: invite people who aren't on the app, rename them, add or remove
- * them (groups only), or leave.
+ * them (groups only), report or block people who are, or leave.
  */
 export function MembersScreen({
   detail,
@@ -198,6 +231,8 @@ export function MembersScreen({
   onInvite,
   onRename,
   onLeave,
+  onReport,
+  onBlock,
 }: {
   detail: LedgerDetail;
   onAdd: (name: string) => Promise<void>;
@@ -206,6 +241,8 @@ export function MembersScreen({
   onInvite: (memberId: string | null) => void;
   onRename: (memberId: string, name: string) => Promise<void>;
   onLeave: () => Promise<void>;
+  onReport: (member: Member) => void;
+  onBlock: (member: Member) => Promise<void>;
 }) {
   const isGroup = detail.kind === 'GROUP';
   const copy = leaveCopy(detail);
@@ -256,6 +293,22 @@ export function MembersScreen({
     }
   }
 
+  function block(member: Member) {
+    Alert.alert(`Block ${member.displayName}?`, blockMessage(detail, member.displayName), [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Block',
+        style: 'destructive',
+        onPress: () => {
+          setError(null);
+          onBlock(member).catch(() =>
+            setError("Couldn't block them. Check your connection and try again."),
+          );
+        },
+      },
+    ]);
+  }
+
   function leave() {
     Alert.alert(copy.title, copy.message, [
       { text: 'Cancel', style: 'cancel' },
@@ -300,6 +353,8 @@ export function MembersScreen({
                   onInvite={() => onInvite(member.id)}
                   onRemove={() => remove(member)}
                   onStartRename={() => setRenamingId(member.id)}
+                  onReport={() => onReport(member)}
+                  onBlock={() => block(member)}
                   renameField={
                     <RenameField
                       member={member}

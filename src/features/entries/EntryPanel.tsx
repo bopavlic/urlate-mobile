@@ -9,6 +9,7 @@ import {
   useListEntryRevisions,
   useRejectEntry,
 } from '@/api/generated/endpoints/entries/entries';
+import { useGetMe } from '@/api/generated/endpoints/me/me';
 import type { Entry, EntryRevision } from '@/api/generated/model';
 import { refreshActivity } from '@/features/activity/queries';
 import { refreshLedgers } from '@/features/ledgers/queries';
@@ -50,6 +51,7 @@ export function EntryPanel({ entry }: { entry: Entry }) {
   const reject = useRejectEntry();
   const dispute = useDisputeEntry();
   const remove = useDeleteEntry();
+  const me = useGetMe();
   const [error, setError] = useState<string | null>(null);
   const busy = confirm.isPending || reject.isPending || dispute.isPending || remove.isPending;
 
@@ -78,6 +80,16 @@ export function EntryPanel({ entry }: { entry: Entry }) {
       />
       {error ? <Text className="text-base text-danger">{error}</Text> : null}
       {entry.editedAt ? <Revisions entryId={entry.id} /> : null}
+      {/* Someone else's ticket (and its note) can be reported. */}
+      {me.data && entry.createdByUserId && entry.createdByUserId !== me.data.id ? (
+        <Text
+          accessibilityRole="button"
+          onPress={() => router.push({ pathname: '/report', params: { entryId: entry.id } })}
+          className="text-sm font-semibold text-muted underline"
+        >
+          Report this ticket
+        </Text>
+      ) : null}
     </View>
   );
 }
