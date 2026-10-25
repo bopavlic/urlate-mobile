@@ -152,11 +152,13 @@ export function PremiumScreen({
           <View className="gap-4 rounded-2xl bg-surface p-5">
             <Text className="font-display text-lg text-ink">You’re on Premium.</Text>
             <Text className="text-base text-muted">{premiumStatus(entitlements)}</Text>
-            <Button
-              title={`Manage in ${storeName(entitlements.premiumStore)}`}
-              variant="secondary"
-              onPress={onManage}
-            />
+            {entitlements.premiumStore ? (
+              <Button
+                title={`Manage in ${storeName(entitlements.premiumStore)}`}
+                variant="secondary"
+                onPress={onManage}
+              />
+            ) : null}
           </View>
         ) : plans && plans.length > 0 ? (
           <View className="gap-3">

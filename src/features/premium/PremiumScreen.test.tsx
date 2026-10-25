@@ -110,6 +110,16 @@ describe('PremiumScreen', () => {
     expect(props.onManage).toHaveBeenCalled();
   });
 
+  it('has nothing to manage when Premium came without a store (the app review account)', async () => {
+    const { view } = setup({
+      entitlements: { ...free, premium: true, groupLimit: null, adsLeftToday: 0 },
+    });
+    await view;
+    expect(screen.getByText('You’re on Premium.')).toBeTruthy();
+    expect(screen.getByText('Premium is on for this account.')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Manage in/ })).toBeNull();
+  });
+
   it('says when the store has no prices to show', async () => {
     const { view } = setup({ plans: undefined, plansError: true });
     await view;

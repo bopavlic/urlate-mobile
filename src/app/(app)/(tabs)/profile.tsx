@@ -13,7 +13,7 @@ import { privacyChoicesRequired, rewardedUnit, showPrivacyChoices } from '@/feat
 import { personalShareMessage } from '@/features/invites/copy';
 import { MyInviteCode } from '@/features/invites/MyInviteCode';
 import { refreshLedgers } from '@/features/ledgers/queries';
-import { storeName } from '@/features/premium/copy';
+import { subscribedIn } from '@/features/premium/copy';
 import { PremiumRow } from '@/features/premium/PremiumRow';
 import { useEntitlements } from '@/features/premium/queries';
 import { DeleteAccount } from '@/features/profile/DeleteAccount';
@@ -146,9 +146,7 @@ export default function Profile() {
         <MenuRow title="Sign out" onPress={() => void signOut()} />
         {/* The server ends every session; signing out locally takes the app back to sign-in. */}
         <DeleteAccount
-          subscribedIn={
-            entitlements.data?.premium ? storeName(entitlements.data.premiumStore) : null
-          }
+          subscribedIn={subscribedIn(entitlements.data)}
           onDelete={async () => {
             await deleteMe();
             await signOut();

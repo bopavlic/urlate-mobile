@@ -1,6 +1,6 @@
 import type { Entitlements } from '@/api/generated/model';
 
-import { groupLimitReached, premiumStatus, storeName } from './copy';
+import { groupLimitReached, premiumStatus, storeName, subscribedIn } from './copy';
 
 const premium: Entitlements = {
   premium: true,
@@ -22,6 +22,12 @@ describe('premiumStatus', () => {
     );
   });
 
+  it('says Premium is on when it came without a store (the app review account)', () => {
+    expect(
+      premiumStatus({ ...premium, premiumUntil: null, premiumStore: null, premiumRenews: null }),
+    ).toBe('Premium is on for this account.');
+  });
+
   it('has nothing to say without premium', () => {
     expect(premiumStatus({ ...premium, premium: false, premiumUntil: null })).toBeNull();
   });
@@ -31,6 +37,16 @@ describe('storeName', () => {
   it('names the store to manage it in', () => {
     expect(storeName('APPLE')).toBe('the App Store');
     expect(storeName('GOOGLE')).toBe('Google Play');
+  });
+});
+
+describe('subscribedIn', () => {
+  it('names the store only for a store subscription', () => {
+    expect(subscribedIn(premium)).toBe('the App Store');
+    expect(subscribedIn({ ...premium, premiumStore: 'GOOGLE' })).toBe('Google Play');
+    expect(subscribedIn({ ...premium, premiumStore: null })).toBeNull();
+    expect(subscribedIn({ ...premium, premium: false, premiumStore: null })).toBeNull();
+    expect(subscribedIn(undefined)).toBeNull();
   });
 });
 
