@@ -16,11 +16,11 @@ const easProjectId = process.env.EAS_PROJECT_ID;
 // Android push goes through Firebase Cloud Messaging: path to the Firebase project's
 // google-services.json (kept out of git). iOS push needs no file: EAS holds the APNs key.
 const googleServicesFile = process.env.GOOGLE_SERVICES_JSON;
-// AdMob app ids (AdMob → Apps → App settings). Unset = Google's sample apps, which only ever
-// serve test ads, so development builds never touch the real account.
-const admobIosAppId = process.env.ADMOB_IOS_APP_ID ?? 'ca-app-pub-3940256099942544~1458002511';
+// AdMob app ids (AdMob → Apps → App settings). Unset or empty = Google's sample apps, which
+// only ever serve test ads, so development builds never touch the real account.
+const admobIosAppId = process.env.ADMOB_IOS_APP_ID || 'ca-app-pub-3940256099942544~1458002511';
 const admobAndroidAppId =
-  process.env.ADMOB_ANDROID_APP_ID ?? 'ca-app-pub-3940256099942544~3347511713';
+  process.env.ADMOB_ANDROID_APP_ID || 'ca-app-pub-3940256099942544~3347511713';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
