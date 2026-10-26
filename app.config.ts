@@ -67,6 +67,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-dev-client',
     'expo-secure-store',
     'expo-apple-authentication',
+    [
+      'expo-build-properties',
+      {
+        android: {
+          // WorkManager comes with Room 2.2, whose keep rules predate R8's full mode and drop
+          // the generated database's constructor: release builds crashed at launch.
+          extraProguardRules: '-keep class * extends androidx.room.RoomDatabase { <init>(); }',
+        },
+      },
+    ],
     // Push notifications (activity). The Android icon tint matches the accent.
     ['expo-notifications', { color: '#D63A1F', icon: './assets/icons/monochrome.png' }],
     [
