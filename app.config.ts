@@ -39,6 +39,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     usesAppleSignIn: true,
     // Universal links: urlate.app/i/… and /s/… open the app (the site serves the AASA file).
     associatedDomains: ['applinks:urlate.app'],
+    // Only HTTPS and the OS's own crypto: no export compliance question on each TestFlight build.
+    config: { usesNonExemptEncryption: false },
   },
   android: {
     package: 'app.urlate',
