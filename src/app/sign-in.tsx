@@ -65,9 +65,9 @@ export default function SignIn() {
           minutes={18}
           offender="YOUR FRIEND"
           waiter="YOU"
-          scale={0.62}
+          scale={0.74}
           tilt={-5}
-          style={{ alignSelf: 'flex-start', width: 230 }}
+          style={{ alignSelf: 'center', width: 275 }}
         />
         <Title className="mt-4 text-[38px] leading-[42px]">Who’s been waiting on who?</Title>
         <Text className="text-lg text-muted">
