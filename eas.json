@@ -18,7 +18,11 @@
         "EXPO_PUBLIC_API_URL": "https://api.urlate.app",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "56817037709-nq4dh7fkqvt7eabt9mugo6587lm9mns3.apps.googleusercontent.com",
         "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "56817037709-kifedtauc26q4ghm2s0lho7e39dltmsm.apps.googleusercontent.com",
-        "GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.56817037709-kifedtauc26q4ghm2s0lho7e39dltmsm"
+        "GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.56817037709-kifedtauc26q4ghm2s0lho7e39dltmsm",
+        "ADMOB_IOS_APP_ID": "ca-app-pub-3490845705014105~2159969831",
+        "ADMOB_ANDROID_APP_ID": "ca-app-pub-3490845705014105~3846128586",
+        "EXPO_PUBLIC_ADMOB_REWARDED_IOS": "ca-app-pub-3490845705014105/1190503096",
+        "EXPO_PUBLIC_ADMOB_REWARDED_ANDROID": "ca-app-pub-3490845705014105/4216207405"
       }
     },
     "preview": {

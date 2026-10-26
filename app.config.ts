@@ -12,7 +12,8 @@ const nativeIconName = (id: string) =>
 // Set GOOGLE_IOS_URL_SCHEME (the reversed iOS client ID) to enable Google sign-in in native
 // builds; it is baked into the iOS app, so rebuild the dev client after changing it.
 const googleIosUrlScheme = process.env.GOOGLE_IOS_URL_SCHEME;
-const easProjectId = process.env.EAS_PROJECT_ID;
+// The EAS project (expo.dev → borna_code_s/urlate): builds, and the app's Expo push tokens.
+const EAS_PROJECT_ID = '4144d131-84ce-4d7e-9894-527e209bf0ea';
 // Android push goes through Firebase Cloud Messaging: path to the Firebase project's
 // google-services.json (kept out of git). iOS push needs no file: EAS holds the APNs key.
 const googleServicesFile = process.env.GOOGLE_SERVICES_JSON;
@@ -129,6 +130,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     reactCompiler: true,
   },
   extra: {
-    ...(easProjectId ? { eas: { projectId: easProjectId } } : {}),
+    eas: { projectId: EAS_PROJECT_ID },
   },
 });
